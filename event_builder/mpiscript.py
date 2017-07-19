@@ -6,19 +6,15 @@ from mpi4py import MPI
 import h5py, glob, time, sys
 import numpy as np
 
+start = time.time()
+
 #initializatoin commands
 nbatch = int(sys.argv[1])
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size() #number of cores
-i = 0
 #offset = rank*
 
-#FIX ERROR MESSAGE AND INSERT HERE
-
-#for time testing --use glob to diaply all files
-comm.Barrier()
-start1 = MPI.Wtime()
 
 #list distribution for file 1
 time1Dist = h5py.File('file1.h5', 'r')
@@ -28,32 +24,16 @@ mytime = [i for i in xrange(len(times)) if i%(size*nbatch) >= (rank*nbatch) and 
 ts = time1Dist['timestamp1'][mytime]
 smldata = time1Dist['smalldata'][mytime]
 
-#start = time.time()
 ds = time1Dist['bigdata1']
-i = 0
-while i < len(mytime):
-    evti = ds[i]
-    i = i+1
-#end = time.time()
-#print 'Time:', end-start
-'''
-i = 1
-done = False
-while !done:
-    bigData = time1Dist['bigdata1'][(i-1)*10:10*i, :]
-    i = i + 1
-    if i == len(time1Dist['bigdata1']):
-        done = True
-'''
+cnEvents = 0
+for i in mytime:
+  evti = ds[i]
+  cnEvents += 1
 
 #for debugging
-print 'Core Number: ', rank, ' | Timestamp 1:', ts
-print 'Core Number: ', rank, ' | Small Data:', smldata
-print 'Core Number: ', rank, ' | Large Data 1:', i
+print 'Core_TIMESTAMP: ', rank, ts[0], ts[nbatch], len(ts)
+print 'CORE_LARGEDATA', rank, cnEvents
 
-#for time testing
-comm.Barrier()
-end1 = MPI.Wtime()
-print 'MPI total time', end1-start1
-if rank==0: print 'trank','| Rank', rank, '| Time', end-start
+if rank== 0: print 'NBATCH', nbatch 
+if rank==0: print 'TOTALTIME', time.time()-start
 MPI.Finalize()

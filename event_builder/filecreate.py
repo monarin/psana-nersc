@@ -15,8 +15,6 @@ datAmount=250000    #width of data for h5 files
 #data chunking for fast writing
 chunk = np.array([range(250000) for i in range(10)])
 row_count = chunk.shape[0]
-eventnum = slot #we changed all 'slot' to 'eventnum'
-
 start = time.time()
 
 with h5py.File('file1.h5', 'w') as f:
