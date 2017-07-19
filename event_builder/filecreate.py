@@ -6,14 +6,14 @@ import numpy as np
 
 #data parameters
 startnum=0          #counts start at 0
-tsFactor=1000       #timestamps increase by factor of this number
+tsFactor=1       #timestamps increase by factor of this number
 datSize=150000        #legth of data for first h5 file ~filesize in GB is this number divided by 500 
 datSize2=60         #legth of data for second h5 file
-datAmount=250000    #width of data for h5 files
+datAmount=10    #width of data for h5 files
 
 #--------------------PHASE I ~ File 1--------------------
 #data chunking for fast writing
-chunk = np.array([range(250000) for i in range(10)])
+chunk = np.array([range(datAmount) for i in range(10)])
 row_count = chunk.shape[0]
 start = time.time()
 
@@ -39,7 +39,7 @@ with h5py.File('file1.h5', 'w') as f:
   bigDat1 = f.create_dataset('bigdata1', shape=chunk.shape, maxshape=maxshape,
     chunks=chunk.shape, dtype=chunk.dtype)
   bigDat1[:] = chunk
-  for i in range(datSize/chunk.shape[0]):
+  for i in range(int(datSize/chunk.shape[0])-1):
     start1 = time.time()
     bigDat1.resize(row_count + chunk.shape[0], axis=0)
     bigDat1[row_count:] = chunk
