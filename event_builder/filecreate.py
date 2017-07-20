@@ -8,7 +8,6 @@ import numpy as np
 startnum=0          #counts start at 0
 tsFactor=1       #timestamps increase by factor of this number
 datSize=150000        #legth of data for first h5 file ~filesize in GB is this number divided by 500 
-datSize2=60         #legth of data for second h5 file is half the size of first h5 file
 datAmount=10    #width of data for h5 files
 
 #--------------------PHASE I ~ File 1--------------------
@@ -39,18 +38,19 @@ with h5py.File('file1.h5', 'w') as f:
 
 #--------------------PHASE II ~ File 2-------------------
 with h5py.File('file2.h5', 'w') as g:
-
+  datsize2 = int(datSize/2)
 #creation of timestamp array 2
-  secondStamp = g.create_dataset('timestamp2', (datSize,), dtype='i')
-  for eventnum in range(datSize):
+  secondStamp = g.create_dataset('timestamp2', (datsize2,), dtype='i')
+  for eventnum in range(datsize2):
       secondStamp[eventnum]=startnum+(eventnum*2*tsFactor)
 
 #creation of large array 2
+  row_count = chunk.shape[0]
   maxshape = (None,) + chunk.shape[1:]
   bigDat2 = g.create_dataset('bigdata2', shape=chunk.shape, maxshape=maxshape,
     chunks=chunk.shape, dtype=chunk.dtype)
   bigDat2[:] = chunk
-  for i in range(int(datSize/chunk.shape[0])-1):
+  for i in range(int(datsize2/chunk.shape[0])-1):
     bigDat2.resize(row_count + chunk.shape[0], axis=0)
     bigDat2[row_count:] = chunk
     row_count += chunk.shape[0]
