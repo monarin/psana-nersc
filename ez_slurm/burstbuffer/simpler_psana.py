@@ -25,9 +25,9 @@ run = ds.runs().next()
 # list of all events
 times = run.times()
 # striping
-mytimes = [times[i] for i in xrange(len(times)) if (i+rank)%size == 0]
+#mytimes = [times[i] for i in xrange(len(times)) if (i+rank)%size == 0]
 # splitting
-#mytimes = np.array_split(times, size)[rank]
+mytimes = np.array_split(times, size)[rank]
 
 start = time.time()
 img = None

@@ -24,6 +24,7 @@ run = ds.runs().next()
 
 # list of all events
 times = run.times()
+
 # striping
 #mytimes = [times[i] for i in xrange(len(times)) if (i+rank)%size == 0]
 # splitting
@@ -36,9 +37,9 @@ for i,timestamp in enumerate(mytimes):
   #calling det.raw point blank
   img = det.raw(evt)
 
-print 'Rank', rank, 'Run Time (s)', time.time() - start
+print 'Rank', rank, 'Run Time (s)', time.time() - start, len(mytimes)
 
+if rank == 0: print 'ncpus', size, 'nevents', len(times)
 MPI.Finalize() #finishing gracefully
-
 
 
