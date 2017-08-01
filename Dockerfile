@@ -20,7 +20,8 @@ ENV PATH /opt/conda/bin:$PATH
 
 # psana-conda
 RUN conda update -y conda
-RUN conda install -y -c conda-forge "mpich>=3" mpi4py h5py pytables libtiff=4.0.6
+RUN conda install -y -c conda-forge mpich
+RUN conda install -y -c anaconda mpi4py hdf5 h5py pytables libtiff 
 RUN rm -rf /opt/conda/lib/python2.7/site-packages/numexpr-2.6.2-py2.7.egg-info
 RUN conda install -y --channel lcls-rhel7 psana-conda
 RUN conda uninstall --force mpich
