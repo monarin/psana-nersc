@@ -2,15 +2,14 @@
 
 EXP=${1}
 RUN_NO=${2}
-CONST=${3}
-FS=${4}
-BBNAME=${5}
+TASK=${3}
+CONST=${4}
+FS=${5}
+BBNAME=${6}
 
 # get no. of cpus and times from smart.conf
-conf_cpus=`grep cpus smart.conf`
-n_cpus=`(echo $conf_cpus)`
-conf_times=`grep times smart.conf`
-n_times=`(echo $conf_times)`
+n_cpus=(`grep cpus smart.conf`)
+n_times=(`grep times smart.conf`)
 EMAIL=`grep email smart.conf | awk '{print $2}'`
 
 # create constant vars for different contraints
@@ -39,6 +38,7 @@ do
   cat > submit_$$_${i}.sh << EOL
 #!/bin/bash -l
 #SBATCH --partition=regular
+#SBATCH --account=m2859
 #SBATCH --qos=premium
 #SBATCH --job-name=psauto
 #SBATCH --nodes=${n_node}
@@ -50,7 +50,13 @@ EOL
     echo "#DW persistentdw name=${BBNAME}" >> submit_$$_${i}.sh
   fi
   echo 't_start=`date +%s`' >> submit_$$_${i}.sh
-  echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/activate.sh ${EXP} ${RUN_NO} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+  if [ ${TASK} == "CCTBX" ]; then
+    # task with trial_no is cctbx task - run indexing
+    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/index.sh ${EXP} ${RUN_NO} ${i} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+  else
+    # otherwise run I/O reading task
+    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/activate.sh ${EXP} ${RUN_NO} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+  fi
   echo 't_end=`date +%s`' >> submit_$$_${i}.sh
   echo "n_cpus=${n_cpus[$i]}" >> submit_$$_${i}.sh
   echo 'echo N_Cpus $n_cpus' >> submit_$$_${i}.sh

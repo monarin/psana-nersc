@@ -1,6 +1,9 @@
 # psana-nersc
 Dockerfile
-- Most recent version of Psana/Cctbx and their dependencies build for Nersc Shifter.
+Psana/Cctbx and their dependencies build for Nersc Shifter.
+2017-08-01:
+- psana-conda: 1.3.9
+- cctbx: update indexing parameters (tmp_output_dir, etc.) 
 
 ez_slurm: Sample job submitting scripts.
 To submit a job(s) automatically, use ez_slurm/auto

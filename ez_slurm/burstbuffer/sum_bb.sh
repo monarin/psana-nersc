@@ -19,7 +19,8 @@ BASE_DIR=${BB_DIR}/d/psdm/cxi/cxid9114/scratch/mona
 EXP=${1}
 RUN=${2}
 
-python ${BASE_DIR}/simpler_psana.py ${EXP} ${RUN}
+#python ${PWD}/simpler_psana.py ${EXP} ${RUN}
+strace -ttt -f -o $$.log python ${PWD}/idxmpi.py
 
 END_XTC=$(date +"%s")
 ELAPSED=$((END_XTC-START_XTC))
