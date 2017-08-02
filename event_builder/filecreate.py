@@ -8,7 +8,7 @@ import numpy as np
 startnum=0          #counts start at 0
 tsFactor=1       #timestamps increase by factor of this number
 datSize=150000        #legth of data for first h5 file ~filesize in GB is this number divided by 500 
-datAmount=10    #width of data for h5 files
+datAmount=2000    #width of data for h5 files
 
 #--------------------PHASE I ~ File 1--------------------
 #data chunking for fast writing
