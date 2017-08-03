@@ -38,12 +38,11 @@ def client():
     # Read smlData
     smlData = file1['smalldata'][evtIndex]
     # Read timestamp
-    #: Read bigData in batch mode
-    if len(myIndices) == nbatch:
-      for i in myIndices:
-        bigData1 = file1['bigdata1'][i] 
-      myIndices = [] 
-'''    
+    # Read bigData in batch mode
+    #if len(myIndices) == nbatch:
+    #  for i in myIndices:
+    #    bigData1 = file1['bigdata1'][i] 
+    #  myIndices = [] 
     # Access the second file
     if len(myIndices) == nbatch:
       timestamp1 = file1['timestamp1'][myIndices]
@@ -54,7 +53,7 @@ def client():
           bigData1 = file1['bigdata1'][i]
           bigData2 = file2['bigdata2'][ind]
       myIndices = []
-'''
+
 indices = range(len(file1['timestamp1']))
 if rank == 0:
   master(indices)
