@@ -1,4 +1,4 @@
-#Code will produce two h5 files; each containing multiple arays.
+#Code will produce two h5 files; each containing multiple arrays.
 
 #logistical support
 import h5py, time
