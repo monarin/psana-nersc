@@ -1,22 +1,36 @@
+'''
+mpi_dealer.py
+Execution commands:
+    >16 Cores => mpirun -n 16 python mpi_dealer.py 1000
+    <16 Cores => bsub -q psnehq -o log.txt -n 32 mpirun python mpi_dealer.py 1000
+    @NERSC => sbatch -o log.txt submit_simple.sh
+'''
+
+#Logistical Support
 from psana import *
 from mpi4py import MPI
 import h5py, sys, time
 import numpy as np
 
+#Initialization Definitions
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 assert size>1
+nbatch = int(sys.argv[1])
 
+#Start of Analysis -- Opening h5 Files
 comm.Barrier()
 start = MPI.Wtime()
 file1 = h5py.File('file1.h5', 'r')
 file2 = h5py.File('file2.h5', 'r')
 
-# input n_batch
-nbatch = int(sys.argv[1])
+#Extraction Definitions
+stampExtract = file1['timestamp1']
+bigData1 = file1['bigdata1']
+analysisBlock = [i for i in xrange(len(stampExtract)) if i%(size*nbatch) >= (rank*nbatch) and i%(size*nbatch) < (rank+1)*nbatch]
 
-
+#Block distribution among cores
 def master(indices):
   for i in indices:
     rankreq = comm.recv(source=MPI.ANY_SOURCE)
@@ -38,11 +52,21 @@ def client():
     # Read smlData
     smlData = file1['smalldata'][evtIndex]
     # Read timestamp
-    #: Read bigData in batch mode
-    if len(myIndices) == nbatch:
-      for i in myIndices:
-        bigData1 = file1['bigdata1'][i] 
-      myIndices = [] 
+    # Read bigData in batch mode
+#Attempting to read the data like mpiscript.py in chunks instead of one-by-one
+    i = 0
+    while i < len(analysisBlock):
+      if i + nbatch < len(analysisBlock):
+        dataread = bigData1[analysisBlock][i:i+nbatch]
+      else:
+        dataread = bigData1[analysisBlock][i:]
+      i += nbatch
+
+#Reading the data one-by-one (original way of reading data)
+#    if len(myIndices) == nbatch:
+#      for i in myIndices:
+#        bigData1 = file1['bigdata1'][i] 
+#      myIndices = [] 
 '''    
     # Access the second file
     if len(myIndices) == nbatch:
