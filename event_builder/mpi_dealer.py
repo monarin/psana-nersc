@@ -25,11 +25,6 @@ start = MPI.Wtime()
 file1 = h5py.File('file1.h5', 'r')
 file2 = h5py.File('file2.h5', 'r')
 
-#Extraction Definitions
-stampExtract = file1['timestamp1']
-bigData1 = file1['bigdata1']
-analysisBlock = [i for i in xrange(len(stampExtract)) if i%(size*nbatch) >= (rank*nbatch) and i%(size*nbatch) < (rank+1)*nbatch]
-
 #Block distribution among cores
 def master(indices):
   for i in indices:
@@ -48,20 +43,15 @@ def client():
     if str(evtIndex) == 'endrun': 
       print "Rank: %d Time Elapsed (s): %6.3f"%(rank, time.time()-start_local)
       break
-    myIndices.append(evtIndex)
+#Analysis by blocks of events    
+    if evtIndex+nbatch < len(file1['timestamp1']):
+      myIndices=range(evtIndex, evtIndex+nbatch)
+    else:
+      myIndices = range(evtIndex, len(file1['timestamp1']))
     # Read smlData
-    smlData = file1['smalldata'][evtIndex]
-    # Read timestamp
+    smlData = file1['smalldata'][myIndices]
     # Read bigData in batch mode
-#Attempting to read the data like mpiscript.py in chunks instead of one-by-one
-    i = 0
-    while i < len(analysisBlock):
-      if i + nbatch < len(analysisBlock):
-        dataread = bigData1[analysisBlock][i:i+nbatch]
-      else:
-        dataread = bigData1[analysisBlock][i:]
-      i += nbatch
-
+    bigData1 = file1['bigdata1'][myIndices]
 #Reading the data one-by-one (original way of reading data)
 #    if len(myIndices) == nbatch:
 #      for i in myIndices:
@@ -79,7 +69,7 @@ def client():
           bigData2 = file2['bigdata2'][ind]
       myIndices = []
 '''
-indices = range(len(file1['timestamp1']))
+indices = range(0, len(file1['timestamp1']), nbatch)
 if rank == 0:
   master(indices)
 else:
