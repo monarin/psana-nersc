@@ -24,7 +24,7 @@ tsFactor = 1
 if file1size == 0:
     datSize = 150
 else:
-    datsize = file1size*75000
+    datSize = file1size*75000
 datSize2 = datSize/2
 datAmount = int(round(datSize/7.5))
 smallDatColors = ['red', 'blue', 'green']
