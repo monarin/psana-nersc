@@ -14,7 +14,7 @@ import h5py, random
 import numpy as np
 
 #INPUT YOUR OPTIONS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-file1size = 0 #Size of File 1 in GB (subsequent files will be half this size)
+file1size = 20 #Size of File 1 in GB (aproximately)
 number_of_files = 10 #Total number of h5 files you want
 
 #Initialization variables
@@ -24,8 +24,7 @@ tsFactor = 1
 if file1size == 0:
     datSize = 150
 else:
-    datSize = file1size*75000
-datSize2 = datSize/2
+    datSize = file1size*12000
 datAmount = int(round(datSize/7.5))
 smallDatColors = ['red', 'blue', 'green']
 
@@ -34,8 +33,8 @@ if datSize < 100000:
     bunch = int(round(datSize/50))
 else:
     max_block_size= int(round(datSize*.003))
-    bunch = datSize/300
-print 'MAXIMUM TIMESTAMP2 BLOCK SIZE:', max_block_size, 'BUNCH:', bunch
+    bunch = int(round(datSize/300))
+#print 'MAXIMUM TIMESTAMP2 BLOCK SIZE:', max_block_size, 'BUNCH:', bunch
 
 chunk = np.array([range(datAmount) for i in range(10)])
 row_count = chunk.shape[0]
@@ -46,13 +45,13 @@ with h5py.File('file1.h5', 'w') as f:
     smallDat1 = f.create_dataset('smalldata', (datSize,), dtype='S5')
     for event in range(datSize):
         smallDat1[event] = (random.choice(smallDatColors))
-    print 'SMALLDATA1:', smallDat1[:]
+    #print 'SMALLDATA1:', smallDat1[:]
 
     #Creating first Timestamp array
     firstStamp = f.create_dataset('timestamp1', (datSize,), dtype='i')
     for stamp in range(datSize):
         firstStamp[stamp] = startnum+(stamp*tsFactor)
-    print 'TIMESTAMP1:', firstStamp[:]
+    #print 'TIMESTAMP1:', firstStamp[:]
     
     #Creating first Event array
     maxshape = (None,) + chunk.shape[1:]
@@ -63,16 +62,16 @@ with h5py.File('file1.h5', 'w') as f:
         bigDat1.resize(row_count + chunk.shape[0], axis=0)
         bigDat1[row_count:] = chunk
         row_count += chunk.shape[0]
-    print 'BIGDATA1:', bigDat1[:]
+    #print 'BIGDATA1:', bigDat1[:]
 
 #Phase II --Creating subsequent h5 files--
-#Shitty way of getting the time stamps to work out...
+#Crappy way of getting the time stamps to work out below...
 #Please fix with datset.resize as done with File1's bigDat1
 while r <= number_of_files:
   list = np.arange(datSize)[...]
   amendment = [] 
   while startnum < len(list):   
-    sel_n = random.choice(range(startnum,startnum+bunch))
+    sel_n = int(round(random.choice(range(startnum,startnum+bunch))))
     block_size = random.choice(range(max_block_size))
     if sel_n+block_size > len(list):
         block_size = len(list)- sel_n
@@ -85,18 +84,18 @@ while r <= number_of_files:
       secondStamp = g.create_dataset('timestamp%s' %r, (len(amendment),), dtype='i')    
       length = len(amendment)
       secondStamp[:length]=amendment[:]
-      print 'TIMESTAMP', r, ':', secondStamp[:]
+      #print 'TIMESTAMP', r, ':', secondStamp[:]
     
       #Creating Event Data arrays
       maxshape = (None,) + chunk.shape[1:]
       bigDat2 = g.create_dataset('bigdata%s' %r, shape=chunk.shape, maxshape=maxshape,
         chunks=chunk.shape, dtype=chunk.dtype)
       bigDat2[:] = chunk
-      for i in range(int(datSize/chunk.shape[0])-1):
+      for i in range(int(len(amendment)/chunk.shape[0])-1):
         bigDat2.resize(row_count + chunk.shape[0], axis=0)
         bigDat2[row_count:] = chunk
         row_count += chunk.shape[0]
-      print 'BIGDATA', r, ':', bigDat2[:]
+      #print 'BIGDATA', r, ':', bigDat2[:]
 
   #Part of the loop
   r = r+1
