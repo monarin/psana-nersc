@@ -7,64 +7,63 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 assert size>1
+nbatch = int(sys.argv[1])
 
+number_of_files = 10
+j = 2
 comm.Barrier()
 start = MPI.Wtime()
 file1 = h5py.File('file1.h5', 'r')
-file2 = h5py.File('file2.h5', 'r')
+#   ####   file2 = h5py.file('file2.h5', 'r')
+truncSD = [i for i, x in enumerate(file1['smalldata']) if 'red' in x]
+#print 'TRUNCATED SMALL DATA:', truncSD
 
-# input n_batch
-nbatch = int(sys.argv[1])
+truncTS = [file1['timestamp1'][i] for i in truncSD]
+#print 'TRUNCATED TIME STAMP 1:', truncTS
 
+data1 = [file1['bigdata1'][i] for i in truncTS]
+#print 'TRUNCATED BIG DATA 1:', data1
 
-def master(indices):
-  for i in indices:
-    rankreq = comm.recv(source=MPI.ANY_SOURCE)
-    comm.send(i, dest=rankreq)
-  for rankreq in range(size-1):
-    rankreq = comm.recv(source=MPI.ANY_SOURCE)
-    comm.send('endrun', dest=rankreq)
+while j <= number_of_files:
+  def master():
+    #open one h5 file per loop
+    f = h5py.File('file%s.h5' %j, 'r')
+    #match the timestamps
+    foundind = [i for i, item in enumerate(f['timestamp%s' %j]) if item in truncTS]
+    #print 'FOUNDIND NUMBER:', j, 'FOUNDIND:', foundind
+    #I DON'T THINK SEARCHSORTED WORKS HERE!!!!!!!!!!!!!!!!!!!!!
+    #foundind = np.searchsorted(file1['timestamp1'], file2['timestamp2'])
+    indices = range(0, len(foundind), nbatch)
+    for i in indices:
+      # get indices for this rank
+      if i+nbatch < len(foundind):
+        myIndices=range(i, i+nbatch)
+      else:
+        myIndices = range(i, len(foundind))
+      rankreq = comm.recv(source=MPI.ANY_SOURCE)
+      comm.send((list(foundind[myIndices]), myIndices), dest=rankreq)
+    for rankreq in range(size-1):
+      rankreq = comm.recv(source=MPI.ANY_SOURCE)
+      comm.send('endrun', dest=rankreq)
 
-def client():
-  start_local = time.time()
-  myIndices = []
-  while True:
-    start_read = time.time()
-    comm.send(rank, dest=0)
-    evtIndex = comm.recv(source=0)
-    if str(evtIndex) == 'endrun': 
-      print "Rank: %d Time Elapsed (s): %6.3f"%(rank, time.time()-start_local)
-      break
-    if evtIndex+nbatch < len(file1['timestamp1']):
-      myIndices=range(evtIndex, evtIndex+nbatch)
-    else:
-      myIndices = range(evtIndex, len(file1['timestamp1']))
-    #myIndices.append(evtIndex) #dunno what this does...
-    # Read smlData
-    smlData = file1['smalldata'][myIndices]
-    # Read timestamp
-    # Read bigData in batch mode
-    #if len(myIndices) == nbatch:
-    #  for i in myIndices:
-    #    bigData1 = file1['bigdata1'][i] 
-    #  myIndices = [] 
-    # Access the second file
-    #if len(myIndices) == nbatch:
-    timestamp1 = file1['timestamp1'][myIndices]
-    foundind = np.searchsorted(file2['timestamp2'], timestamp1, side='left')
-    for i,ind in enumerate(foundind):  
-      if ind == len(file2['timestamp2']): continue
-      if timestamp1[i] == file2['timestamp2'][ind]:
-        bigData1 = file1['bigdata1'][i]
-        bigData2 = file2['bigdata2'][ind]
-    print 'DEBUG', rank, len(foundind), len(file2['timestamp2']), len(timestamp1), time.time()-start_read
-    #myIndices = []
-
-indices = range(0, len(file1['timestamp1']), nbatch)
-if rank == 0:
-  master(indices)
-else:
-  client()
+  def client():
+    start_local = time.time()
+    while True:
+      comm.send(rank, dest=0)
+      results = comm.recv(source=0)
+      if str(results) == 'endrun': 
+        print "Rank: %d Time Elapsed (s): %6.3f"%(rank, time.time()-start_local)
+        break
+      #bigData1 = file1['bigdata1'][results[0]]
+      #bigData2 = file2['bigdata2'][results[1]]
+      #Pair the subsequential bigdata with the truncated subsequential timestamp
+      data = [f['bigdata%s' %j][i] for i in truncTS]
+      print 'TRUNCATED BIG DATA', j, ':', data
+  if rank == 0:
+    master()
+  else:
+    client()
+  j = j+1
 
 comm.Barrier()
 end = MPI.Wtime()
