@@ -8,12 +8,15 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 assert size>1
 nbatch = int(sys.argv[1])
+#print '!!!!!!!!!!!!!!!!!!!!!!test1'
 
 number_of_files = 10
 j = 2
+#print '!!!!!!!!!!!!!!!!!!!!test2', number_of_files, j
 comm.Barrier()
 start = MPI.Wtime()
 file1 = h5py.File('file1.h5', 'r')
+#print '!!!!!!!!!!!!!!!!!!!!test3', file1
 #   ####   file2 = h5py.file('file2.h5', 'r')
 truncSD = [i for i, x in enumerate(file1['smalldata']) if 'red' in x]
 #print 'TRUNCATED SMALL DATA:', truncSD
@@ -33,20 +36,28 @@ while j <= number_of_files:
     #print 'FOUNDIND NUMBER:', j, 'FOUNDIND:', foundind
     #I DON'T THINK SEARCHSORTED WORKS HERE!!!!!!!!!!!!!!!!!!!!!
     #foundind = np.searchsorted(file1['timestamp1'], file2['timestamp2'])
+    #print 'FOUNDIND 1:', foundind
     indices = range(0, len(foundind), nbatch)
+    #print indices
     for i in indices:
       # get indices for this rank
       if i+nbatch < len(foundind):
         myIndices=range(i, i+nbatch)
+        foundind = [foundind[x] for x in myIndices]
+        #print myIndices
       else:
         myIndices = range(i, len(foundind))
+        foundind = [foundind[x] for x in myIndices]
+      #print 'batched foundind:', foundind
       rankreq = comm.recv(source=MPI.ANY_SOURCE)
-      comm.send((list(foundind[myIndices]), myIndices), dest=rankreq)
+      comm.send((foundind, myIndices), dest=rankreq)
+      #comm.send((list(foundind[myIndices]), myIndices), dest=rankreq)
     for rankreq in range(size-1):
       rankreq = comm.recv(source=MPI.ANY_SOURCE)
       comm.send('endrun', dest=rankreq)
 
   def client():
+    f = h5py.File('file%s.h5' %j, 'r')
     start_local = time.time()
     while True:
       comm.send(rank, dest=0)
@@ -58,7 +69,7 @@ while j <= number_of_files:
       #bigData2 = file2['bigdata2'][results[1]]
       #Pair the subsequential bigdata with the truncated subsequential timestamp
       data = [f['bigdata%s' %j][i] for i in truncTS]
-      print 'TRUNCATED BIG DATA', j, ':', data
+      #print 'TRUNCATED BIG DATA', j, ':', data
   if rank == 0:
     master()
   else:
@@ -70,4 +81,3 @@ end = MPI.Wtime()
 
 if rank ==0:
     print 'NBATCH', nbatch, 'NEXPEVTS_PERRANK', 'total time in seconds:', end - start
-  
