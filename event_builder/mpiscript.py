@@ -35,6 +35,7 @@ ds = time1Dist['bigdata1']
 
 #reading in batch for SLAC
 i = 0
+start_local = time.time()
 while i < len(mytime):
   # reading
   if i + nbatch < len(mytime):
@@ -42,14 +43,19 @@ while i < len(mytime):
   else:
     c = ds[mytime][i:]
   """
-  # reading in batch for NERSC
-  for j in range(i, i+nbatch):
-    c = ds[mytime][j]
+  if i + nbatch < len(mytime):
+    for j in range(i, i+nbatch):
+      c = ds[mytime][j]
+      print rank, j, c
+  else:
+    for j in range(i, len(mytime)):
+      c = ds[mytime][j]
+      print rank, j, c
   """
   i += nbatch
 
 #for debugging
-print 'TIMESTAMP RANK TSB1[0] TSSIZE NEVENTS: ', rank, ts[0], len(ts), len(mytime)
+print 'TIMESTAMP RANK:%d TSB1[0]: %5.1f TSSIZE: %d NEVENTS: %d TIME:%6.2f'%(rank, ts[0], len(ts), len(mytime), time.time()-start_local)
 
 comm.Barrier()
 end = MPI.Wtime()
