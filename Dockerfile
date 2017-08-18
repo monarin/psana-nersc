@@ -1,14 +1,14 @@
 #
 # Dockerfile
 #
-# Latest version of centos
-# Test 01: Test script original owned by Chuck Yoon
+# Latest version of psana
+# 
 #
 FROM centos:centos7
 MAINTAINER Monarin Uervirojnangkoorn <monarin@stanford.edu>
 
 RUN yum clean all && \
-    yum -y install bzip2.x86_64 libgomp.x86_64 telnet.x86_64 gcc-c++
+    yum -y install bzip2.x86_64 libgomp.x86_64 telnet.x86_64 gcc-c++ strace
 
 # https://repo.continuum.io/miniconda/
 ADD Miniconda2-latest-Linux-x86_64.sh miniconda.sh
@@ -20,11 +20,9 @@ ENV PATH /opt/conda/bin:$PATH
 
 # psana-conda
 RUN conda update -y conda
-RUN conda install -y -c conda-forge mpich
-RUN conda install -y -c anaconda mpi4py hdf5 h5py pytables libtiff 
-RUN rm -rf /opt/conda/lib/python2.7/site-packages/numexpr-2.6.2-py2.7.egg-info
 RUN conda install -y --channel lcls-rhel7 psana-conda
-RUN conda uninstall --force mpich
+RUN conda install -y -c conda-forge "mpich>=3" mpi4py h5py pytables libtiff=4.0.6
+RUN rm -rf /opt/conda/lib/python2.7/site-packages/numexpr-2.6.2-py2.7.egg-info
 
 # cctbx
 RUN conda install scons
@@ -35,7 +33,9 @@ RUN python bootstrap.py build --builder=xfel --with-python=/opt/conda/bin/python
 # recreate /reg/d directories for data
 RUN mkdir -p /reg/g &&\
     mkdir -p /reg/d/psdm/CXI &&\
-    mkdir -p /reg/d/psdm/cxi
+    mkdir -p /reg/d/psdm/cxi &&\
+    mkdir -p /reg/d/psdm/MFX &&\
+    mkdir -p /reg/d/psdm/mfx
 
-# for profiling
-RUN yum -y install strace
+# remove mpich
+RUN conda uninstall --force mpich
