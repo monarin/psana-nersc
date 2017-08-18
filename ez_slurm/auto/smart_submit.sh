@@ -1,11 +1,12 @@
 #!/bin/bash
 
 EXP=${1}
-RUN_NO=${2}
-TASK=${3}
-CONST=${4}
-FS=${5}
-BBNAME=${6}
+RUN_ST=${2}
+RUN_EN=${3}
+TASK=${4}
+CONST=${5}
+FS=${6}
+BBNAME=${7}
 
 # get no. of cpus and times from smart.conf
 n_cpus=(`grep cpus smart.conf`)
@@ -38,7 +39,7 @@ do
   cat > submit_$$_${i}.sh << EOL
 #!/bin/bash -l
 #SBATCH --partition=regular
-#SBATCH --account=m2859
+#SBATCH --account=lcls
 #SBATCH --qos=premium
 #SBATCH --job-name=psauto
 #SBATCH --nodes=${n_node}
@@ -52,10 +53,10 @@ EOL
   echo 't_start=`date +%s`' >> submit_$$_${i}.sh
   if [ ${TASK} == "CCTBX" ]; then
     # task with trial_no is cctbx task - run indexing
-    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/index.sh ${EXP} ${RUN_NO} ${i} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${i} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
   else
     # otherwise run I/O reading task
-    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/activate.sh ${EXP} ${RUN_NO} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/activate.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
   fi
   echo 't_end=`date +%s`' >> submit_$$_${i}.sh
   echo "n_cpus=${n_cpus[$i]}" >> submit_$$_${i}.sh

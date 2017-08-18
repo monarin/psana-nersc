@@ -6,5 +6,5 @@ vals = []
 with open(fname,'r') as f:
   for line in f: vals.append(float(line.strip()))
 
-print 'Mean=%6.2f Median=%6.2f Min=%6.2f Max=%6.2f Std=%6.2f'%(np.mean(vals), np.median(vals), min(vals), max(vals), np.std(vals))
+print 'Mean=%6.2f Median=%6.2f Min=%6.2f Max=%6.2f Std=%6.2f Sum=%6.2f'%(np.mean(vals), np.median(vals), min(vals), max(vals), np.std(vals), sum(vals))
 

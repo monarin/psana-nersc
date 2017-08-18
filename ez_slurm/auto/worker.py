@@ -9,37 +9,34 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 exp = sys.argv[1]
-runNo = sys.argv[2]
+run_st = int(sys.argv[2])
+run_en = int(sys.argv[3])
 
-#comm.Barrier()
-#start = MPI.Wtime()
-ds = DataSource('exp='+exp+':run='+runNo+':idx')
-#comm.Barrier()
-#end = MPI.Wtime()
-#if rank == 0: print "Opening Datasource (s)", end - start
+for run_no in range(run_st, run_en):
+  ds = DataSource('exp='+exp+':run='+str(run_no)+':idx')
+  det = Detector('CxiDs2.0:Cspad.0')
+  run = ds.runs().next()
 
-det = Detector('CxiDs2.0:Cspad.0')
+  # list of all events
+  times = run.times()
+  # striping
+  #mytimes = [times[i] for i in xrange(len(times)) if (i+rank)%size == 0]
+  # splitting
+  mytimes = np.array_split(times, size)[rank]
 
-run = ds.runs().next()
+  comm.Barrier()
+  start = MPI.Wtime()
+  img = None
+  for i,timestamp in enumerate(mytimes):
+    evt = run.event(timestamp)
+    #calling det.raw point blank
+    img = det.raw(evt)
 
-# list of all events
-times = run.times()
+  comm.Barrier()
+  end = MPI.Wtime()
+  print 'Rank', rank, 'Run Time (s)', end - start, start, end
 
-# striping
-#mytimes = [times[i] for i in xrange(len(times)) if (i+rank)%size == 0]
-# splitting
-mytimes = np.array_split(times, size)[rank]
-
-start = time.time()
-img = None
-for i,timestamp in enumerate(mytimes):
-  evt = run.event(timestamp)
-  #calling det.raw point blank
-  img = det.raw(evt)
-
-print 'Rank', rank, 'Run Time (s)', time.time() - start, len(mytimes)
-
-if rank == 0: print 'ncpus', size, 'nevents', len(times)
 MPI.Finalize() #finishing gracefully
+
 
 
