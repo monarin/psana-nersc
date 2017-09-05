@@ -29,14 +29,17 @@ times = run.times()
 # splitting
 mytimes = np.array_split(times, size)[rank]
 
-start = time.time()
+comm.Barrier()
+start = MPI.Wtime()
 img = None
 for i,timestamp in enumerate(mytimes):
   evt = run.event(timestamp)
   #calling det.raw point blank
   img = det.raw(evt)
 
-print 'Rank', rank, 'Run Time (s)', time.time() - start
+comm.Barrier()
+end = MPI.Wtime()
+if rank == 0: print "Total Elapsed (s)", start, end, end-start
 
 MPI.Finalize() #finishing gracefully
 
