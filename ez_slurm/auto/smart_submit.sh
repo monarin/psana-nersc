@@ -7,6 +7,7 @@ TASK=${4}
 CONST=${5}
 FS=${6}
 BBNAME=${7}
+CMDMODE=${8}
 
 # get no. of cpus and times from smart.conf
 n_cpus=(`grep cpus smart.conf`)
@@ -14,14 +15,14 @@ n_times=(`grep times smart.conf`)
 EMAIL=`grep email smart.conf | awk '{print $2}'`
 
 # create constant vars for different contraints
-if [ $CONST == "knl" ]; then
-  const_core=68
-  const_thread=272
-  const_max_thread=4
-else
+if [ $CONST == "haswell" ]; then
   const_core=32
   const_thread=64
   const_max_thread=2
+else
+  const_core=68
+  const_thread=272
+  const_max_thread=4
 fi
 
 # build job submission script
@@ -45,18 +46,24 @@ do
 #SBATCH --nodes=${n_node}
 #SBATCH --constraint=${CONST}
 #SBATCH --time=${n_times[$i]}
-#SBATCH --image=docker:monarin/psananersc:latest
+#SBATCH --image=docker:monarin/psanatest:latest
 EOL
   if [ ${FS} == "BB" ]; then
     echo "#DW persistentdw name=${BBNAME}" >> submit_$$_${i}.sh
   fi
   echo 't_start=`date +%s`' >> submit_$$_${i}.sh
   if [ ${TASK} == "CCTBX" ]; then
-    # task with trial_no is cctbx task - run indexing
-    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${i} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+    if [ ${CONST} == "knl,quad,flat" ]; then
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores numactl -p 1 shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${RUN_EN} ${i} ${FS} ${BBNAME} ${CMDMODE}" >> submit_$$_${i}.sh
+    else
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${RUN_EN} ${i} ${FS} ${BBNAME} ${CMDMODE}" >> submit_$$_${i}.sh
+    fi
   else
-    # otherwise run I/O reading task
-    echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/activate.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+    if [ ${CONST} == "knl,quad,flat" ]; then
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores numactl -p 1 shifter ${PWD}/client_server.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+    else
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/client_server.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+    fi
   fi
   echo 't_end=`date +%s`' >> submit_$$_${i}.sh
   echo "n_cpus=${n_cpus[$i]}" >> submit_$$_${i}.sh
@@ -77,11 +84,11 @@ EOL
         break
       else
         echo "$DATE Job is running..."
-        sleep 5
+        sleep 60
       fi
     else
       echo "$DATE Job is still pending..."
-      sleep 5
+      sleep 60
     fi
   done
 done

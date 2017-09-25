@@ -20,7 +20,7 @@ RUN_EN=${3}
 # base directory
 BASE_DIR=${BB_DIR}/d/psdm/cxi/${EXP}/scratch/
 
-python ${PWD}/simpler_psana.py ${EXP} ${RUN_ST} ${RUN_EN}
+python /global/cscratch1/sd/monarin/d/psdm/cxi/cxid9114/scratch/mona/psana-nersc/ez_slurm/burstbuffer/simpler_psana.py ${EXP} ${RUN_ST} ${RUN_EN}
 
 END_XTC=$(date +"%s")
 ELAPSED=$((END_XTC-START_XTC))

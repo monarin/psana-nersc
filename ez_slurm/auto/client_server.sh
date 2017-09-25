@@ -22,7 +22,7 @@ export SIT_PSDM_DATA=${PSDIR}/d/psdm
 # base directory
 BASE_DIR=${PSDIR}/d/psdm/cxi/${EXP}/scratch
 
-python ${PWD}/mpi_dealer_rax.py exp=${EXP}:run=${RUN_ST} -n 10
+python ${PWD}/mpi_dealer_rax.py exp=${EXP}:run=${RUN_ST}
 
 END_XTC=$(date +"%s")
 ELAPSED=$((END_XTC-START_XTC))

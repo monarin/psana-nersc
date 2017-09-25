@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "${1}" = "" ]; then
-echo "Usage: ./rapidfire_submit.sh EXP TRIAL TASK(CCTBX/profile) CONST(knl/haswell) FS(lustre/BB/GPFS) BBNAME"
+echo "Usage: ./rapidfire_submit.sh EXP TRIAL TASK(CCTBX/profile) CONST(knl/haswell) FS(lustre/BB/GPFS) BBNAME CMDMODE(none/pythonprof/strace/debug)"
 else
 EXP=${1}
 TRIAL=${2}
@@ -8,6 +8,7 @@ TASK=${3}
 CONST=${4}
 FS=${5}
 BBNAME=${6}
+CMDMODE=${7}
 
 # get no. of cpus and times from smart.conf
 n_cpus=(`grep cpus rapid.conf`)
@@ -41,11 +42,11 @@ do
   else
     let "n_cpu_pp=$const_thread / ${n_cpus[$i]}"
   fi
-  cat > submit_$$_${i}.sh << EOL
+  cat > submit_$$_${i}_${TRIAL}.sh << EOL
 #!/bin/bash -l
-#SBATCH --partition=regular
+#SBATCH --reservation=xfeldata
+#SBATCH --partition=special
 #SBATCH --account=lcls
-#SBATCH --qos=premium
 #SBATCH --job-name=psauto
 #SBATCH --nodes=${n_node}
 #SBATCH --constraint=${CONST}
@@ -53,29 +54,30 @@ do
 #SBATCH --image=docker:monarin/psanatest:latest
 EOL
   if [ ${FS} == "BB" ]; then
-    echo "#DW persistentdw name=${BBNAME}" >> submit_$$_${i}.sh
+    echo "#DW persistentdw name=${BBNAME}" >> submit_$$_${i}_${TRIAL}.sh
   fi
-  echo 't_start=`date +%s`' >> submit_$$_${i}.sh
+  echo 't_start=`date +%s`' >> submit_$$_${i}_${TRIAL}.sh
   if [ ${TASK} == "CCTBX" ]; then
     if [ ${CONST} == "knl,quad,flat" ]; then
-      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores numactl -p 1 shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${RUN_EN} ${TRIAL} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores numactl -p 1 shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${RUN_EN} ${TRIAL} ${FS} ${BBNAME} ${CMDMODE}" >> submit_$$_${i}_${TRIAL}.sh
     else
-      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${RUN_EN} ${TRIAL} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/index.sh ${EXP} ${RUN_ST} ${RUN_EN} ${TRIAL} ${FS} ${BBNAME} ${CMDMODE}" >> submit_$$_${i}_${TRIAL}.sh
     fi
   else
     if [ ${CONST} == "knl,quad,flat" ]; then
-      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores numactl -p 1 shifter ${PWD}/client_server.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores numactl -p 1 shifter ${PWD}/client_server.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}_${TRIAL}.sh
     else
-      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/client_server.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}.sh
+      echo "srun -n ${n_cpus[$i]} -c ${n_cpu_pp} --cpu_bind=cores shifter ${PWD}/client_server.sh ${EXP} ${RUN_ST} ${RUN_EN} ${FS} ${BBNAME}" >> submit_$$_${i}_${TRIAL}.sh
     fi
   fi
-  echo 't_end=`date +%s`' >> submit_$$_${i}.sh
-  echo "n_cpus=${n_cpus[$i]}" >> submit_$$_${i}.sh
-  echo 'echo N_Cpus $n_cpus' >> submit_$$_${i}.sh
-  echo 'echo PSJobCompleted TotalElapsed $((t_end-t_start)) $t_start $t_end' >> submit_$$_${i}.sh
+  echo 't_end=`date +%s`' >> submit_$$_${i}_${TRIAL}.sh
+  echo "n_cpus=${n_cpus[$i]}" >> submit_$$_${i}_${TRIAL}.sh
+  echo 'echo N_Cpus $n_cpus' >> submit_$$_${i}_${TRIAL}.sh
+  echo 't_submit' `date +%s` >> submit_$$_${i}_${TRIAL}.sh
+  echo 'echo PSJobCompleted TotalElapsed $((t_end-t_start)) $t_start $t_end' >> submit_$$_${i}_${TRIAL}.sh
   
-  sbatch -o log_$$_${i}.txt submit_$$_${i}.sh
-  echo "Job script submit_$$_${i}.sh submitted"
+  sbatch -o log_$$_${i}_${TRIAL}.txt submit_$$_${i}_${TRIAL}.sh
+  echo "Job script submit_$$_${i}_${TRIAL}.sh submitted"
 done
 
 fi

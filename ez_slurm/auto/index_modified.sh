@@ -31,23 +31,17 @@ RUN_F="$(printf "r%04d" ${RUN})"
 TRIAL_F="$(printf "%03d" ${TRIAL})"
 
 # setup playground
-mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out
-mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout
 mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp
 
-ls ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}>/dev/null
+ls ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}
 if [ $? -gt 0 ]; then
   mkdir -p ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out
   mkdir -p ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout
 fi
 
 #run index
-cctbx.xfel.xtc_process input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout output.output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask.pickle ${BASE_DIR}/discovery/target.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp max_events=25
-
-cp -rf ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out/* ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out/
-cp -rf ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout/* ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout/
+cctbx.xfel.xtc_process input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout output.output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask.pickle ${BASE_DIR}/discovery/target.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp max_events=100
 
 END_XTC=$(date +"%s")
 ELAPSED=$((END_XTC-START_XTC))
 echo TotalElapsed_OneCore ${ELAPSED} ${START_XTC} ${END_XTC}
-

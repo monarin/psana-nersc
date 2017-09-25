@@ -13,7 +13,11 @@ run_st = int(sys.argv[2])
 run_en = int(sys.argv[3])
 
 for run_no in range(run_st, run_en):
+  comm.Barrier()
+  start_ds = MPI.Wtime()
   ds = DataSource('exp='+exp+':run='+str(run_no)+':idx')
+  comm.Barrier()
+  end_ds = MPI.Wtime()
   det = Detector('CxiDs2.0:Cspad.0')
   run = ds.runs().next()
 
@@ -31,11 +35,13 @@ for run_no in range(run_st, run_en):
     evt = run.event(timestamp)
     #calling det.raw point blank
     img = det.raw(evt)
+    if i==0:
+      comm.Barrier()
+      end_1 = MPI.Wtime()
 
   comm.Barrier()
   end = MPI.Wtime()
-  print 'Rank', rank, 'Run Time (s)', end - start, start, end
-
+  if rank == 0: print 'Ds (s)', start_ds, end_ds, end_ds-start_ds, 'Run Time (s)', start, end_1, end, end_1-start, end-start
 MPI.Finalize() #finishing gracefully
 
 
