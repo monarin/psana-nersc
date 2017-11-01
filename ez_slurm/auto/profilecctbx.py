@@ -14,6 +14,7 @@ if __name__ == "__main__":
   trialNo = int(sys.argv[4])
   print "#RunSeq QueueWait FastestStartCore SlowestStartCore Client-ServerProcess WallTime"
   for i in xrange(maxSeq):
+    if runSeq[i] in (98, 104): continue
     cmd = "grep t_submit submit_"+str(procId)+"_"+str(i+1)+"_"+str(trialNo)+".sh | awk '{print $2}'"
     try:
       startSubmit = float(grepThis(cmd))
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     except:
       deltaInts = None
 
-    print i+1, startJob - startSubmit, np.min(deltaProcStarts), np.max(deltaProcStarts), deltaClientServer, endJob - startJob, \
+    print i+1, runSeq[i], startJob - startSubmit, np.min(deltaProcStarts), np.max(deltaProcStarts), deltaClientServer, endJob - startJob, \
         np.min(deltaPhils), np.max(deltaPhils), np.mean(deltaPhils), np.median(deltaPhils), \
         np.min(deltaDss), np.max(deltaDss), np.mean(deltaDss), np.median(deltaDss), \
         np.min(deltaMasters), np.max(deltaMasters), np.mean(deltaMasters), np.median(deltaMasters), \
@@ -84,4 +85,13 @@ if __name__ == "__main__":
         np.min(deltaInts), np.max(deltaInts), np.mean(deltaInts), np.median(deltaInts)
          
         
-
+    strPhils = '\n'.join([str(tmp) for tmp in deltaPhils])
+    strDss = '\n'.join([str(tmp) for tmp in deltaDss])
+    strMasters ='\n'.join([str(tmp) for tmp in deltaMasters])
+    strJumps = '\n'.join([str(tmp) for tmp in deltaJumps])
+    strInts = '\n'.join([str(tmp) for tmp in deltaInts])
+    with open('profilephils_'+str(runSeq[i])+'.csv','w') as f: f.write(strPhils)
+    with open('profiledss_'+str(runSeq[i])+'.csv','w') as f: f.write(strDss)
+    with open('profilemasters_'+str(runSeq[i])+'.csv','w') as f: f.write(strMasters)
+    with open('profilejumps_'+str(runSeq[i])+'.csv','w') as f: f.write(strJumps)
+    with open('profileints_'+str(runSeq[i])+'.csv','w') as f: f.write(strInts)

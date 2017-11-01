@@ -609,7 +609,7 @@ class InMemScript(DialsProcessScript):
     if params.input.cfg is not None:
       psana.setConfigFile(params.input.cfg)
     # all cores in stripe mode and the master in client-server mode read smd
-    dataset_name = "exp=%s:run=%s:%s"%(params.input.experiment,params.input.run_num,'smd')
+    dataset_name = "exp=%s:run=%s:%s"%(params.input.experiment,params.input.run_num,'smd:live')
     if params.input.xtc_dir is not None:
       if params.input.use_ffb:
         raise Sorry("Cannot specify the xtc_dir and use SLAC's ffb system")
@@ -622,10 +622,11 @@ class InMemScript(DialsProcessScript):
     if params.input.calib_dir is not None:
       psana.setOption('psana.calib-dir',params.input.calib_dir)
     if params.mp.method == "mpi" and params.mp.mpi.method == 'client_server' and size > 2:
-      dataset_name_client = dataset_name.replace(":smd",":rax")
+      dataset_name_client = dataset_name.replace(":smd:live",":rax")
       # for client-server, master reads smd - clients read rax
       start_ds = MPI.Wtime()
       if rank == 0:
+        psana.setOption('PSXtcInput.XtcInputModule.liveDbConn', 'Server=scidb1.nersc.gov;Database=lclsdb;Uid=lclsdb_user')
         ds = psana.DataSource(dataset_name)
       else:
         ds = psana.DataSource(dataset_name_client)

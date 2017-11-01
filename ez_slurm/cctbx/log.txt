@@ -1,0 +1,2 @@
+srun: error: Unable to create job step: More processors requested than permitted
+PSJobCompleted TotalElapsed 0 1508201092 1508201092

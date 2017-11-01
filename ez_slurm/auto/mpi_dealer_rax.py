@@ -22,7 +22,7 @@ class ConvertToPyObj():
 def master():
     setOption('PSXtcInput.XtcInputModule.liveDbConn', 'Server=scidb1.nersc.gov;Database=lclsdb;Uid=lclsdb_user')
     start_ds = MPI.Wtime()
-    ds = DataSource(args.exprun+':smd:live')
+    ds = DataSource(args.exprun+':smd:live:dir=/global/cscratch1/sd/monarin/d/psdm/cxi/cxid9114/xtc')
     end_ds = MPI.Wtime()
     print "PROFILEDS", rank, start_ds, end_ds, end_ds - start_ds
     for nevt, evt in enumerate(ds.events()):
@@ -51,7 +51,6 @@ def client():
         end_jump = MPI.Wtime()
         print "PROFILEJUMP", rank, start_jump, end_jump, end_jump-start_jump
         img = det.raw(evt)
-        print img
 
 comm.Barrier()
 start = MPI.Wtime()

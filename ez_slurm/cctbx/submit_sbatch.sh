@@ -1,15 +1,11 @@
 #!/bin/bash -l
-#SBATCH --partition=regular
+#SBATCH --partition=realtime
 #SBATCH --account=lcls
-#SBATCH --qos=normal
 #SBATCH --job-name=psauto
 #SBATCH --nodes=1
-#SBATCH --constraint=knl
-#SBATCH --time=00:15:00
-#SBATCH --image=docker:monarin/psanatest:latest
+#SBATCH --constraint=haswell
+#SBATCH --time=00:05:00
 t_start=`date +%s`
-srun -n 68 -c 4 --cpu_bind=cores shifter ./index.sh cxic0415 98 0 lustre 
+srun -n 32 -c 2 --cpu_bind=cores shifter --image=docker:monarin/psanatest:latest python test.py
 t_end=`date +%s`
-n_cpus=68
-echo N_Cpus $n_cpus
 echo PSJobCompleted TotalElapsed $((t_end-t_start)) $t_start $t_end

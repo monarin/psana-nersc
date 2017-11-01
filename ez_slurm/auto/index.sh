@@ -33,8 +33,6 @@ source /build/setpaths.sh
 
 # base directory
 BASE_DIR=${WK_DIR}/d/psdm/cxi/${EXP}/scratch
-#OUT_DIR=/tmp
-OUT_DIR=${WK_DIR}/d/psdm/cxi/${EXP}/scratch
 
 # looping through all the given runs
 for RUN in `seq $RUN_ST $RUN_EN`; do
@@ -45,32 +43,23 @@ for RUN in `seq $RUN_ST $RUN_EN`; do
   TRIAL_F="$(printf "%03d" ${TRIAL})"
 
   # setup playground
-  mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out
-  mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout
-  mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp
+  mkdir -p ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out
+  mkdir -p ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout
+  mkdir -p ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp
 
-  ls ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}
-  if [ $? -gt 0 ]; then
-    mkdir -p ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out
-    mkdir -p ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout
-  fi
-  
   if [ "${CMDMODE}" = "pythonprof" ]; then
-    python -m cProfile -s tottime xtc_process.py input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout output.output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp
+    python -m cProfile -s tottime xtc_process.py input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout output.output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp
   
   elif [ "${CMDMODE}" = "strace" ]; then
-    strace -ttt -f -o $$.log cctbx.xfel.xtc_process input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout output.output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp
+    strace -ttt -f -o $$.log cctbx.xfel.xtc_process input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout output.output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp
 
   elif [ "${CMDMODE}" = "debug" ]; then
-    python xtc_process.py input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout output.output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp
+    python xtc_process.py input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout output.output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp input.xtc_dir=/global/cscratch1/sd/psdatmgr/data/psdm/cxi/cxid9114/demo/xtc
   
   else
-    cctbx.xfel.xtc_process input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout output.output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/tmp
+    cctbx.xfel.xtc_process input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout output.output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out format.cbf.invalid_pixel_mask=${BASE_DIR}/calib/mask_ld91.pickle input.reference_geometry=${BASE_DIR}/discovery/geom_ld91.json ${BASE_DIR}/discovery/process_batch.phil dump_indexed=False output.tmp_output_dir=${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp input.xtc_dir=/global/cscratch1/sd/psdatmgr/data/psdm/cxi/cxid9114/demo/test_xtc
   
   fi
-
-  #cp -rf ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/out/* ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out/
-  #cp -rf ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/$$/stdout/* ${BASE_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout/
 
   END_RUN=$(date +"%s")
   ELAPSED_RUN=$((END_RUN-START_RUN))

@@ -44,14 +44,14 @@ do
   fi
   cat > submit_$$_${i}_${TRIAL}.sh << EOL
 #!/bin/bash -l
-#SBATCH --reservation=xfeldata
-#SBATCH --partition=special
+#SBATCH --partition=debug
+#SBATCH --qos=regular
 #SBATCH --account=lcls
 #SBATCH --job-name=psauto
 #SBATCH --nodes=${n_node}
 #SBATCH --constraint=${CONST}
 #SBATCH --time=${n_times[$i]}
-#SBATCH --image=docker:monarin/psanatest:latest
+#SBATCH --image=docker:monarin/psananersc:latest
 EOL
   if [ ${FS} == "BB" ]; then
     echo "#DW persistentdw name=${BBNAME}" >> submit_$$_${i}_${TRIAL}.sh
