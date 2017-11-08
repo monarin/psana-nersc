@@ -718,20 +718,15 @@ class InMemScript(DialsProcessScript):
               if nevt == max_events: break
               s0 = time.time()
               self.mpi_log_write("Getting next available process\n")
-              s1 = time.time()
               offset = evt.get(psana.EventOffset)
-              s2 = time.time()
+              s1 = time.time()
               rankreq = comm.recv(source=MPI.ANY_SOURCE)
-              s3 = time.time()
               t = evt.get(psana.EventId).time()
-              s4 = time.time()
               ts = cspad_tbx.evt_timestamp((t[0],t[1]/1e6))
-              s5 = time.time()
               self.mpi_log_write("Process %s is ready, sending ts %s\n"%(rankreq, ts))
-              s6 = time.time()
               comm.send(EventOffsetSerializer(offset),dest=rankreq)
-              s7 = time.time()
-              print "PROFILEMASTEREVT", rankreq, s1-s0, s2-s1, s3-s2, s4-s3, s5-s4, s6-s5, s7-s6, s7-s0
+              s2 = time.time()
+              print "PROFILEMASTEREVT", rankreq, s0, s1, s2, s1-s0, s2-s0
             # send a stop command to each process
             self.mpi_log_write("MPI DONE, sending stops\n")
             for rankreq in range(size-1):
