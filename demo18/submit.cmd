@@ -11,6 +11,7 @@ export IN_DIR=$PWD/input
 export LIMIT=10
 export OUT_DIR=$PWD/output
 export DATA_DIR=/reg/d/psdm/xpp/xpptut15/scratch/mona/cxid9114
+export PS_CALIB_DIR=$IN_DIR
 
 source ~/lcls2/setup_env_python2.sh
 conda activate ps2cctbx
