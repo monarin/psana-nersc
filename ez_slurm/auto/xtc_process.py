@@ -626,7 +626,9 @@ class InMemScript(DialsProcessScript):
       # for client-server, master reads smd - clients read rax
       start_ds = MPI.Wtime()
       if rank == 0:
-        psana.setOption('PSXtcInput.XtcInputModule.liveDbConn', 'Server=scidb1.nersc.gov;Database=lclsdb;Uid=lclsdb_user')
+        #psana.setOption('PSXtcInput.XtcInputModule.liveDbConn', 'Server=nerscdb04.nersc.gov;Database=lclsdb;Uid=lclsdb_user')
+        psana.setOption('PSXtcInput.XtcInputModule.liveDbConn', 'Server=nerscdb04.nersc.gov;Database=lclsdb;Uid=lclsdb_user;pwd=232Sssftt44_2kkkkk3322') 
+
         ds = psana.DataSource(dataset_name)
       else:
         ds = psana.DataSource(dataset_name_client)
