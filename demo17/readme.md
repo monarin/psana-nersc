@@ -26,5 +26,5 @@ Integration summary json created with this content:
   
 No. of total processed should match with no. integrated.
 
-
-
+To run at SLAC (debug/ no-scaling) using lsf,  
+bsub < submit.cmd
