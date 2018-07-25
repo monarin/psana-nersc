@@ -27,7 +27,7 @@ mpirun cctbx.xfel.xtc_process \
    output.logging_dir=$OUT_DIR/discovery/dials/r0108/000/stdout \
    output.output_dir=$OUT_DIR/discovery/dials/r0108/000/out \
    format.cbf.invalid_pixel_mask=$IN_DIR/mask_ld91.pickle \
-   $IN_DIR/process_batch.phil \
+   $IN_DIR/process_batch_newcctbx.phil \
    dump_indexed=False \
    output.tmp_output_dir=$OUT_DIR/discovery/dials/r0108/000/tmp \
    input.reference_geometry=$IN_DIR/geom_ld91.json \
