@@ -1,0 +1,122 @@
+run number 95 (trial 1): data check queue time=2 seconds, run time=0 seconds
+run number 95 (trial 1): integrate queue time=155 seconds, run time=189 seconds
+run number 95 (trial 1): total process time=355 seconds                        
+run number 95 (trial 1): pipeline overhead time=9 seconds                      
+------------------------------------------------                               
+
+run number 96 (trial 1): data check queue time=2 seconds, run time=0 seconds
+run number 96 (trial 1): integrate queue time=152 seconds, run time=246 seconds
+run number 96 (trial 1): total process time=414 seconds                        
+run number 96 (trial 1): pipeline overhead time=14 seconds                     
+------------------------------------------------                               
+
+run number 97 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 97 (trial 1): integrate queue time=138 seconds, run time=254 seconds
+run number 97 (trial 1): total process time=421 seconds                        
+run number 97 (trial 1): pipeline overhead time=26 seconds                     
+------------------------------------------------                               
+
+run number 98 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 98 (trial 1): integrate queue time=114 seconds, run time=95 seconds
+run number 98 (trial 1): total process time=245 seconds                       
+run number 98 (trial 1): pipeline overhead time=33 seconds                    
+------------------------------------------------                              
+
+run number 99 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 99 (trial 1): integrate queue time=89 seconds, run time=216 seconds
+run number 99 (trial 1): total process time=362 seconds                       
+run number 99 (trial 1): pipeline overhead time=54 seconds                    
+------------------------------------------------                              
+
+run number 100 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 100 (trial 1): integrate queue time=71 seconds, run time=267 seconds
+run number 100 (trial 1): total process time=398 seconds                       
+run number 100 (trial 1): pipeline overhead time=57 seconds                    
+------------------------------------------------                               
+
+run number 101 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 101 (trial 1): integrate queue time=81 seconds, run time=296 seconds
+run number 101 (trial 1): total process time=441 seconds                       
+run number 101 (trial 1): pipeline overhead time=61 seconds                    
+------------------------------------------------                               
+
+run number 102 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 102 (trial 1): integrate queue time=76 seconds, run time=304 seconds
+run number 102 (trial 1): total process time=449 seconds                       
+run number 102 (trial 1): pipeline overhead time=66 seconds                    
+------------------------------------------------                               
+
+run number 103 (trial 1): data check queue time=3 seconds, run time=10 seconds
+run number 103 (trial 1): integrate queue time=84 seconds, run time=332 seconds
+run number 103 (trial 1): total process time=489 seconds                       
+run number 103 (trial 1): pipeline overhead time=60 seconds                    
+------------------------------------------------                               
+
+run number 105 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 105 (trial 1): integrate queue time=60 seconds, run time=345 seconds
+run number 105 (trial 1): total process time=457 seconds                       
+run number 105 (trial 1): pipeline overhead time=49 seconds                    
+------------------------------------------------                               
+
+run number 104 (trial 1): data check queue time=3 seconds, run time=0 seconds
+run number 104 (trial 1): integrate queue time=57 seconds, run time=78 seconds
+run number 104 (trial 1): total process time=191 seconds                      
+run number 104 (trial 1): pipeline overhead time=53 seconds                   
+------------------------------------------------                              
+
+run number 106 (trial 1): data check queue time=4 seconds, run time=0 seconds
+run number 106 (trial 1): integrate queue time=61 seconds, run time=406 seconds
+run number 106 (trial 1): total process time=527 seconds                       
+run number 106 (trial 1): pipeline overhead time=56 seconds                    
+------------------------------------------------                               
+
+run number 107 (trial 1): data check queue time=4 seconds, run time=0 seconds
+run number 107 (trial 1): integrate queue time=106 seconds, run time=461 seconds
+run number 107 (trial 1): total process time=630 seconds                        
+run number 107 (trial 1): pipeline overhead time=59 seconds                     
+------------------------------------------------                                
+
+run number 108 (trial 1): data check queue time=4 seconds, run time=10 seconds
+run number 108 (trial 1): integrate queue time=102 seconds, run time=470 seconds
+run number 108 (trial 1): total process time=639 seconds                        
+run number 108 (trial 1): pipeline overhead time=53 seconds                     
+------------------------------------------------                                
+
+run number 109 (trial 1): data check queue time=3 seconds, run time=60 seconds
+run number 109 (trial 1): integrate queue time=129 seconds, run time=714 seconds
+run number 109 (trial 1): total process time=989 seconds                        
+run number 109 (trial 1): pipeline overhead time=83 seconds                     
+------------------------------------------------                                
+
+run number 110 (trial 1): data check queue time=4 seconds, run time=60 seconds
+run number 110 (trial 1): integrate queue time=135 seconds, run time=706 seconds
+run number 110 (trial 1): total process time=991 seconds
+run number 110 (trial 1): pipeline overhead time=86 seconds
+------------------------------------------------
+
+run number 111 (trial 1): data check queue time=4 seconds, run time=70 seconds
+run number 111 (trial 1): integrate queue time=127 seconds, run time=635 seconds
+run number 111 (trial 1): total process time=917 seconds
+run number 111 (trial 1): pipeline overhead time=81 seconds
+------------------------------------------------
+
+run number 112 (trial 1): data check queue time=4 seconds, run time=100 seconds
+run number 112 (trial 1): integrate queue time=127 seconds, run time=693 seconds
+run number 112 (trial 1): total process time=979 seconds
+run number 112 (trial 1): pipeline overhead time=55 seconds
+------------------------------------------------
+
+run number 113 (trial 1): data check queue time=4 seconds, run time=120 seconds
+run number 113 (trial 1): integrate queue time=120 seconds, run time=729 seconds
+run number 113 (trial 1): total process time=1011 seconds
+run number 113 (trial 1): pipeline overhead time=38 seconds
+------------------------------------------------
+
+run number 114 (trial 1): data check queue time=4 seconds, run time=140 seconds
+run number 114 (trial 1): integrate queue time=117 seconds, run time=707 seconds
+run number 114 (trial 1): total process time=997 seconds
+run number 114 (trial 1): pipeline overhead time=29 seconds
+------------------------------------------------
+
+total time for processing all runs listed=1078 seconds
+
