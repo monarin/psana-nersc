@@ -16,12 +16,13 @@ TRIAL_F="$(printf "%03d" ${TRIAL})"
 export IN_DIR=$PWD/input
 export LIMIT=10
 export OUT_DIR=$PWD/output
-export DATA_DIR=/reg/d/psdm/xpp/xpptut15/scratch/mona/cxid9114
+export DATA_DIR=/reg/d/psdm/cxi/${EXP}/xtc
 export PS_CALIB_DIR=$IN_DIR
 
-source ~/lcls2/setup_env_python2.sh
-conda activate ps2cctbx
-source /reg/neh/home/monarin/.conda/envs/ps2cctbx/cctbx/build/setpaths.sh
+source /reg/neh/home/monarin/miniconda2/etc/profile.d/conda.sh
+conda activate cctbx-dev
+export SIT_DATA=/reg/g/psdm/data
+source /reg/neh/home/monarin/cctbx/build/setpaths.sh
 
 # setup playground
 mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out
@@ -33,10 +34,9 @@ mpirun cctbx.xfel.xtc_process \
    input.run_num=${RUN} \
    output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout \
    output.output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out \
-   format.cbf.invalid_pixel_mask=$IN_DIR/mask_ld91.pickle \
+   format.cbf.invalid_pixel_mask=$IN_DIR/mask.pickle \
    $IN_DIR/process_batch.phil \
    dump_indexed=False \
    output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp \
-   input.reference_geometry=${IN_DIR}/geom_ld91.json \
    input.xtc_dir=$DATA_DIR \
    max_events=$LIMIT

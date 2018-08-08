@@ -2,7 +2,7 @@
 #BSUB -J cctbx      # job name
 #BSUB -W 00:10                # wall-clock time (hrs:mins)
 #BSUB -n 8                   # number of tasks in job
-#BSUB -q psdebugq              # queue
+#BSUB -q psfehq              # queue
 #BSUB -e cctbx_error.%J.log     # error file name in which %J is replaced by the job ID
 #BSUB -o cctbx_output.%J.log     # output file name in which %J is replaced by the job ID
 
