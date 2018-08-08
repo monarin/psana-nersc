@@ -1,0 +1,19 @@
+Run at SLAC  
+bsub < submit.cmd  
+  
+List of useful cctbx calibration commands:  
+Single-core average  
+cxi.mpi_average -x cxic0415 -r 86 -a CxiDs1.0:Cspad.0 -d 589 -v -g 1.0 -R  
+
+Parallel average  
+bsub -n 32 -q psfehq -o avg_r101.log mpirun cxi.mpi_average -x cxic0415 -r 101 -a CxiDs1.0:Cspad.0 -d 589 -v -g 1.0  
+  
+Make a mask  
+cxi.make_dials_mask --maxproj_min=300 -o mask.pickle cxic0415_avg-r0086.cbf cxic0415_stddev-r0086.cbf cxic0415_max-r0101.cbf
+
+Calibrate geometry  
+cspad.quadrants_cbf cxic0415_max-r0101.cbf -p  
+
+Deploy geometry  
+cxi.cbfheader2slaccalib cbf_header=cxic0415_max-r0101_cc.cbf  
+

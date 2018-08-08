@@ -1,10 +1,10 @@
 #!/bin/bash
-#BSUB -J cctbx      # job name
-#BSUB -W 00:10                # wall-clock time (hrs:mins)
-#BSUB -n 8                   # number of tasks in job
-#BSUB -q psdebugq              # queue
-#BSUB -e cctbx_error.%J.log     # error file name in which %J is replaced by the job ID
-#BSUB -o cctbx_output.%J.log     # output file name in which %J is replaced by the job ID
+#BSUB -J cctbx
+#BSUB -W 00:30
+#BSUB -n 32  
+#BSUB -q psfehq
+#BSUB -e cctbx_error.%J.log
+#BSUB -o cctbx_output.%J.log
 
 # experiment parameters
 EXP="cxic0415"
@@ -14,7 +14,7 @@ RUN_F="$(printf "r%04d" ${RUN})"
 TRIAL_F="$(printf "%03d" ${TRIAL})"
 
 export IN_DIR=$PWD/input
-export LIMIT=10
+export LIMIT=1000
 export OUT_DIR=$PWD/output
 export DATA_DIR=/reg/d/psdm/cxi/${EXP}/xtc
 export PS_CALIB_DIR=$IN_DIR
