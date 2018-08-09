@@ -8,6 +8,6 @@
 #SBATCH --qos=premium
 
 t_start=`date +%s`
-srun -n 8 -c 32 --cpu_bind=cores shifter ./index_single.sh cxid9114 95 0 debug 
+srun -n 8 -c 32 --cpu_bind=cores shifter ./index_single.sh cxid9114 95 0 strace
 t_end=`date +%s`
 echo PSJobCompleted TotalElapsed $((t_end-t_start)) $t_start $t_end
