@@ -10,6 +10,10 @@ echo "Usage: ./index_single.sh EXP RUN_NO TRIAL_NO CMDMODE(none/pythonprof/strac
 else
 echo $EXP $RUN $TRIAL $CMDMODE
 
+#psana
+source /opt/conda/etc/profile.d/conda.sh
+conda activate base
+
 #cctbx
 source /build/setpaths.sh
 
