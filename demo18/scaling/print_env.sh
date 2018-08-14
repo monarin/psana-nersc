@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo CONDA_DEFAULT_ENV
+echo $CONDA_DEFAULT_ENV
+echo LD_LIBRARY_PATH
+echo $LD_LIBRARY_PATH
+echo MANPATH
+echo $MANPATH
+echo PATH
+echo $PATH
+echo PCP_DIR
+echo $PCP_DIR
+echo PERL5LIB
+echo $PERL5LIB
