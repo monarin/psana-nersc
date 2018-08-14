@@ -54,4 +54,5 @@ RUN cd cctbx &&\
     cd ..
 
 RUN conda uninstall --force mpich 
-
+RUN yum -y install strace
+ADD test.py test.py
