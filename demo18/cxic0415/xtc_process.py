@@ -407,11 +407,11 @@ def run_psana2(ims, params, comm):
           t_evt_proc_done = time.time()
           ims.finalize()
           t_evt_end = time.time()
-          print("PROFILE_EVT", ds.nodetype, comm.Get_rank(), t_evt_start, t_evt_proc_done, t_evt_end, t_evt_start-t_evt_0, t_evt_proc_done-t_evt_start, t_evt_end-t_evt_proc_done, t_evt_end-t_evt_start)
+          print("PROFILE_EVT R %f PROC %f FIN %f ALL %f"%(t_evt_start-t_evt_0, t_evt_proc_done-t_evt_start, t_evt_end-t_evt_proc_done, t_evt_end-t_evt_start))
           t_evt_0 = time.time()
     
     comm.Barrier()
-    t_end = comm.Wtime()
+    t_end = MPI.Wtime()
     if comm.Get_rank() == 0:
         print("PROFILE_ALL %f"%(t_end-t_start))
 
