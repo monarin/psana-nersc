@@ -4,33 +4,37 @@ EXP=${1}
 RUN=${2}
 TRIAL=${3}
 CMDMODE=${4}
+LIMIT=${5}
+OUT_DIR=${6}
 RUN_F="$(printf "r%04d" ${RUN})"
 TRIAL_F="$(printf "%03d" ${TRIAL})"
 
 
 if [ $# -eq 0 ]; then
-    echo "Usage: ./index_single.sh EXP RUN_NO TRIAL_NO CMDMODE(none/pythonprof/strace/debug)"
+    echo "Usage: ./index_single.sh EXP RUN_NO TRIAL_NO CMDMODE(none/pythonprof/strace/debug) MAX_EVTS OUT_DIR"
     exit 0
 fi
 
-echo $EXP $RUN $TRIAL $CMDMODE
+echo $EXP $RUN $TRIAL $CMDMODE $LIMIT $OUT_DIR
 
-# base directory is the current directory
-IN_DIR=/tmp
-LIMIT=1
-OUT_DIR=${PWD}/output
+# mask and metrology files are from the current dir
+IN_DIR=${PWD}/input
 DATA_DIR=/global/cscratch1/sd/monarin/d/psdm/cxi/${EXP}/xtc2
 
 export PS_CALIB_DIR=$IN_DIR
-export PS_SMD_N_EVENTS=1
-export PS_SMD_NODES=1
+export PS_SMD_N_EVENTS=1000
+export PS_SMD_NODES=3
 
 # setup playground
-mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out
-mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout
-mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp
+if [ "${CMDMODE}" != "/tmp" ]; then
+    mkdir -p ${OUT_DIR}
+fi
 
-cctbx_args="input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout output.output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out format.cbf.invalid_pixel_mask=${IN_DIR}/mask.pickle ${IN_DIR}/process_batch.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp input.xtc_dir=${DATA_DIR} max_events=${LIMIT}"
+cctbx_args="input.experiment=${EXP} input.run_num=${RUN} output.logging_dir=${OUT_DIR} output.output_dir=${OUT_DIR} format.cbf.invalid_pixel_mask=${IN_DIR}/mask.pickle /tmp/process_batch.phil dump_indexed=False output.tmp_output_dir=${OUT_DIR} input.xtc_dir=${DATA_DIR}"
+
+if [ "$LIMIT" -ne 0 ]; then
+    cctbx_args="$cctbx_args max_events=${LIMIT}"
+fi
 
 if [ "${CMDMODE}" = "pythonprof" ]; then
     python -m cProfile -s tottime python /tmp/xtc_process.py ${cctbx_args}

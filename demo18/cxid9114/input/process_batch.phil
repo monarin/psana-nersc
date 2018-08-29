@@ -5,6 +5,7 @@ dispatch{
 input{
     #address=CxiDs2.0:Cspad.0
     address=DsdCsPad
+    #address=CxiDs2
     experiment=cxid9114
 }
 format {

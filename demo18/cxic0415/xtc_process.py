@@ -368,9 +368,8 @@ def run_psana2(ims, params, comm):
     params: input parameters
     comm: mpi comm for broadcasting per run calibration files"""
     import time
-    from mpi4py import MPI
-    comm.Barrier()
-    t_start = MPI.Wtime()
+    rank = comm.Get_rank()
+    size = comm.Get_size()
     
     ds = psana.DataSource("exp=%s:run=%s:dir=%s" \
         %(params.input.experiment, params.input.run_num, params.input.xtc_dir), \
@@ -379,7 +378,8 @@ def run_psana2(ims, params, comm):
     det = None
     if ds.nodetype == "bd":
       det = ds.Detector(params.input.address)
-
+   
+    cn_evt = 0 
     for run in ds.runs():
       # broadcast cctbx per run calibration
       if comm.Get_rank() == 0:
@@ -392,7 +392,6 @@ def run_psana2(ims, params, comm):
         dials_mask = None
       metro = comm.bcast(metro, root=0)
       dials_mask = comm.bcast(dials_mask, root=0)
-
       t_evt_0 = time.time()
       for evt in run.events():
         if det:
@@ -405,15 +404,22 @@ def run_psana2(ims, params, comm):
           
           ims.process_event(run, evt, det)
           t_evt_proc_done = time.time()
+
           ims.finalize()
           t_evt_end = time.time()
           print("PROFILE_EVT R %f PROC %f FIN %f ALL %f"%(t_evt_start-t_evt_0, t_evt_proc_done-t_evt_start, t_evt_end-t_evt_proc_done, t_evt_end-t_evt_start))
+          cn_evt += 1
           t_evt_0 = time.time()
     
-    comm.Barrier()
-    t_end = MPI.Wtime()
-    if comm.Get_rank() == 0:
-        print("PROFILE_ALL %f"%(t_end-t_start))
+    sendbuf = np.zeros(1, dtype='i') + cn_evt
+    recvbuf = None
+    if rank == 0:
+      recvbuf = np.empty([size, 1], dtype='i')
+    comm.Gather(sendbuf, recvbuf, root=0)
+    if rank == 0:
+      open(os.path.join(os.environ.get('SCRATCH'), "logs_%s.txt"%os.getpid()), "wb").write('%d'%np.sum(recvbuf))
+
+ 
 
 class EventOffsetSerializer(object):
   """ Pickles python object """

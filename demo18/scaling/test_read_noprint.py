@@ -11,7 +11,7 @@ xtc_dir = "/global/cscratch1/sd/monarin/d/psdm/cxi/cxid9114/xtc2"
 
 comm.Barrier()
 t_st = MPI.Wtime()
-ds = DataSource('exp=xpptut13:run=1:dir=%s'%(xtc_dir), filter=filter, batch_size=100, max_events=1000)
+ds = DataSource('exp=xpptut13:run=1:dir=%s'%(xtc_dir), filter=filter, batch_size=100)
 
 #print("PROFILE_GOT_DS")
 
@@ -30,12 +30,12 @@ for run in ds.runs():
             #if raw is None:
 	    #   print("PROFILE_GOT_NONE_RAW")
         t_evt_en = time.time()
-        print("PROFILE_EVT %d %f"%(i, t_evt_st - t_evt_0))
+        #print("PROFILE_EVT %d %f"%(i, t_evt_st - t_evt_0))
         t_evt_0 = time.time()
 
 comm.Barrier()
 t_en =MPI.Wtime()
-if comm.Get_rank() == 0:
-    print("PROFILE_ALL %f"%(t_en-t_st))
+#if comm.Get_rank() == 0:
+#    print("PROFILE_ALL %f"%(t_en-t_st))
 
 #print("PROFILE_DONE")
