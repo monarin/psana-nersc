@@ -9,7 +9,7 @@ cp -r /global/project/projectdirs/lcls/mona/demo18/cxid9114/smalldata .
 ln -s /global/cscratch1/sd/psdatmgr/data/psdm/cxi/cxid9114/demo/xtc/cxid9114x12_stripe.xtc test-r0002.xtc  
 cd $SCRATCH  
 git clone https://github.com/monarin/psana-nersc.git  
-cd demo18/cxid9114  
+cd psana-nersc/demo18/cxid9114  
 
 You may need to change --qos, --reservation, --account flags to your own preferred settings in submit_single.sh before submitting the job.   
 sbatch submit_single.sh   
