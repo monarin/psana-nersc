@@ -368,8 +368,12 @@ def run_psana2(ims, params, comm):
     params: input parameters
     comm: mpi comm for broadcasting per run calibration files"""
     import time
+    from mpi4py import MPI
+    comm.Barrier()
+    t_st = MPI.Wtime()
     rank = comm.Get_rank()
     size = comm.Get_size()
+    
     
     ds = psana.DataSource("exp=%s:run=%s:dir=%s" \
         %(params.input.experiment, params.input.run_num, params.input.xtc_dir), \
@@ -416,8 +420,10 @@ def run_psana2(ims, params, comm):
     if rank == 0:
       recvbuf = np.empty([size, 1], dtype='i')
     comm.Gather(sendbuf, recvbuf, root=0)
+    comm.Barrier()
+    t_en = MPI.Wtime()
     if rank == 0:
-      open(os.path.join(os.environ.get('SCRATCH'), "logs_%s.txt"%os.getpid()), "wb").write('%d'%np.sum(recvbuf))
+      open(os.path.join(os.environ.get('SCRATCH'), "logs_%s.txt"%os.environ.get('SLURM_JOB_ID')), "wb").write('%d %f %f %f'%(np.sum(recvbuf), t_st, t_en, t_en-t_st))
 
  
 

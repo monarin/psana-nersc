@@ -15,7 +15,7 @@ if [ $# -eq 0 ]; then
     exit 0
 fi
 
-echo $EXP $RUN $TRIAL $CMDMODE $LIMIT $OUT_DIR
+#echo $EXP $RUN $TRIAL $CMDMODE $LIMIT $OUT_DIR
 
 # base directory is the current directory
 IN_DIR=${PWD}/input
@@ -23,7 +23,7 @@ DATA_DIR=/global/cscratch1/sd/monarin/d/psdm/cxi/${EXP}/xtc2
 
 export PS_CALIB_DIR=$IN_DIR
 export PS_SMD_N_EVENTS=1000
-export PS_SMD_NODES=3
+export PS_SMD_NODES=32
 
 # setup playground
 if [ "${CMDMODE}" != "/tmp" ]; then
@@ -53,4 +53,4 @@ fi
 
 END_XTC=$(date +"%s")
 ELAPSED=$((END_XTC-START_XTC))
-echo TotalElapsed ${ELAPSED} ${START_XTC} ${END_XTC}
+echo TotalElapsedIndexing ${ELAPSED} ${START_XTC} ${END_XTC}

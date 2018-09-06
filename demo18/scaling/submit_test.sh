@@ -10,9 +10,10 @@
 
 t_start=`date +%s`
 export PMI_MMAP_SYNC_WAIT_TIME=600
-sbcast -p ./test_read.py /tmp/test_read.py
-sbcast -p ./input/pedestals.npy /tmp/pedestals.npy
-sbcast -p ./input/gain_mask.pickle /tmp/gain_mask.pickle
+sbcast -p ./user.py /tmp/user.py
+#sbcast -p ./test_read.py /tmp/test_read.py
+#sbcast -p ./input/pedestals.npy /tmp/pedestals.npy
+#sbcast -p ./input/gain_mask.pickle /tmp/gain_mask.pickle
 t_end_sbcast=`date +%s`
 srun -n 68 -c 4 --cpu_bind=cores shifter ./mysetup.sh
 t_end=`date +%s`
