@@ -1,7 +1,12 @@
 Demo18: Processing LD91 Step-by-step  
-You will need an access to the input files (test-r0002.xtc and smalldata/test-r002.smd.xtc):  
-/global/cscratch1/sd/monarin/d/psdm/cxi/cxid9114/xtc2  
+You will need an access to the input files  
+/global/cscratch1/sd/psdatmgr/data/psdm/cxi/cxid9114/demo/xtc/cxid9114x12_stripe.xtc  
+/global/project/projectdirs/lcls/mona/demo18/cxid9114/smalldata
 
+mkdir -p $SCRATCH/d/psdm/cxi/cxid9114/xtc2/  
+cd $SCRATCH/d/psdm/cxi/cxid9114/xtc2/  
+cp -r /global/project/projectdirs/lcls/mona/demo18/cxid9114/smalldata .  
+ln -s /global/cscratch1/sd/psdatmgr/data/psdm/cxi/cxid9114/demo/xtc/cxid9114x12_stripe.xtc test-r0002.xtc  
 cd $SCRATCH  
 git clone https://github.com/monarin/psana-nersc.git  
 cd demo18/cxid9114  
