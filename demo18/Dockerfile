@@ -35,16 +35,21 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86
     conda install --channel conda-forge "mpich>=3" mpi4py h5py libtiff orderedset &&\
     conda install future wxpython pillow \
                   mock pytest jinja2 scikit-learn tabulate &&\
+    conda install rapidjson &&\
     python -m pip install procrunner &&\
+    conda install --channel conda-forge versioneer &&\
+    conda install mongodb pymongo requests &&\
     conda clean -y --all
 
 SHELL ["/bin/bash", "-c"]
 ENV BASH_ENV ~/.bashrc
 
-# build psana2 with python 2
+# build psana2 without psdaq
+ENV PYTHONPATH=/lcls2/install/lib/python2.7/site-packages
+ENV PATH=/lcls2/install/bin:/lcls2/build/bin${PATH}
 ADD lcls2 lcls2 
 RUN cd lcls2 && \
-    ./build_python2_psana.sh && \
+    ./build_all.sh -d && \
     cd ..
 
 # build cctbx
