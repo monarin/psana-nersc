@@ -1,10 +1,11 @@
 #!/bin/bash
 #BSUB -J cctbx      # job name
-#BSUB -W 00:10                # wall-clock time (hrs:mins)
-#BSUB -n 8                   # number of tasks in job
-#BSUB -q psfehq              # queue
+#BSUB -n 12                   # number of tasks in job
+#BSUB -q psdebugq              # queue
 #BSUB -e cctbx_error.%J.log     # error file name in which %J is replaced by the job ID
 #BSUB -o cctbx_output.%J.log     # output file name in which %J is replaced by the job ID
+
+t_start=`date +%s`
 
 # experiment parameters
 EXP="cxid9114"
@@ -19,7 +20,7 @@ export OUT_DIR=$PWD/output
 export DATA_DIR=/reg/d/psdm/xpp/xpptut15/scratch/mona/cxid9114
 export PS_CALIB_DIR=$IN_DIR
 
-source ~/lcls2/setup_env_python2.sh
+source ~/tmp/lcls2_py2/setup_env.sh -py2
 conda activate ps2cctbx
 source /reg/neh/home/monarin/.conda/envs/ps2cctbx/cctbx/build/setpaths.sh
 
@@ -40,3 +41,7 @@ mpirun cctbx.xfel.xtc_process \
    input.reference_geometry=${IN_DIR}/geom_ld91.json \
    input.xtc_dir=$DATA_DIR \
    max_events=$LIMIT
+
+t_end=`date +%s`
+
+echo TotalElapsed $((t_end-t_start)) $t_start $t_end

@@ -21,7 +21,7 @@ export PS_CALIB_DIR=$IN_DIR
 export PS_SMD_NODES=1
 export PS_SMD_N_EVENTS=1000
 
-source ~/lcls2/setup_env_python2.sh
+source ~/tmp/lcls2_py2/setup_env.sh -py2
 conda activate ps2cctbx
 source /reg/neh/home/monarin/.conda/envs/ps2cctbx/cctbx/build/setpaths.sh
 
@@ -30,7 +30,8 @@ mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/out
 mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout
 mkdir -p ${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/tmp
 
-mpirun cctbx.xfel.xtc_process \
+#mpirun cctbx.xfel.xtc_process \
+mpirun python xtc_process.py \
    input.experiment=${EXP} \
    input.run_num=${RUN} \
    output.logging_dir=${OUT_DIR}/discovery/dials/${RUN_F}/${TRIAL_F}/stdout \

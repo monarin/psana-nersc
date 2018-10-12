@@ -3,18 +3,16 @@ dispatch{
 	dump_indexed=True
 }
 input{
-    #address=CxiDs2.0:Cspad.0
-    address=DsdCsPad
-    #address=CxiDs2
-    experiment=cxid9114
+    address=DscCsPad
 }
 format {
     cbf{
 		detz_offset=572.3938
-		override_energy=8950
+		#override_energy=8950
         override_distance=124.4
 		cspad{
 			gain_mask_value=6.85
+            common_mode.algorithm=None
 		}
 	}
 }
@@ -38,3 +36,4 @@ indexing{
 	}
 	refinement_protocol.d_min_start=1.7
 }
+mp.composite_stride=None

@@ -8,7 +8,7 @@ input{
 format {
     cbf{
         detz_offset=589
-		override_energy=12807
+		#override_energy=12807
         override_distance=138.744
 	}
 }
@@ -17,7 +17,7 @@ border_mask {
 }
 spotfinder {
     filter.min_spot_size=2
-    threshold.dispersion.gain=37.61
+    threshold.dispersion.gain=25
     threshold.dispersion.global_threshold=100
 }
 indexing{
@@ -71,3 +71,4 @@ profile {
   min_spots.overall = 0
   }
 }
+mp.composite_stride=None
