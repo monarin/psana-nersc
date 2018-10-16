@@ -77,3 +77,7 @@ ENV PERL5LIB=/opt/rh/devtoolset-7/root//usr/lib64/perl5/vendor_perl:/opt/rh/devt
 ENV PMI_MMAP_SYNC_WAIT_TIME=600
 ENV PYTHONPATH=/lcls2/install/lib/python2.7/site-packages
 ENV HOME=/tmp
+
+ENV http_proxy ""
+ENV https_proxy ""
+ENV ftp_proxy ""  
