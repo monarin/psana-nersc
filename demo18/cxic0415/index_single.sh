@@ -23,7 +23,7 @@ DATA_DIR=/global/cscratch1/sd/monarin/d/psdm/cxi/${EXP}/xtc2
 
 export PS_CALIB_DIR=$IN_DIR
 export PS_SMD_N_EVENTS=1000
-export PS_SMD_NODES=1
+export PS_SMD_NODES=32
 
 # setup playground
 if [ "${CMDMODE}" != "/tmp" ]; then
