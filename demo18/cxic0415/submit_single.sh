@@ -3,8 +3,8 @@
 #SBATCH --job-name=ps2cctbx
 #SBATCH --nodes=100
 #SBATCH --constraint=knl,quad,cache
-#SBATCH --time=03:00:00
-#SBATCH --image=docker:monarin/ps2cctbx:test
+#SBATCH --time=02:00:00
+#SBATCH --image=docker:monarin/ps2cctbx:latest
 #SBATCH --exclusive
 #SBATCH --qos=premium
 
