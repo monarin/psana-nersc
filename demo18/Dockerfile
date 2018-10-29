@@ -18,7 +18,7 @@ RUN yum clean all && \
     yum -y update && \
     yum -y install centos-release-scl-rh && \
     yum -y install devtoolset-7-gcc devtoolset-7-gcc-c++ devtoolset-7-gcc-gfortran \
-                   devtoolset-7-make wget bzip2 && \
+                   devtoolset-7-make wget bzip2 strace && \
     yum clean all -y
 
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
@@ -31,26 +31,14 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86
     source ~/.bashrc && \
     conda update -y conda && \
     conda update -y --all && \
-    conda install numpy cython cmake git && \
-    conda install --channel conda-forge "mpich>=3" mpi4py h5py libtiff orderedset &&\
-    conda install future wxpython pillow \
-                  mock pytest jinja2 scikit-learn tabulate &&\
-    conda install rapidjson &&\
+    conda install --channel conda-forge "mpich>=3" mpi4py orderedset &&\
+    conda install -c lcls-ii psana && \
+    conda install future h5py wxpython pillow libtiff mock pytest jinja2 scikit-learn tabulate tqdm && \
     python -m pip install procrunner &&\
-    conda install --channel conda-forge versioneer &&\
-    conda install mongodb pymongo requests &&\
     conda clean -y --all
 
 SHELL ["/bin/bash", "-c"]
 ENV BASH_ENV ~/.bashrc
-
-# build psana2 without psdaq
-ENV PYTHONPATH=/lcls2/install/lib/python2.7/site-packages
-ENV PATH=/lcls2/install/bin:/lcls2/build/bin${PATH}
-ADD lcls2 lcls2 
-RUN cd lcls2 && \
-    ./build_all.sh -d && \
-    cd ..
 
 # build cctbx
 ADD cctbx cctbx
@@ -59,7 +47,6 @@ RUN cd cctbx &&\
     cd ..
 
 RUN conda uninstall --force mpich 
-RUN yum -y install strace
 
 # setup environments for psana2 and cctbx
 ENV CONDA_EXE=/opt/conda/bin/conda
@@ -75,7 +62,6 @@ ENV PATH=/cctbx/build/bin:/lcls2/install/bin:/lcls2/build/bin:/opt/rh/devtoolset
 ENV PCP_DIR=/opt/rh/devtoolset-7/root
 ENV PERL5LIB=/opt/rh/devtoolset-7/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-7/root/usr/lib/perl5:/opt/rh/devtoolset-7/root//usr/share/perl5/vendor_perl
 ENV PMI_MMAP_SYNC_WAIT_TIME=600
-ENV PYTHONPATH=/lcls2/install/lib/python2.7/site-packages
 ENV HOME=/tmp
 
 ENV http_proxy ""
