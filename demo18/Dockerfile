@@ -47,6 +47,7 @@ RUN cd cctbx &&\
     cd ..
 
 RUN conda uninstall --force mpich 
+RUN conda install matplotlib
 
 # setup environments for psana2 and cctbx
 ENV CONDA_EXE=/opt/conda/bin/conda
@@ -67,3 +68,6 @@ ENV HOME=/tmp
 ENV http_proxy ""
 ENV https_proxy ""
 ENV ftp_proxy ""  
+
+RUN echo "backend : AGG" > /tmp/matplotlibrc
+ENV MATPLOTLIBRC=/tmp/matplotlibrc 
