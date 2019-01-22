@@ -68,7 +68,8 @@ if __name__ == "__main__":
     if rank == 0:
         #smd_files = np.asarray(glob.glob('/ffb01/monarin/hsd/smalldata/*.smd.xtc'))[:nfiles]
         #smd_files = np.asarray(glob.glob('/global/cscratch1/sd/monarin/testxtc2/hsd/smalldata/*.smd.xtc'))[:nfiles]
-        smd_files = np.asarray(glob.glob(os.path.join(os.environ['DW_PERSISTENT_STRIPED_psana2_hsd'],'hsd','smalldata','*.smd.xtc')))[:nfiles]
+        #smd_files = np.asarray(glob.glob(os.path.join(os.environ['DW_PERSISTENT_STRIPED_psana2_hsd'],'hsd','smalldata','*.smd.xtc')))[:nfiles]
+        smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/hsd/smalldata/*.smd.xtc'))[:nfiles]
     else:
         smd_files = None
     smd_files = comm.bcast(smd_files, root=0)

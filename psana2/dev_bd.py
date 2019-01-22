@@ -12,11 +12,11 @@ def filter_fn(evt):
 comm.Barrier()
 st = MPI.Wtime()
 max_events = 10000000
-batch_size = 1000
+batch_size = 1
 #xtc_dir = "/ffb01/monarin/hsd"
-#xtc_dir = "/reg/d/psdm/xpp/xpptut15/scratch/mona/hsd"
+xtc_dir = "/reg/d/psdm/xpp/xpptut15/scratch/mona/hsd"
 #xtc_dir = "/global/cscratch1/sd/monarin/testxtc2/hsd"
-xtc_dir = os.path.join(os.environ['DW_PERSISTENT_STRIPED_psana2_hsd'],'hsd')
+#xtc_dir = os.path.join(os.environ['DW_PERSISTENT_STRIPED_psana2_hsd'],'hsd')
 ds = DataSource('exp=xpptut13:run=1:dir=%s'%(xtc_dir), filter=filter_fn, max_events=max_events, batch_size=batch_size)
 
 #sendbuf = np.zeros(1, dtype='i') 
