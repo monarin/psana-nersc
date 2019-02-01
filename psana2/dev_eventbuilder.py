@@ -21,6 +21,7 @@ def smd_0(fds, n_smd_nodes):
     rankreq = np.empty(1, dtype='i')
 
     for chunk in smdr_man.chunks():
+        print('%d %f'%(rank, time.time()))
         comm.Recv(rankreq, source=MPI.ANY_SOURCE)
         comm.Send(chunk, dest=rankreq[0], tag=12)
 
@@ -51,7 +52,7 @@ def smd_node(configs, batch_size=1, filter=0):
             #d = dgram.Dgram(view=batch, config=configs[0], offset=0)
             #pf = PacketFooter(view=batch)
             #print(pf.n_packets)
-            pass
+            print('%d %f'%(rank, time.time()))
         
         view = 0  
 
