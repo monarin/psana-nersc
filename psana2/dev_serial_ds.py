@@ -27,12 +27,12 @@ if __name__ == "__main__":
     nfiles = 16
     batch_size = 1000
 
-    smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/hsd/smalldata/*.smd.xtc'))
-    xtc_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/hsd/*.xtc'))
+    smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/smalldata/*.smd.xtc2'))
+    xtc_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/*.xtc2'))
     smd_dm = DgramManager(smd_files)
     smd_configs = smd_dm.configs
     dm = DgramManager(xtc_files)
-    ev_man = EventManager(smd_configs, dm, filter_fn=filter)
+    ev_man = EventManager(smd_configs, dm, filter_fn=0)
    
     #get smd chunks
     smdr_man = SmdReaderManager(smd_dm.fds, max_events)
