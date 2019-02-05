@@ -18,21 +18,21 @@ from psana.psexp.packet_footer import PacketFooter
 from psana.psexp.event_manager import EventManager
 from psana.dgrammanager import DgramManager
 
-max_events = 10000
+max_events = 100000
 
 def filter(evt):
     return True
 
 if __name__ == "__main__":
     nfiles = 16
-    batch_size = 1000
+    batch_size = 10000
 
     smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/smalldata/*.smd.xtc2'))
     xtc_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/*.xtc2'))
     smd_dm = DgramManager(smd_files)
     smd_configs = smd_dm.configs
     dm = DgramManager(xtc_files)
-    ev_man = EventManager(smd_configs, dm, filter_fn=0)
+    ev_man = EventManager(smd_configs, dm, filter_fn=filter)
    
     #get smd chunks
     smdr_man = SmdReaderManager(smd_dm.fds, max_events)
