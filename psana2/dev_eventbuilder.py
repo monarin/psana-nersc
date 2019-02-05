@@ -30,10 +30,10 @@ def smd_0(fds, n_smd_nodes):
         comm.Send(bytearray(), dest=rankreq[0], tag=12)    
     
 
-def smd_node(configs, batch_size=1, filter=0):
+def smd_node(configs, batch_size=1, filter=0, sendbuf=None):
     eb_man = EventBuilderManager(configs, batch_size, filter)
     rankreq = np.empty(1, dtype='i')
-    view = 0
+    
     while True:
         # handles requests from smd_0
         comm.Send(np.array([rank], dtype='i'), dest=0)
@@ -46,16 +46,13 @@ def smd_node(configs, batch_size=1, filter=0):
             break
 
         # build batch of events
-        cn_batch = 0
         for batch in eb_man.batches(view):
-            cn_batch += 1
             #d = dgram.Dgram(view=batch, config=configs[0], offset=0)
             #pf = PacketFooter(view=batch)
             #print(pf.n_packets)
-            print('%d %f'%(rank, time.time()))
-        
-        view = 0  
-
+            #print('%d %f'%(rank, time.time()))
+            sendbuf += 1
+    
 
 if __name__ == "__main__":
     comm.Barrier()
@@ -91,14 +88,19 @@ if __name__ == "__main__":
     ts1 = MPI.Wtime()
     
     # start smd-bd nodes
+    sendbuf = np.zeros(1, dtype='i')
+    recvbuf = None
     PS_SMD0_THREADS=int(os.environ.get('PS_SMD0_THREADS', 1))
     n_smd_nodes = size - PS_SMD0_THREADS
     if rank == 0:
+        recvbuf = np.empty([size, 1], dtype='i')
         smd_0(fds, n_smd_nodes)
     elif rank >= PS_SMD0_THREADS:
-        smd_node(configs, batch_size=batch_size, filter=filter)
+        smd_node(configs, batch_size=batch_size, filter=filter, sendbuf=sendbuf)
+    comm.Gather(sendbuf, recvbuf, root=0)
     
     comm.Barrier()
     ts2 = MPI.Wtime()
     if rank == 0:
         print("#Threads: %d #Nfiles: %d Total: %6.2f s Bcast: %6.2f s Rate: %6.2f MHz"%(PS_SMD0_THREADS, nfiles, ts2-ts0, ts1-ts0, max_events/((ts2-ts0)*1e6)))
+        print(recvbuf)
