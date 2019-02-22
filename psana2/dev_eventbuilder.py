@@ -21,7 +21,7 @@ def smd_0(fds, n_smd_nodes):
     rankreq = np.empty(1, dtype='i')
 
     for chunk in smdr_man.chunks():
-        print('%d %f'%(rank, time.time()))
+        #print('%d %f'%(rank, time.time()))
         comm.Recv(rankreq, source=MPI.ANY_SOURCE)
         comm.Send(chunk, dest=rankreq[0], tag=12)
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         #smd_files = np.asarray(glob.glob('/ffb01/monarin/hsd/smalldata/*.smd.xtc'))[:nfiles]
         #smd_files = np.asarray(glob.glob('/global/cscratch1/sd/monarin/testxtc2/hsd/smalldata/*.smd.xtc'))[:nfiles]
         #smd_files = np.asarray(glob.glob(os.path.join(os.environ['DW_PERSISTENT_STRIPED_psana2_hsd'],'hsd','smalldata','*.smd.xtc')))[:nfiles]
-        smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/hsd/smalldata/*.smd.xtc'))[:nfiles]
+        smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/smalldata/*.smd.xtc2'))[:nfiles]
     else:
         smd_files = None
     smd_files = comm.bcast(smd_files, root=0)

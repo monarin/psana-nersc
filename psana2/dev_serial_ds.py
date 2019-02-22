@@ -17,22 +17,26 @@ import numpy as np
 from psana.psexp.packet_footer import PacketFooter
 from psana.psexp.event_manager import EventManager
 from psana.dgrammanager import DgramManager
-
-max_events = 100000
+from psana.psexp.fuzzyevent_store import FuzzyEventStore
 
 def filter(evt):
     return True
 
 if __name__ == "__main__":
     nfiles = 16
-    batch_size = 10000
+    max_events = 10000
+    batch_size = 1000
+    os.environ['PS_SMD_N_EVENTS']=str(batch_size)
 
-    smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/smalldata/*.smd.xtc2'))
-    xtc_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/*.xtc2'))
+    smd_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/smalldata/*-s*.smd.xtc2'))
+    xtc_files = np.asarray(glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/*-s*.xtc2'))
+    epic_file = '/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/data-r0001-epc.xtc2'
     smd_dm = DgramManager(smd_files)
     smd_configs = smd_dm.configs
     dm = DgramManager(xtc_files)
-    ev_man = EventManager(smd_configs, dm, filter_fn=filter)
+    fuzzy_es = FuzzyEventStore(fuzzy_file=epic_file)
+
+    ev_man = EventManager(smd_configs, dm, filter_fn=0, fuzzy_es=fuzzy_es)
    
     #get smd chunks
     smdr_man = SmdReaderManager(smd_dm.fds, max_events)
@@ -46,10 +50,6 @@ if __name__ == "__main__":
                 en = time.time()
                 delta_t.append((en - st)*1000)
                 st = time.time()
-                #for l, d in enumerate(evt):
-                #    cn_d += 1
-
-                #    print('chunk %d batch %d evt %d d %d %s'%(i,j,k,l, d.xpphsd.hsd.chan00.shape))
 
     delta_thres = 200
     delta_t = np.asarray(delta_t) 
