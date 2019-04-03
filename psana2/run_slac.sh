@@ -8,7 +8,7 @@ source $HOME/lcls2/setup_env.sh
 #export PATH=/reg/neh/home/monarin/tau-2.28/x86_64/bin:$PATH
 #tau_exec python $HOME/lcls2/psana/psana/tests/dev_eventbuilder.py
 
-python test_mpi.py
+#python test_mpi.py
 
-#export PS_SMD_NODES=2
-#python $HOME/lcls2/psana/psana/tests/dev_bd.py
+export PS_SMD_NODES=12
+python $HOME/psana-nersc/psana2/dev_bd.py

@@ -1,6 +1,7 @@
 import os, time                                                                       
 from psana import DataSource                                                          
 import numpy as np                                                                    
+import vals
 from mpi4py import MPI                                                                
 comm = MPI.COMM_WORLD                                                                 
 size = comm.Get_size()                                                                
@@ -14,9 +15,8 @@ st = MPI.Wtime()
 max_events = 10000
 batch_size = 1000
 os.environ['PS_SMD_N_EVENTS'] = str(batch_size)
-#xtc_dir = "/ffb01/monarin/hsd"
+#xtc_dir = "/ffb01/mona/xtc2"
 xtc_dir = "/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2"
-#xtc_dir = "/global/cscratch1/sd/monarin/testxtc2/hsd"
 #xtc_dir = os.path.join(os.environ['DW_PERSISTENT_STRIPED_psana2_hsd'],'hsd')
 ds = DataSource('exp=xpptut13:run=1:dir=%s'%(xtc_dir), filter=0, max_events=max_events, batch_size=batch_size)
 
@@ -27,9 +27,11 @@ if rank == 0:
 
 for run in ds.runs():
     det = run.Detector('xppcspad')
+    edet = run.Detector('XPP:VARS:FLOAT:02')
     for evt in run.events():
-        assert det.raw.raw(evt).shape == (18,)
-        epics = run.epicsStore(evt)
+        padarray = vals.padarray
+        assert(np.array_equal(det.raw.calib(evt),np.stack((padarray,padarray))))
+        assert edet(evt) == 41.0
         sendbuf += 1
 
 comm.Gather(sendbuf, recvbuf, root=0)
