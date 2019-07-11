@@ -7,4 +7,4 @@ size = comm.Get_size()
 myhost = MPI.Get_processor_name()
 
 import psana
-print(rank, size, myhost, psana.__version__)
+print(rank, size, myhost)

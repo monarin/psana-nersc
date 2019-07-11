@@ -10,5 +10,5 @@ source $HOME/lcls2/setup_env.sh
 
 #python test_mpi.py
 
-export PS_SMD_NODES=12
+export PS_SMD_NODES=1
 python $HOME/psana-nersc/psana2/dev_bd.py
