@@ -17,48 +17,46 @@ import numpy as np
 from psana.psexp.packet_footer import PacketFooter
 from psana.psexp.event_manager import EventManager
 from psana.dgrammanager import DgramManager
-from psana.psexp.epicsstore import EpicsStore
-from psana.psexp.epicsreader import EpicsReader
+from psana.psexp.updatestore import UpdateStore
 
 def filter(evt):
     return True
 
 if __name__ == "__main__":
-    nfiles = 1
-    max_events = 1000
+    nfiles = 16
+    max_events = 10
     batch_size = 1
     os.environ['PS_SMD_N_EVENTS']=str(batch_size)
 
-    #smd_files = np.asarray(['/ffb01/mona/xtc2/smalldata/data-r0001-s%02d.smd.xtc2'%i for i in range(nfiles)])
-    #xtc_files = np.asarray(['/ffb01/mona/xtc2/data-r0001-s%02d.xtc2'%i for i in range(nfiles)])
-    
-    smd_files = np.asarray(['/reg/neh/home/monarin/lcls2/tmp2/smalldata/data-r0001-s00.smd.xtc2'])
-    xtc_files = np.asarray(['/reg/neh/home/monarin/lcls2/tmp2/data-r0001-s00.xtc2'])
+    smd_files = np.asarray(['/reg/neh/home/monarin/data/smalldata/data-r0001-s%s.smd.xtc2'%str(i).zfill(2) for i in range(nfiles)])
+    xtc_files = np.asarray(['/reg/neh/home/monarin/data/data-r0001-s%s.xtc2'%str(i).zfill(2) for i in range(nfiles)])
 
     smd_dm = DgramManager(smd_files)
-    smd_configs = smd_dm.configs
-    dm = DgramManager(xtc_files)
+    configs = smd_dm.configs
+    dm = DgramManager(xtc_files, configs=configs)
     
-    #epics_file = '/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/data-r0001-epc.xtc2'
-    #epics_reader = EpicsReader(epics_file)
-    #epics_store = EpicsStore()
+    epics_store = UpdateStore(configs, 'epics')
 
-    ev_man = EventManager(smd_configs, dm, filter_fn=filter)
+    ev_man = EventManager(configs, dm, filter_fn=filter)
    
     #get smd chunks
     smdr_man = SmdReaderManager(smd_dm.fds, max_events)
-    eb_man = EventBuilderManager(smd_configs, batch_size, filter)
+    eb_man = EventBuilderManager(configs, batch_size, filter)
     n_events = 0
     delta_t = []
-    for i, chunk in enumerate(smdr_man.chunks()):
-        #epics_store.update(epics_reader.read(), epics_reader._config, min_ts=smdr_man.min_ts)
-        for j, batch_dict in enumerate(eb_man.batches(chunk)):
+    for i, (smd_chunk, update_chunk) in enumerate(smdr_man.chunks()):
+        update_pf = PacketFooter(view=update_chunk)
+        update_views = update_pf.split_packets()
+        epics_store.update(update_views)
+        for idx, update in enumerate(epics_store._update_list):
+            print(idx, update.n_items)
+
+        for j, batch_dict in enumerate(eb_man.batches(smd_chunk)):
             batch, _ = batch_dict[0]
-            #batch = batch_dict
             st = time.time()
             for k, evt in enumerate(ev_man.events(batch)):
                 en = time.time()
-                #epics_evt = epics_store.checkout_by_events([evt])[0]
+                vals = epics_store.values([evt], 'HX2:DVD:GCC:01:PMON')
                 delta_t.append((en - st)*1000)
                 st = time.time()
                 n_events += 1

@@ -6,7 +6,7 @@ from psana.smdreader import SmdReader
 from psana.dgram import Dgram
 
 def run_smd0():
-    filenames = glob.glob('/reg/neh/home/monarin/lcls2/tmp3/smalldata/*.xtc2')
+    filenames = glob.glob('/ffb01/mona/xtc2/.tmp/smalldata/*.xtc2')
     fds = [os.open(filename, os.O_RDONLY) for filename in filenames]
 
     # Move file ptrs to datagram part
@@ -25,6 +25,8 @@ def run_smd0():
         smdr.get(n_events)
         got_events = smdr.got_events
         processed_events += got_events
+        if processed_events >= 10000000:
+            break
     
     en = time.time()
     print("#Events: %d Elapsed Time (s): %f Rate (MHz): %f"%(processed_events, (en-st), processed_events/((en-st)*1e6)))

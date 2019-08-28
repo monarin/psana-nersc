@@ -10,11 +10,15 @@ rank = comm.Get_rank()
 def filter_fn(evt):
     return True
 
-xtc_dir = "/reg/neh/home/monarin/lcls2/tmp2"
+xtc_dir = "/ffb01/mona/xtc2/.tmp"
+max_events = 10000000
+batch_size = 1000
+n_files = 16
+os.environ['PS_SMD_N_EVENTS']=str(batch_size)
 
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
-ds = DataSource(exp='xpptut13', run=1, dir=xtc_dir, filter=filter_fn)
+ds = DataSource(exp='xpptut13', run=1, dir=xtc_dir, filter=filter_fn, max_events=max_events)
 
 sendbuf = np.zeros(1, dtype='i')
 recvbuf = None
@@ -23,17 +27,15 @@ if rank == 0:
 
 for run in ds.runs():
     det = run.Detector('xppcspad')
-    edet = run.Detector('XPP:VARS:STRING:01')
+    edet = run.Detector('HX2:DVD:GCC:01:PMON')
     for evt in run.events():
         sendbuf += 1
-        padarray = vals.padarray
-        assert(np.array_equal(det.raw.calib(evt),np.stack((padarray,padarray,padarray,padarray))))
-        assert evt._size == 2 # check that two dgrams are in there
-        assert edet(evt) == "Test String"
+        assert evt._size == n_files # check that two dgrams are in there
+        assert edet(evt) is None or edet(evt) == 41.0
 
 comm.Gather(sendbuf, recvbuf, root=0)
-
 en = MPI.Wtime()
+
 if rank == 0:
     n_events = np.sum(recvbuf)
     evtbuilder = int(os.environ.get('PS_SMD_NODES', 1))
