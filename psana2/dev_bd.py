@@ -11,8 +11,8 @@ def filter_fn(evt):
     return True
 
 xtc_dir = "/ffb01/mona/xtc2/.tmp"
-max_events = 10000000
-batch_size = 1000
+max_events = 2000
+batch_size = 2000
 n_files = 16
 os.environ['PS_SMD_N_EVENTS']=str(batch_size)
 
@@ -28,10 +28,12 @@ if rank == 0:
 for run in ds.runs():
     det = run.Detector('xppcspad')
     edet = run.Detector('HX2:DVD:GCC:01:PMON')
-    for evt in run.events():
-        sendbuf += 1
-        assert evt._size == n_files # check that two dgrams are in there
-        assert edet(evt) is None or edet(evt) == 41.0
+    for step in run.steps():
+        for evt in step.events():
+            sendbuf += 1
+            assert evt._size == n_files # check that n_files dgrams are in there
+            assert edet(evt) is None or edet(evt) == 41.0
+        print(sendbuf)
 
 comm.Gather(sendbuf, recvbuf, root=0)
 en = MPI.Wtime()
