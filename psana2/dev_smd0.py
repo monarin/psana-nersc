@@ -7,7 +7,8 @@ from psana.dgram import Dgram
 
 max_events = 10000000
 def run_smd0():
-    filenames = glob.glob('/ffb01/mona/xtc2/.tmp/smalldata/*.xtc2')
+    #filenames = glob.glob('/ffb01/mona/xtc2/.tmp/smalldata/*.xtc2')
+    filenames = glob.glob('/gpfs/alpine/proj-shared/chm137/data/test/.tmp/smalldata/*.xtc2')
     fds = [os.open(filename, os.O_RDONLY) for filename in filenames]
 
     # Move file ptrs to datagram part
