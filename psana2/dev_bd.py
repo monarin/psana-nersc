@@ -8,12 +8,13 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
-batch_size = 10
+#xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
+xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/test/.tmp"
+batch_size = 1000
 
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
-ds = DataSource(exp='xpptut13', run=1, dir=xtc_dir, batch_size=batch_size)
+ds = DataSource(exp='xpptut13', run=1, dir=xtc_dir, batch_size=batch_size, max_events=10000)
 
 comm.Barrier()
 import_t = time.time() 
@@ -24,12 +25,14 @@ if rank == 0:
     recvbuf = np.empty([size, 1], dtype='i')
 
 for run in ds.runs():
-    det = run.Detector('cspad')
+    #det = run.Detector('cspad')
+    det = run.Detector('xppcspad')
     for evt in run.events():
         sendbuf += 1
-        photon_energy = det.raw.photonEnergy(evt)
-        raw = det.raw.raw(evt)
-        #print(evt.timestamp, photon_energy, raw.shape)
+        #photon_energy = det.raw.photonEnergy(evt)
+        #raw = det.raw.raw(evt)
+        raw = det.raw.calib(evt)
+        #print(evt.timestamp, raw.shape)
 
 comm.Gather(sendbuf, recvbuf, root=0)
 en = MPI.Wtime()

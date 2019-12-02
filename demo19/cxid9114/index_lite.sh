@@ -24,6 +24,8 @@ DATA_DIR=$PROJWORK/chm137/data/LD91
 export PS_CALIB_DIR=$IN_DIR
 export PS_SMD_N_EVENTS=1000
 export PS_SMD_NODES=1
+export PSANA2_VERSION=1
+export LCLS_CALIB_HTTP=http://login4:6749/calib_ws
 
 cctbx_args="input.experiment=${EXP} input.run_num=${RUN} output.output_dir=${OUT_DIR} output.logging_dir=${OUT_DIR} output.tmp_output_dir=${OUT_DIR} format.cbf.invalid_pixel_mask=${IN_DIR}/mask_ld91.pickle input.reference_geometry=${IN_DIR}/geom_ld91.json ${IN_DIR}/process_batch.phil dump_indexed=False input.xtc_dir=${DATA_DIR} max_events=${LIMIT}"
 

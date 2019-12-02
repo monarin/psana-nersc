@@ -3,7 +3,7 @@ dispatch{
 	dump_indexed=True
 }
 input{
-    address=DscCsPad
+    address=cspad
 }
 format {
     cbf{

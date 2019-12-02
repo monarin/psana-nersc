@@ -7,10 +7,11 @@
 
 
 # SUMMIT
-export OMP_NUM_THREADS=16
+#export OMP_NUM_THREADS=16
 #source $MEMBERWORK/chm137/adse13_161/summit/env.sh
 #strace -ttt -f -o $$.log python dev_smd0.py
-export PS_SMD_NODES=1
+export PS_SMD_NODES=2
+export LCLS_CALIB_HTTP=http://login2:6749/calib_ws
 python dev_bd.py
 #python test_mpi.py
 
