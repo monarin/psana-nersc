@@ -16,8 +16,11 @@ batch_size = 100
 st = MPI.Wtime()
 ds = DataSource(exp='cxid9114', run=95, dir=xtc_dir, batch_size=batch_size)
 
+ds_done_t = MPI.Wtime()
+
 comm.Barrier()
-import_t = time.time() 
+ds_called_ts = time.time()
+barrier_t = MPI.Wtime()
 
 sendbuf = np.zeros(1, dtype='i')
 recvbuf = None
@@ -34,10 +37,12 @@ for run in ds.runs():
         #raw = det.raw.calib(evt)
         print(evt.timestamp, raw.shape)
 
+run_done_t = MPI.Wtime()
+
 comm.Gather(sendbuf, recvbuf, root=0)
 en = MPI.Wtime()
 
 if rank == 0:
     n_events = np.sum(recvbuf)
     evtbuilder = int(os.environ.get('PS_SMD_NODES', 1))
-    print('#evtbuilder: %d #events: %d total elapsed (s): %6.2f rate (kHz): %6.2f ds called at: %d'%(evtbuilder, n_events, en-st, n_events/((en-st)*1000), import_t))
+    print(f'#eb: {evtbuilder} total(s): {en-st:.2f} rate(kHz): {n_events/((en-st)*1000):.2f} ds(s): {ds_done_t-st:.2f} barrier(s): {barrier_t-ds_done_t:.2f} run(s): {run_done_t-barrier_t:.2f} gather(s): {en-run_done_t:.2f} ds_called: {ds_called_ts:.0f}')
