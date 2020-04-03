@@ -4,33 +4,64 @@ import pyximport
 pyximport.install()
 from psana.smdreader import SmdReader
 from psana.dgram import Dgram
+import numpy as np
 
+chunksize = 0x100000
 max_events = 10000000
+smd0_batch_size = 10000
 def run_smd0():
-    #filenames = glob.glob('/ffb01/mona/xtc2/.tmp/smalldata/*.xtc2')
-    filenames = glob.glob('/gpfs/alpine/proj-shared/chm137/data/test/.tmp/smalldata/*.xtc2')
-    fds = [os.open(filename, os.O_RDONLY) for filename in filenames]
+    #filenames = glob.glob('/reg/neh/home/monarin/psana-nersc/psana2/.tmp/smalldata/*.xtc2')
+    filenames = glob.glob('/ffb01/mona/.tmp/smalldata/*.xtc2')
+
+    fds = np.array([os.open(filename, os.O_RDONLY) for filename in filenames], dtype=np.int32)
 
     # Move file ptrs to datagram part
     configs = [Dgram(file_descriptor=fd) for fd in fds]
+    beginRun = [Dgram(config=config) for config in configs]
     
     limit = len(filenames)
     if len(sys.argv) > 1:
         limit = int(sys.argv[1])
     
     st = time.time()
-    smdr = SmdReader(fds[:limit])
+    smdr = SmdReader(fds[:limit], chunksize, smd0_batch_size)
     got_events = -1
-    n_events = 10000
     processed_events = 0
-    smdr.get(n_events)
-    while smdr.got_events != 0:
+    offsets = np.zeros(limit,dtype=np.uint64)
+    smdr.get()
+    while smdr.got_events > 0:
+        for i in range(limit):
+            view = smdr.view(i)
+            """
+            if view:
+                cn_dgrams = 0
+                while offsets[i] < view.shape[0]:
+                    d = Dgram(config=configs[i], view=view, offset=offsets[i])
+                    print(f' buf{i} d_id: {cn_dgrams} d_ts {d.timestamp() & 0xffffffff}')
+                    offsets[i] += d._size
+                    cn_dgrams += 1
+                #print(f'smdr_man got {memoryview(view).nbytes}')
+            else:
+                #print(f' buf[{i} empty')
+                pass
+            """
         processed_events += smdr.got_events
         if processed_events >= max_events:
             break
-        
-        smdr.get(n_events)
+        smdr.get()
+        offsets[:] = 0
+    """
+    while smdr.got_events != 0:
+        if smdr.got_events > 0:
+            processed_events += smdr.got_events
+            if processed_events >= max_events:
+                break
+        for i in range(limit):
+            smdr.view(i)
 
+        smdr.get(n_events)
+        print(f'smdr.got_events={smdr.got_events}')
+    """
     en = time.time()
     print("#Events: %d Elapsed Time (s): %f Rate (MHz): %f"%(processed_events, (en-st), processed_events/((en-st)*1e6)))
 
