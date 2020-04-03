@@ -1,7 +1,7 @@
 #!/bin/bash
 #BSUB -P CHM137
 #BSUB -W 00:10
-#BSUB -nnodes 107
+#BSUB -nnodes 3
 #BSUB -alloc_flags gpumps
 #BSUB -J RunPsana2
 #BSUB -o RunPsana2.%J

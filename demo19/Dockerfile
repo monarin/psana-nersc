@@ -41,8 +41,9 @@ ENV MATPLOTLIBRC=/tmp/matplotlibrc
 SHELL ["/bin/bash", "-c"]
 ENV BASH_ENV ~/.bashrc
 
-RUN git clone https://github.com/slac-lcls/lcls2.git && \
-    pushd lcls2 && \
+ADD lcls2 lcls2
+#RUN git clone https://github.com/slac-lcls/lcls2.git && \
+RUN pushd lcls2 && \
     PYTHONPATH=/lcls2/install/lib/python3.6/site-packages ./build_all.sh -d && \
     popd
 
