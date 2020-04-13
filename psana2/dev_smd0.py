@@ -6,9 +6,10 @@ from psana.smdreader import SmdReader
 from psana.dgram import Dgram
 import numpy as np
 
-chunksize = 0x100000
+chunksize = 0x1000000
 max_events = 10000000
-smd0_batch_size = 10000
+smd0_batch_size = 13500*16
+
 def run_smd0():
     #filenames = glob.glob('/reg/neh/home/monarin/psana-nersc/psana2/.tmp/smalldata/*.xtc2')
     filenames = glob.glob('/ffb01/mona/.tmp/smalldata/*.xtc2')
@@ -24,11 +25,18 @@ def run_smd0():
         limit = int(sys.argv[1])
     
     st = time.time()
-    smdr = SmdReader(fds[:limit], chunksize, smd0_batch_size)
+    smdr = SmdReader(fds[:limit], chunksize)
     got_events = -1
     processed_events = 0
     offsets = np.zeros(limit,dtype=np.uint64)
-    smdr.get()
+
+
+    how_many = smd0_batch_size
+    to_be_read = max_events - processed_events
+    if to_be_read < how_many:
+        how_many = to_be_read
+
+    smdr.get(how_many)
     while smdr.got_events > 0:
         for i in range(limit):
             view = smdr.view(i)
@@ -48,7 +56,14 @@ def run_smd0():
         processed_events += smdr.got_events
         if processed_events >= max_events:
             break
-        smdr.get()
+        
+        how_many = smd0_batch_size
+        to_be_read = max_events - processed_events
+        if to_be_read < how_many:
+            how_many = to_be_read
+
+        smdr.get(how_many)
+        
         offsets[:] = 0
     """
     while smdr.got_events != 0:
