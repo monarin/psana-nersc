@@ -8,13 +8,18 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
+#xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
 #xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/test/.tmp"
-batch_size = 100
+xtc_dir = "/ffb01/mona/xtc2/.tmp"
+batch_size = 1 
+max_events = 100000 
+
+def filter_fn(evt):
+    return True
 
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
-ds = DataSource(exp='cxid9114', run=95, dir=xtc_dir, batch_size=batch_size)
+ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, filter=filter_fn)
 
 ds_done_t = MPI.Wtime()
 
@@ -28,14 +33,14 @@ if rank == 0:
     recvbuf = np.empty([size, 1], dtype='i')
 
 for run in ds.runs():
-    det = run.Detector('cspad')
-    #det = run.Detector('xppcspad')
-    for evt in run.events():
+    #det = run.Detector('cspad')
+    det = run.Detector('xppcspad')
+    for i, evt in enumerate(run.events()):
         sendbuf += 1
-        photon_energy = det.raw.photonEnergy(evt)
-        raw = det.raw.raw(evt)
-        #raw = det.raw.calib(evt)
-        print(evt.timestamp, raw.shape)
+        #photon_energy = det.raw.photonEnergy(evt)
+        #raw = det.raw.raw(evt)
+        raw = det.raw.calib(evt)
+        #print(evt.timestamp, raw.shape)
 
 run_done_t = MPI.Wtime()
 
@@ -45,4 +50,4 @@ en = MPI.Wtime()
 if rank == 0:
     n_events = np.sum(recvbuf)
     evtbuilder = int(os.environ.get('PS_SMD_NODES', 1))
-    print(f'#eb: {evtbuilder} total(s): {en-st:.2f} rate(kHz): {n_events/((en-st)*1000):.2f} ds(s): {ds_done_t-st:.2f} barrier(s): {barrier_t-ds_done_t:.2f} run(s): {run_done_t-barrier_t:.2f} gather(s): {en-run_done_t:.2f} ds_called: {ds_called_ts:.0f}')
+    print(f'#eb: {evtbuilder} #evt:{n_events} total(s): {en-st:.2f} rate(kHz): {n_events/((en-st)*1000):.2f} ds(s): {ds_done_t-st:.2f} barrier(s): {barrier_t-ds_done_t:.2f} run(s): {run_done_t-barrier_t:.2f} gather(s): {en-run_done_t:.2f} ds_called: {ds_called_ts:.0f}')

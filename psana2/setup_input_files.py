@@ -13,8 +13,10 @@ def setup_input_files(tmp_path):
         filename = 'data-r0001-s%s.xtc2'%(str(i).zfill(2))
         smd_filename = 'data-r0001-s%s.smd.xtc2'%(str(i).zfill(2))
         s01file = str(xtc_dir / filename)
-        subprocess.call(['xtcwriter','-f',s01file,'-t','-n','100000','-s',str(i*2),'-e','1000000','-m','100']) # ask for 10 events with every 4 events, one SlowUpdate inserted.
+        subprocess.call(['xtcwriter','-f',s01file,'-t','-n','100000','-s',str(i*2),'-e','1000000','-m','100']) # ask for 100 steps (-m) with 100k events per step (-n) with every 1M events, one SlowUpdate inserted (-e).
         subprocess.call(['smdwriter','-f',s01file,'-o',str(smd_dir / smd_filename)])
+        #subprocess.call(['xtcwriter','-f',s01file,'-t','-n','100','-s',str(i*2), '-e', '25']) 
+        #subprocess.call(['smdwriter','-f',s01file,'-o',str(smd_dir / smd_filename)])
 
 
 if __name__ == "__main__":
