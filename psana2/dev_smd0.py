@@ -7,12 +7,12 @@ from psana.dgram import Dgram
 import numpy as np
 
 chunksize = 0x1000000
-max_events = 10000000
-smd0_batch_size = 13500*16
+max_events = 100
+smd0_batch_size = 1
 
 def run_smd0():
-    #filenames = glob.glob('/reg/neh/home/monarin/psana-nersc/psana2/.tmp/smalldata/*.xtc2')
-    filenames = glob.glob('/ffb01/mona/.tmp/smalldata/*.xtc2')
+    filenames = glob.glob('/reg/neh/home/monarin/psana-nersc/psana2/.tmp/smalldata/*.xtc2')
+    #filenames = glob.glob('/ffb01/mona/.tmp/smalldata/*.xtc2')
 
     fds = np.array([os.open(filename, os.O_RDONLY) for filename in filenames], dtype=np.int32)
 
@@ -38,21 +38,24 @@ def run_smd0():
 
     smdr.get(how_many)
     while smdr.got_events > 0:
-        for i in range(limit):
-            view = smdr.view(i)
-            """
-            if view:
-                cn_dgrams = 0
-                while offsets[i] < view.shape[0]:
-                    d = Dgram(config=configs[i], view=view, offset=offsets[i])
-                    print(f' buf{i} d_id: {cn_dgrams} d_ts {d.timestamp() & 0xffffffff}')
-                    offsets[i] += d._size
-                    cn_dgrams += 1
-                #print(f'smdr_man got {memoryview(view).nbytes}')
-            else:
-                #print(f' buf[{i} empty')
-                pass
-            """
+#        for i in range(limit):
+#            view = smdr.view(i)
+#            """
+#            if view:
+#                cn_dgrams = 0
+#                while offsets[i] < view.shape[0]:
+#                    d = Dgram(config=configs[i], view=view, offset=offsets[i])
+#                    print(f' buf{i} d_id: {cn_dgrams} d_ts {d.timestamp() & 0xffffffff}')
+#                    offsets[i] += d._size
+#                    cn_dgrams += 1
+#                #print(f'smdr_man got {memoryview(view).nbytes}')
+#            else:
+#                #print(f' buf[{i} empty')
+#                pass
+#            """
+#
+#
+#
         processed_events += smdr.got_events
         if processed_events >= max_events:
             break
