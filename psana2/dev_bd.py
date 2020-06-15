@@ -1,8 +1,7 @@
-import os
+import os, time
 from psana import DataSource
 import numpy as np
 import vals
-import time
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
@@ -11,7 +10,9 @@ rank = comm.Get_rank()
 #xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
 #xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/test/.tmp"
 #xtc_dir = "/ffb01/mona/xtc2/.tmp"
-xtc_dir = "/reg/neh/home/monarin/tmp/.tmp"
+#xtc_dir = "/reg/neh/home/monarin/tmp/.tmp"
+xtc_dir="/global/cscratch1/sd/monarin/xtc2/.tmp"
+
 batch_size = 1000
 max_events = 0
 
@@ -20,7 +21,7 @@ def filter_fn(evt):
 
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
-ds = DataSource(exp='xpptut13', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, filter=filter_fn)
+ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events)
 
 ds_done_t = MPI.Wtime()
 

@@ -7,7 +7,7 @@ def setup_input_files(tmp_path):
     smd_dir = xtc_dir / 'smalldata'
     smd_dir.mkdir()
     
-    n_files = 3
+    n_files = 2
     for i in range(n_files):
         # segments 0,1 and "counting" timestamps for event-building
         filename = 'data-r0001-s%s.xtc2'%(str(i).zfill(2))
