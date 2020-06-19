@@ -22,6 +22,7 @@ def filter_fn(evt):
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
 ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events)
+ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, live=True, filter=filter_fn, max_events=max_events)
 
 ds_done_t = MPI.Wtime()
 
@@ -41,9 +42,8 @@ for run in ds.runs():
     for i, evt in enumerate(run.events()):
         sendbuf += 1
         #photon_energy = det.raw.photonEnergy(evt)
-        #raw = det.raw.raw(evt)
-        raw = det.raw.calib(evt)
-        #print(evt.timestamp, raw.shape)
+        raw = det.raw.raw(evt)
+        print(f'bd: ts={evt._nanoseconds} {raw.shape}')
         sendstr += f'{rank} {time.time()}\n'
 
 run_done_t = MPI.Wtime()
