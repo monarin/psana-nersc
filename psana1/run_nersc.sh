@@ -2,8 +2,8 @@
 
 
 # activate psana environment
-#source /img/conda.local/env.sh
-#source activate psana_base
+source /img/conda.local/env.sh
+source activate psana_base
 
 
 # set location for experiment db and calib dir

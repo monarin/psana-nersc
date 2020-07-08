@@ -1,5 +1,12 @@
 #!/bin/bash
-source /img/conda.local/env.sh
+
+
+# Activate conda 
+source /img/conda.local/env.sh              # when using shifter images
+#module load python/3.7-anaconda-2019.07    # when using build on $SCRATCH/ $HOME
+
+
+# Activate psana base environment
 source activate psana_base
 
 
@@ -8,4 +15,4 @@ source activate psana_base
 HOME=/tmp
 
 
-python test.py
+python dev_bd.py

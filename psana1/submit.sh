@@ -1,12 +1,12 @@
 #!/bin/bash -l
-#SBATCH --account=m2859
-#SBATCH --job-name=psana2
+#SBATCH --account=lcls
+#SBATCH --job-name=lcls-py2-root
 #SBATCH --nodes=1
 #SBATCH --constraint=knl
 #SBATCH --time=00:15:00
-#SBATCH --image=docker:slaclcls/lcls-py2:latest
+#SBATCH --image=docker:slaclcls/lcls-py2-root:latest
 #SBATCH --exclusive
-#SBATCH --qos=premium
+#SBATCH --qos=regular
 
 t_start=`date +%s`
 

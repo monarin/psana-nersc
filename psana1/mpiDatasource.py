@@ -1,4 +1,6 @@
 from psana import *
+import requests
+import ROOT
 
 dsource = MPIDataSource('exp=xpptut15:run=540:smd')
 det = Detector('epix10ka2m')
@@ -19,7 +21,6 @@ for nevt,evt in enumerate(dsource.events()):
    # save per-event data
    smldata.event(epix_sum=epix_sum,epix_roi=epix_roi)
 
-   if nevt == 1000: break
 
 # get "summary" data
 run_sum = smldata.sum(partial_run_sum)
