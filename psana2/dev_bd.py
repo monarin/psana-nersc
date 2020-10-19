@@ -1,20 +1,23 @@
-import os, time
+import os
 from psana import DataSource
 import numpy as np
-import vals
+#import vals
+import time
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-#xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
-#xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/test/.tmp"
-#xtc_dir = "/ffb01/mona/xtc2/.tmp"
-#xtc_dir = "/reg/neh/home/monarin/tmp/.tmp"
-xtc_dir="/global/cscratch1/sd/monarin/xtc2/.tmp"
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                format='(%(threadName)-10s) %(message)s',
+                        )
 
+#xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
+xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/test/.tmp"
+#xtc_dir = "/ffb01/mona/xtc2/.tmp"
 batch_size = 1000
-max_events = 0
+max_events = 10000
 
 def filter_fn(evt):
     return True
@@ -22,7 +25,6 @@ def filter_fn(evt):
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
 ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events)
-ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, live=True, filter=filter_fn, max_events=max_events)
 
 ds_done_t = MPI.Wtime()
 
@@ -42,9 +44,10 @@ for run in ds.runs():
     for i, evt in enumerate(run.events()):
         sendbuf += 1
         #photon_energy = det.raw.photonEnergy(evt)
-        raw = det.raw.raw(evt)
-        print(f'bd: ts={evt._nanoseconds} {raw.shape}')
-        sendstr += f'{rank} {time.time()}\n'
+        #raw = det.raw.raw(evt)
+        raw = det.raw.calib(evt)
+        #print(evt.timestamp, raw.shape)
+        sendstr += f'{rank} {time.time():.7f}\n'
 
 run_done_t = MPI.Wtime()
 
