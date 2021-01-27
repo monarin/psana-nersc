@@ -11,20 +11,31 @@ rank = comm.Get_rank()
 import logging
 logging.basicConfig(level=logging.DEBUG,
                 format='(%(threadName)-10s) %(message)s',
-                        )
+        )
 
-#xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/LD91"
-xtc_dir = "/gpfs/alpine/proj-shared/chm137/data/test/.tmp"
 #xtc_dir = "/ffb01/mona/xtc2/.tmp"
+xtc_dir = "/reg/neh/home/monarin/tmp/.tmp"
+
 batch_size = 1000
-max_events = 10000
+max_events = 100000
 
 def filter_fn(evt):
-    return True
+    if evt._nanoseconds % 2 == 0:
+        time.sleep(3)
+        logging.debug(f"{evt._nanoseconds} True rank {rank} sleep 3 s")
+        return True
+    else:
+        logging.debug(f"{evt._nanoseconds} False")
+        return False
+
+#def filter_fn(evt):
+#    return True
 
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
-ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events)
+#ds = DataSource(exp='tstx00517', run=72, dir=xtc_dir, batch_size=batch_size, max_events=max_events, live=True, filter=filter_fn)
+#ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
+ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=True, filter=filter_fn)
 
 ds_done_t = MPI.Wtime()
 
@@ -36,18 +47,23 @@ sendbuf = np.zeros(1, dtype='i')
 recvbuf = None
 if rank == 0:
     recvbuf = np.empty([size, 1], dtype='i')
+    print(f'RANK 0 PID:{os.getpid()}')
 
 sendstr = ''
 for run in ds.runs():
-    #det = run.Detector('cspad')
     det = run.Detector('xppcspad')
+    #det = run.Detector('tmohsd')
     for i, evt in enumerate(run.events()):
         sendbuf += 1
         #photon_energy = det.raw.photonEnergy(evt)
-        #raw = det.raw.raw(evt)
-        raw = det.raw.calib(evt)
-        #print(evt.timestamp, raw.shape)
-        sendstr += f'{rank} {time.time():.7f}\n'
+        raw = det.raw.raw(evt)
+        #raw = det.raw.waveforms(evt)
+        #print(f'bd: ts={evt._seconds}.{evt._nanoseconds} {raw.keys()}')
+        #if i % 1000 == 0:
+        #    print(f'bd: ts={evt._seconds}.{evt._nanoseconds} {raw.shape}')
+        sendstr += f'{rank} {time.time()}\n'
+        #if rank == 3:
+        #    time.sleep(2)
 
 run_done_t = MPI.Wtime()
 

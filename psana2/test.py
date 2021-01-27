@@ -1,13 +1,16 @@
-import time
+class Base(object):
+    def say(self):
+        print('base')
+    def __del__(self):
+        print('base exit')
 
+class Derived(Base):
+    def say(self):
+        print('derived')
+        super().say()
 
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
-size = comm.Get_size()
-rank = comm.Get_rank()
+b = Base()
+b.say()
 
-
-comm.Barrier()
-ts = time.time()
-if rank == 0:
-    print(f'{ts:.0f}')
+d = Derived()
+d.say()
