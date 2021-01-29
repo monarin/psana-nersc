@@ -19,7 +19,7 @@ def test_select_detectors():
     #xtc_dir = "./.tmp"
     xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/"
     batch_size = 1000
-    max_events = 1000000
+    max_events = 0
     ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events)
     sendbuf = np.zeros(1, dtype='i')
     recvbuf = None
