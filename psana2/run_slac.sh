@@ -27,31 +27,16 @@
 #export PATH=/reg/neh/home/monarin/tmp/4.0.0-rhel7/bin:$PATH
 #export LD_LIBRARY_PATH=/reg/neh/home/monarin/tmp/4.0.0-rhel7/lib
 
-run_with_prometheus() {
-    . $HOME/tmp/client_bash/prometheus.bash
-
-    export PROMETHEUS_GATEWAY=psdm03:9091
-
-    io::prometheus::NewGauge name=psana_start_time help='time_t when cron job last started' \
-               labels=jobid,rank
-    psana_start_time -jobid=$$ -rank=0 set $(date +'%s.%N')
-    io::prometheus::PushAdd job=psana_pushgateway instance=$HOSTNAME gateway=$PROMETHEUS_GATEWAY
-
-
-    source $HOME/lcls2/setup_env.sh
-    #export PS_SMD_NODES=20
-    /reg/g/psdm/sw/conda2/inst/envs/ps-3.1.16/bin/mpirun -n 40 --hostfile openmpi_hosts --mca btl_openib_allow_ib 1 ./run_with_prometheus.sh
-
-    io::prometheus::NewGauge name=psana_end_time help='time_t when cron job last ended' \
-               labels=jobid,rank
-    psana_end_time -jobid=$$ -rank=0 set $(date +'%s.%N')
-    io::prometheus::PushAdd job=psana_pushgateway instance=$HOSTNAME gateway=$PROMETHEUS_GATEWAY
-}
-
 run_psana2_perf() {
     echo "run psana2 perf"
-    export OPENBLAS_NUM_THREADS=1
+    export OPENBLAS_NUM_THREADS=1 # preventing blas from openning too many threads?
     python ./test_psana2_perf.py
 }
 
+run_smd0_perf() {
+    echo "run smd0 perf limit=$1"
+    python ./dev_smd0.py $1
+}
+
 run_psana2_perf
+#run_smd0_perf $1
