@@ -8,8 +8,6 @@ size=comm.Get_size()
 
 from psana.psexp.tools import show_log
 show_log()
-os.environ['PS_EB_NODES']='1'
-os.environ['PS_SMD_N_EVENTS'] = '10000'
 
 def filter_fn(evt):
     return True
@@ -19,7 +17,7 @@ def test_select_detectors():
     #ds = DataSource(exp='tmoc00118', run=222, dir=xtc_dir, as_smds=['hsd'], max_events=4)
     #xtc_dir = "./.tmp"
     xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/"
-    batch_size = 1000
+    batch_size = 100
     max_events = 0
     ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=True)
     sendbuf = np.zeros(1, dtype='i')

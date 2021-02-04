@@ -306,7 +306,7 @@ def main(srvurl):
     md.show_counter('psana_bd_read_total')
     
     print("TIME (s) WAITING FOR EVENTBUILDER")
-    md.show_ranking_summary('psana_bd_wait_eb', excluded_ranks=range(n_smd_nodes+1), q=q)
+    md.show_ranking_counter('psana_bd_wait_eb_total', rank_unit='seconds', q=q)
 
     print("AVERAGE DISK WAITING TIME")
     md.show_ranking_summary('psana_bd_wait_disk', excluded_ranks=range(n_smd_nodes+1), q=q) 

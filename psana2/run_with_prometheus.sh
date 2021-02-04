@@ -5,7 +5,8 @@ run_it() {
 }
 
 run_it_slurm() {
-    srun --partition=anaq --ntasks=22 --ntasks-per-node=22 ./run_slac.sh
+    #srun --partition=anaq --ntasks=131 --ntasks-per-node=131 ./run_slac.sh
+    srun --partition=anaq --ntasks=261 ./run_slac.sh # default tasks per node is 128
 }
 
 run_with_prometheus() {
@@ -26,4 +27,6 @@ run_with_prometheus() {
     io::prometheus::PushAdd job=psana_pushgateway instance=$HOSTNAME gateway=$PROMETHEUS_GATEWAY
 }
 
+export PS_EB_NODES=4
+export PS_SMD_N_EVENTS=40000
 run_with_prometheus
