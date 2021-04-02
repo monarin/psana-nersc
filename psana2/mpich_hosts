@@ -2,10 +2,12 @@
 #psanagpu101:12
 #psanagpu104:12
 #psanagpu105:12
-drp-tst-dev011:1
-drp-tst-dev012:12
+#drp-tst-dev011:1
+#drp-tst-dev012:12
 #drp-tst-dev013:20
 #drp-tst-dev014:20
 #drp-tst-dev015:20
 #drp-tst-dev016:20
 #drp-tst-dev017:20
+drp-srcf-cmp024:1
+drp-srcf-cmp025:1

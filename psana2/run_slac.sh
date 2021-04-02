@@ -28,15 +28,20 @@
 #export LD_LIBRARY_PATH=/reg/neh/home/monarin/tmp/4.0.0-rhel7/lib
 
 run_psana2_perf() {
-    echo "run psana2 perf"
+    t_start=`date +%s`
+    echo "RUN PSANA2 SCRIPT SUBMITTED AT" $t_start 
     export OPENBLAS_NUM_THREADS=1 # preventing blas from openning too many threads?
-    python ./test_psana2_perf.py
+    python -u ./test_psana2_perf.py
+    #python ./test_mpi.py
+    t_end=`date +%s`
+    echo "PSANA2 JOB COMPLETE AT" $t_end "TOTAL ELAPSED" $((t_end-t_start))
 }
 
 run_smd0_perf() {
-    echo "run smd0 perf limit=$1"
+    echo "RUN SMD0 TEST #FILES=$1"
     python ./dev_smd0.py $1
 }
 
 run_psana2_perf
+
 #run_smd0_perf $1

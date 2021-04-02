@@ -6,4 +6,5 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 myhost = MPI.Get_processor_name()
 
+
 print(rank, size, myhost)

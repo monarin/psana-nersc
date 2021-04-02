@@ -5,11 +5,12 @@ from psana.psexp.ds_base import DsParms
 
 max_events = 0
 os.environ['PS_SMD_MAX_RETRIES'] = '0'
-os.environ['PS_SMD_N_EVENTS'] = '1000'
+os.environ['PS_SMD_N_EVENTS'] = '10000'
 os.environ['PS_SMD_CHUNKSIZE'] = '16777216'
 
 def run_smd0():
-    filenames = glob.glob('/cds/data/drpsrcf/users/monarin/xtcdata/smalldata/*.xtc2')
+    #filenames = glob.glob('/cds/data/drpsrcf/users/monarin/xtcdata/smalldata/*.xtc2')
+    filenames = glob.glob('/cds/data/drpsrcf/users/monarin/xtcdata/100M/xtcdata/smalldata//*.xtc2')
 
     smd_fds = np.array([os.open(filename, os.O_RDONLY) for filename in filenames], dtype=np.int32)
 

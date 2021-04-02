@@ -8,8 +8,6 @@ import dmmon.promquery as pq
 import numpy as np
 import sys, os
 
-jobid = sys.argv[1]
-
 # Disable print
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
@@ -20,54 +18,73 @@ def enablePrint():
 
 
 class MetricDisplay(object):
-    def __init__(self, srvurl, start, stop):
+    def __init__(self, srvurl, start, stop, jobid):
         self.start  = start
         self.stop   = stop
         self.srvurl = srvurl
+        self.jobid  = jobid
 
     def get_rate(self, metric_name):
         blockPrint()        # block promequery print
         data = pq.get_data_prom(self.srvurl,
-                'irate(%s{}[10s])'%(metric_name),
-                self.start.timestamp(), self.stop.timestamp(), 5)
+                'rate(%s{jobid="%s"}[15s])'%(metric_name, self.jobid),
+                self.start.timestamp(), self.stop.timestamp(), step='5s')
         enablePrint()
         return data
 
     def get_raw(self, metric_name):
         blockPrint()
-        data = pq.get_data_prom(self.srvurl,
-                '%s{}'%(metric_name),
-                self.start.timestamp(), self.stop.timestamp(), 5)
+        if metric_name == 'psana_start_time':
+            query = '%s{}'%(metric_name)
+        else:
+            query = '%s{jobid="%s"}'%(metric_name, self.jobid)
+        
+        data = pq.get_data_prom(self.srvurl, query, 
+            self.start.timestamp(), self.stop.timestamp(), step='5s')
         enablePrint()
         return data
 
-    def digest(self, data, iface=None, instance=None):
+    def digest(self, data, iface=None, instance=None, query_type="rate"):
         result = {}
+
+        def set_ts_and_avg_val(result, result_key, values):
+            # report first timestamp and average value (w/o '0') 
+            if len(values) > 0:
+                if query_type == "rate":
+                    vals = [float(v[1]) for v in values if v != '0']
+                    result[result_key] =  int(values[0][0]), np.mean(vals)
+                else:
+                    result[result_key] = int(values[-1][0]), float(values[-1][1])
+
         for sample in  jmespath.search("data.result[*].[metric, values]", data):
             labels, values = sample
             if iface == "bash":
                 if labels["instance"] == instance:
                     result_key = labels['instance']
-                    result[result_key] = int(values[-1][0]), float(values[-1][1])
+                    set_ts_and_avg_val(result, result_key, values)
 
             elif 'jobid' in labels:
-                if labels['jobid'] == jobid:
+                if labels['jobid'] == self.jobid:
                     if 'unit' in labels:
                         result_key = (labels['rank'], labels['unit'], labels['endpoint'])
                     elif 'checkpoint' in labels:
                         result_key = (labels['rank'], labels['checkpoint'])
                     else:
                         result_key = (labels['rank'], 'seconds', 'None')
-                    # report latest value: (ts, val)
-                    result[result_key] = int(values[-1][0]), float(values[-1][1])
+                    
+                    set_ts_and_avg_val(result, result_key, values)
         return result
 
-    def show_counter(self, metric_name, query_type="rate", verbose_level=0):
+    def show_counter(self, metric_name, query_type="rate", verbose_level=0, ignore_ranks=[0], labels=[]):
         if query_type == "rate":
             data = self.get_rate(metric_name)
         else:
             data = self.get_raw(metric_name)
-        result = self.digest(data)
+        
+        with open('dummy.log','w') as f:
+            f.write(f'{data}')
+
+        result = self.digest(data, query_type=query_type)
         prn_out = {}
         sum_by_ranks = {}
         sum_by_units = {}
@@ -93,11 +110,25 @@ class MetricDisplay(object):
                 sum_by_units[unit] = val
         
         for unit, sum_val in sum_by_units.items():
-            print(f"{unit.ljust(20)} {sum_val:.5f}")
+            txt_rate = ""
+            if query_type == "raw" and unit != 'seconds':
+                if 'seconds' in sum_by_units:
+                    if sum_by_units['seconds'] > 0:
+                        # report sum of the values from all ranks/ sum of seconds of only one rank
+                        #seconds_one_rank = sum_by_units['seconds']/ len(sum_by_ranks.keys())
+                        seconds_one_rank = sum_by_units['seconds']
+                        txt_rate = f"rate: {sum_val/seconds_one_rank:.2f} {unit}/s"
+            txt_unit = unit
+            if query_type == "rate":
+                txt_unit += '/s'
+            
+            if unit != 'seconds':
+                if unit in labels or labels==[]:
+                    print(f"{txt_unit.ljust(20)} {sum_val:.2f} {txt_rate}")
         
         for rank, prn in prn_out.items():
             unit_val_dict = sum_by_ranks[rank]
-            if int(rank) > 0 and verbose_level > 0:
+            if int(rank) not in ignore_ranks and verbose_level > 0:
                 print(f"RANK {rank} SUMMARY")
             for unit, sum_val in unit_val_dict.items():
                 if query_type == "rate":
@@ -108,25 +139,35 @@ class MetricDisplay(object):
             if verbose_level > 1:
                 print(prn)
     
-    def show_summary(self, metric_partial_name):
+    def show_summary(self, metric_partial_name, show_all=True):
         data = self.get_raw(f'{metric_partial_name}_sum')
         result_sum = self.digest(data)
 
         data = self.get_raw(f'{metric_partial_name}_count')
         result_count = self.digest(data)
 
+        sum_avg = 0
+        cn_ranks = 0
         for ((rank, sum_unit, sum_endpoint), (_, sum_val)), \
                 ((_, _, _), (_, cn_val)) \
                 in zip(result_sum.items(), result_count.items()):
             
             if cn_val == 0: continue # skip if no data
             
-            if int(rank) > 0:
-                print(f"RANK {rank}")
+            if show_all:
+                if int(rank) > 0:
+                    print(f"RANK {rank}")
+            
+                print(f"{'AVG'.ljust(20)} {sum_val/cn_val:.5f} s")
+                print(f"{'TOTAL'.ljust(20)} {sum_val:.5f} s")
+                print(f"{'COUNTS'.ljust(20)} {cn_val}")
 
-            print(f"{'AVG'.ljust(20)} {sum_val/cn_val:.5f} s")
-            print(f"{'TOTAL'.ljust(20)} {sum_val:.5f} s")
-            print(f"{'COUNTS'.ljust(20)} {cn_val}")
+            sum_avg += sum_val/cn_val
+            cn_ranks += 1
+        
+        if cn_ranks:
+            print(f"{'AVGALLRANKS'.ljust(20)} {sum_avg/cn_ranks:.5f} s")
+        
 
     def show_gauge(self, metric_name, iface=None, instance=None, diff_with=None):
         data = self.get_raw(metric_name)
@@ -189,7 +230,7 @@ class MetricDisplay(object):
             return
 
         percentile = np.percentile(vals, q)
-        print(f'{str(q)+"th percentile".ljust(18)} {percentile:.5f}')
+        print(f'{str(q)+"th percentile".ljust(16)} {percentile:.5f} max: {np.max(vals):.5f} n: {len(vals)}')
 
         prn_out = {}
         for (rank, unit, endpoint), (_, val) in result.items():
@@ -242,7 +283,7 @@ class MetricDisplay(object):
             return
 
         percentile = np.percentile(avgs, q)
-        print(f'{str(q)+"th percentile".ljust(18)} {percentile:.5f}')
+        print(f'{str(q)+"th percentile".ljust(16)} {percentile:.5f} max: {np.max(avgs):.5f} n: {len(avgs)}')
         for ((rank, unit, endpoint), (_, sum_val)), \
                 ((_, _, _), (_, cn_val)) \
                 in zip(result_sum.items(), result_count.items()):
@@ -259,29 +300,36 @@ class MetricDisplay(object):
                     print(f"{rank_str.ljust(20)} {avg_val:.5f} {unit}")
 
 
-def main(srvurl):
+def main(srvurl, jobid, start=None, step_seconds=15):
     
-    stop = datetime.now()
-    start = stop - timedelta(minutes=5)
+    if not start:
+        # Default is the last step_seconds
+        stop = datetime.now()
+        start = stop - timedelta(seconds=step_seconds) 
+    else:
+        # Or query from start with query window = step_seconds 
+        stop = start + timedelta(seconds=step_seconds)
 
-    q = 95 
+    submit_host = os.environ.get('SUBMIT_HOST', '')
+
+    print(f"QUERY FROM {start} TO {stop} ")
+    print(f"STEP={step_seconds}s SUBMIT_HIST={submit_host}")
+
+    q = 99.9
     n_smd_nodes = 1
     
-    md = MetricDisplay(srvurl, start, stop)
+    md = MetricDisplay(srvurl, start, stop, jobid)
     
     print("CHECKPOINT TIMESTAMP")
-    start_time = md.show_gauge('psana_start_time', iface="bash", instance="drp-srcf-cmp001")
+    start_time = md.show_gauge('psana_start_time', iface="bash", instance=submit_host)
     #md.show_gauge('psana_end_time', iface="bash", instance="drp-tst-dev011", diff_with=start_time)
     md.show_gauge('psana_timestamp', diff_with=start_time)
 
-    print("SMD0\nDISK READING RATE")
-    md.show_counter('psana_smd0_read_total', query_type="rate")
+    print("SMD0\nDISK READING")
+    md.show_counter('psana_smd0_read_total', query_type="raw")
 
     print("SEND RATE")
-    md.show_counter('psana_smd0_sent_total')
-    
-    print("DISK WAITING TIME")
-    md.show_summary('psana_smd0_wait_disk')
+    md.show_counter('psana_smd0_sent_total', query_type="rate")
     
     print("MPI WAITING TIME")
     md.show_ranking_counter('psana_smd0_sent_total', rank_unit='seconds', q=q)
@@ -289,7 +337,7 @@ def main(srvurl):
     
     print("\nEVENTBUILDER(S)")
     print("SEND RATE")
-    md.show_counter('psana_eb_sent_total')
+    md.show_counter('psana_eb_sent_total', query_type="rate")
     
     print("USER FILTER CALLBACK WAITING TIME")
     md.show_ranking_counter('psana_eb_filter_total', rank_unit='seconds', q=q)
@@ -302,21 +350,28 @@ def main(srvurl):
 
     
     print("\nBIGDATA")
-    print("DISK READING RATE")
-    md.show_counter('psana_bd_read_total')
+    print("DISK READING")
+    md.show_counter('psana_bd_read_total', query_type="raw", labels=['MB'])
+    md.show_summary('psana_bd_just_read', show_all=False)
+    print("PROCESSING RATE")
+    md.show_counter('psana_bd_read_total', query_type="rate", labels=['evts'])
+    md.show_summary('psana_bd_gen_smd_batch', show_all=False)
+    md.show_summary('psana_bd_gen_evt', show_all=False)
+
     
-    print("TIME (s) WAITING FOR EVENTBUILDER")
+    print("TIME (s) BD WAITING FOR EVENTBUILDER")
     md.show_ranking_counter('psana_bd_wait_eb_total', rank_unit='seconds', q=q)
 
-    print("AVERAGE DISK WAITING TIME")
-    md.show_ranking_summary('psana_bd_wait_disk', excluded_ranks=range(n_smd_nodes+1), q=q) 
-    
     print("AVERAGE ANALYSIS WAITING TIME")
     md.show_ranking_counter('psana_bd_ana_total', rank_unit='seconds', q=q)
 
     
 if __name__ == "__main__":
+    jobid = sys.argv[1]
+    start = None
+    if len(sys.argv) > 2:
+        start = datetime.fromtimestamp(int(sys.argv[2]))
     srvurl = os.environ.get("DM_PROM_SERVER", "http://psmetric03:9090") 
 
-    print("Using server", srvurl)
-    main(srvurl)
+    print("Using server", srvurl, " jobid:", jobid)
+    main(srvurl, jobid, start=start)

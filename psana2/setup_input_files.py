@@ -15,7 +15,7 @@ def setup_input_files(tmp_path):
         s01file = str(xtc_dir / filename)
         
         # ask for 100 steps (-m) with 100k events per step (-n) with every 1M events, one SlowUpdate inserted (-e).
-        subprocess.call(['xtcwriter','-f',s01file,'-t','-n','100000','-s',str(i*2),'-e','1000000','-m','100']) 
+        subprocess.call(['xtcwriter','-f',s01file,'-t','-n','1000000','-s',str(i*2),'-e','1000000','-m','100']) 
         
         subprocess.call(['smdwriter','-f',s01file,'-o',str(smd_dir / smd_filename)])
 
