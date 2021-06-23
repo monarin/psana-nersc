@@ -16,16 +16,17 @@
 
 # Test bigdata
 #export PS_SMD_NODES=1
-export PS_SMD_MAX_RETRIES=0
+#export PS_SMD_MAX_RETRIES=0
 #export PS_SMD_N_EVENTS=1000
-export LCLS_CALIB_HTTP=http://login5:6748/calib_ws
+#export LCLS_CALIB_HTTP=http://login5:6748/calib_ws
 #export PS_PARALLEL=none
 #echo "testing $1 files"
 #python dev_smd0.py $1
 #python dev_smdreader_manager.py
-python dev_bd.py
+#python dev_bd.py
 
 
+source /reg/g/psdm/etc/psconda.sh -py3
 # Test mpi
-#python test_mpi.py
+python test_send_recv.py
 

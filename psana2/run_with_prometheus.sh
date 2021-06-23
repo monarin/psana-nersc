@@ -6,11 +6,13 @@ run_it() {
 
 run_it_slurm() {
     #srun --partition=anaq --ntasks=122 -N 2 --exclusive ./run_slac.sh
-    #srun -o $$.log --partition=anaq --ntasks=2081 --ntasks-per-node=32 --exclusive ./run_slac.sh
+    srun -o $$.log --partition=anaq --ntasks=66 --ntasks-per-node=60 --exclusive ./run_slac.sh
     #srun -o $$.log --partition=anaq --ntasks=4161 --spread-job ./run_slac.sh
     #srun --partition=anaq --ntasks=130 --exclusive ./run_slac.sh # default tasks per node is 128
-    export SLURM_HOSTFILE=slurm_hosts
-    srun -o $$.log --partition=anaq --exclusive ./run_slac.sh
+    
+    #export SLURM_HOSTFILE=slurm_hosts
+    #srun -o $$.log --partition=anaq --exclusive ./run_slac.sh
+    #SLURM_HOSTFILE=slurm_hosts srun -o $$.log --partition=anaq --exclusive ./run_slac.sh
 }
 
 run_with_prometheus() {

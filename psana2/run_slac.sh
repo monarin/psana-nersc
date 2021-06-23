@@ -30,18 +30,29 @@
 run_psana2_perf() {
     t_start=`date +%s`
     echo "RUN PSANA2 SCRIPT SUBMITTED AT" $t_start 
-    export OPENBLAS_NUM_THREADS=1 # preventing blas from openning too many threads?
+    
+    # preventing blas from openning too many threads?
+    export OPENBLAS_NUM_THREADS=1 
+    
+    # for psana2
+    export PS_SMD_N_EVENTS=10000
+    export PS_SMD0_NUM_THREADS=32
+
+    # for openmpi
+    #OMPI_MCA_btl=self,tcp
+    #export OMPI_MCA_btl
+
     python -u ./test_psana2_perf.py
-    #python ./test_mpi.py
+    #python -u ./test_mpi.py
     t_end=`date +%s`
     echo "PSANA2 JOB COMPLETE AT" $t_end "TOTAL ELAPSED" $((t_end-t_start))
 }
 
 run_smd0_perf() {
-    echo "RUN SMD0 TEST #FILES=$1"
-    python ./dev_smd0.py $1
+    echo "RUN SMD0 TEST #FILES=16"
+    python ./dev_smd0.py 16
 }
 
 run_psana2_perf
 
-#run_smd0_perf $1
+#run_smd0_perf
