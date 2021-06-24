@@ -10,7 +10,7 @@ n = 10
 if rank == 0:
     #data = np.arange(1000000, dtype='i')
     #data_nbytes = 100000000
-    data_nbytes = int(500e3)
+    data_nbytes = int(1e9)
     data = bytearray(b'b' * data_nbytes)
     rankreq = np.empty(1, dtype='i')
     send_timings = []
@@ -42,5 +42,5 @@ else:
 if rank == 0:
     tot_time = np.sum(send_timings)
     rates = (data_nbytes*1e-9) / np.asarray(send_timings)
-    print(f'send timing #sends: {len(send_timings)} data: {data_nbytes/1e9:.2f}GB rate avg: {np.mean(rates):.2f}GB/s max: {np.max(rates):.2f}GB/s min: {np.min(rates):.2f}GB/s') 
+    print(f'send timing #sends: {len(send_timings)} data: {data_nbytes/1e6:.2f}MB rate avg: {np.mean(rates):.2f}GB/s max: {np.max(rates):.2f}GB/s min: {np.min(rates):.2f}GB/s') 
     
