@@ -13,9 +13,6 @@ logging.basicConfig(level=logging.DEBUG,
                 format='(%(threadName)-10s) %(message)s',
         )
 
-#xtc_dir = "/ffb01/mona/xtc2/.tmp"
-xtc_dir = "/reg/neh/home/monarin/tmp/.tmp"
-
 batch_size = 1000
 max_events = 100000
 
@@ -33,9 +30,7 @@ def filter_fn(evt):
 
 # Usecase 1a : two iterators with filter function
 st = MPI.Wtime()
-#ds = DataSource(exp='tstx00517', run=72, dir=xtc_dir, batch_size=batch_size, max_events=max_events, live=True, filter=filter_fn)
-#ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
-ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=True, filter=filter_fn)
+ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, live=True, filter=filter_fn, max_events=max_events)
 
 ds_done_t = MPI.Wtime()
 
@@ -57,10 +52,7 @@ for run in ds.runs():
         sendbuf += 1
         #photon_energy = det.raw.photonEnergy(evt)
         raw = det.raw.raw(evt)
-        #raw = det.raw.waveforms(evt)
-        #print(f'bd: ts={evt._seconds}.{evt._nanoseconds} {raw.keys()}')
-        #if i % 1000 == 0:
-        #    print(f'bd: ts={evt._seconds}.{evt._nanoseconds} {raw.shape}')
+        print(f'bd: ts={evt._nanoseconds} {raw.shape}')
         sendstr += f'{rank} {time.time()}\n'
         #if rank == 3:
         #    time.sleep(2)
