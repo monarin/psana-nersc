@@ -26,7 +26,6 @@
 #python dev_bd.py
 
 
-source /reg/g/psdm/etc/psconda.sh -py3
 # Test mpi
-python test_send_recv.py
+python test_send_recv_wait.py
 
