@@ -1,0 +1,14 @@
+setup_env_local.sh
+build
+install
+*.pyc
+*.egg-info/
+*~
+\#*#
+*.so
+*.xtc
+*.h5
+*.ami
+*.xtc2
+p[0-7].cnf.*
+*.log
