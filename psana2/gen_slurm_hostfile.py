@@ -56,6 +56,9 @@ cn_ranks = 1 # smd0 count
 
 # Spread over nodes - each node limits to n_ranks_per_node
 def spread_on(cluster_name, n_asking):
+    if cluster_name not in nodes:
+        return 0, ""
+
     node_list = nodes[cluster_name]
     cn_ranks = 0
     n_used_nodes = 0

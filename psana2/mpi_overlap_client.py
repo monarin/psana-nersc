@@ -1,12 +1,15 @@
 import numpy as np
+import time
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
+myhost = MPI.Get_processor_name()
+print(f'rank{rank} size:{size} on host:{myhost}')
 
 data_MB = 50
 data_nbytes = int(data_MB*1e6)
-n_sends = 100
+n_sends = 200
 
 st = MPI.Wtime()
 
@@ -20,11 +23,12 @@ if rank == 0:
         req = comm.Isend(data, dest=rankreq[0])
         
         # Overlap communication
-        #sum_i = 0
-        #for i in range(100000):
-        #    sum_i += i
-
-        #print(f'loop{j} rank{rank} compute sum_i={sum_i}')
+        st_compute = time.time()
+        sum_i = 0
+        for i in range(10000):
+            sum_i += i
+        en_compute = time.time()
+        #print(f'loop{j} rank{rank} compute sum_i={sum_i} took={(en_compute-st_compute)*1e3:.2f}ms')
 
         # Wait for the last send to complete
         if j == n_sends - 1:

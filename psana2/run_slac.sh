@@ -30,18 +30,20 @@
 run_psana2_perf() {
     t_start=`date +%s`
     echo "RUN PSANA2 SCRIPT SUBMITTED AT" $t_start 
+
+    # for psana2
+    export PS_SMD_N_EVENTS=10000
+    export PS_SMD0_NUM_THREADS=16
+    export PS_EB_NODES=32
+    source $HOME/lcls2/setup_env.sh
     
     # preventing blas from openning too many threads?
     export OPENBLAS_NUM_THREADS=1 
     
-    # for psana2
-    export PS_SMD_N_EVENTS=10000
-    export PS_SMD0_NUM_THREADS=32
-
     # for openmpi
     #OMPI_MCA_btl=self,tcp
     #export OMPI_MCA_btl
-
+    
     python -u ./test_psana2_perf.py
     #python -u ./test_mpi.py
     t_end=`date +%s`

@@ -1,11 +1,11 @@
 import os, time, glob, sys
 import numpy as np
-<<<<<<< Updated upstream
 from psana.psexp import SmdReaderManager, PrometheusManager
 from psana.psexp.ds_base import DsParms
 
 #import logging
-#logger = logging.getLogger('psana.psexp.ds_base')
+#logging.basicConfig(filename='dev_smd0.log')
+#logger = logging.getLogger('psana.psexp.smdreader_manager')
 #logger.setLevel(logging.DEBUG)
 #ch = logging.StreamHandler()
 #ch.setLevel(logging.DEBUG)
@@ -15,20 +15,21 @@ from psana.psexp.ds_base import DsParms
 
 max_events = 0
 os.environ['PS_SMD_MAX_RETRIES'] = '0'
-os.environ['PS_SMD_N_EVENTS'] = '1000'
+os.environ['PS_SMD_N_EVENTS'] = '10000'
 os.environ['PS_SMD_CHUNKSIZE'] = '16777216'
+os.environ['PS_SMD0_NUM_THREADS'] = '32'
 
 def run_smd0():
-    #smd_dir = '/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/smalldata'
-    smd_dir = '/reg/d/psdm/rix/rixx43518/xtc/smalldata/'
+    smd_dir = '/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/smalldata'
+    #smd_dir = '/reg/d/psdm/tmo/tmoc00118/xtc/smalldata/'
+    #smd_dir ='/cds/data/drpsrcf/users/monarin/tmoc00118/xtc/smalldata'
     n_files = int(sys.argv[1])
     filenames = [None] * n_files
     for i in range(n_files):
-        #filenames[i] = os.path.join(smd_dir,f'data-r0001-s{str(i).zfill(2)}.smd.xtc2')
-        filenames[i] = os.path.join(smd_dir,f'rixx43518-r0319-s{str(i).zfill(3)}-c000.smd.xtc2')
-        print(i, filenames[i])
+        filenames[i] = os.path.join(smd_dir,f'data-r0001-s{str(i).zfill(2)}.smd.xtc2')
+        #filenames[i] = os.path.join(smd_dir,f'tmoc00118-r0463-s{str(i).zfill(3)}-c000.smd.xtc2')
 
-    smd_fds = np.array([os.open(filename, os.O_RDONLY) for filename in filenames], dtype=np.int32)
+    smd_fds = np.array([os.open(filename, os.O_DIRECT) for filename in filenames], dtype=np.int32)
 
     st = time.time()
     prom_man = PrometheusManager(os.getpid())
@@ -51,7 +52,7 @@ def run_smd0():
     print(f'total search time: {smdr_man.smdr.total_time}')
     en = time.time()
     processed_events = smdr_man.processed_events
-    print("#Smdfiles: %d #Events: %d Elapsed Time (s): %f Rate (MHz): %f"%(n_files,processed_events, (en-st), processed_events/((en-st)*1e6)))
+    print(f"#Smdfiles: {n_files} #Events: {processed_events} Elapsed Time (s): {en-st:.2f} Rate (MHz): {processed_events/((en-st)*1e6):.2f} Bandwidth(GB/s):{760045608*n_files*1e-9/(en-st)}")
 
 if __name__ == "__main__":
     run_smd0()

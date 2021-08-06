@@ -47,9 +47,11 @@ with open(filename, 'r') as f:
             _ = next(f) # DISK READING
             next_line = next(f)
             bd_read_mbs = float(next_line.split()[3])
+            #bd_read_mbs = 0
             #print(bd_read_mbs)
             next_line = next(f)
             bd_read_avg_s = float(next_line.split()[1])
+            #bd_read_avg_s = 0
             _ = next(f) # PROCESSING RATE
             next_line = next(f) 
             bd_process_khz = float(next_line.split()[1])/1000
@@ -64,5 +66,9 @@ with open(filename, 'r') as f:
             next_line = next(f)
             bd_mpi_sec = float(next_line.split()[2])
             #print(bd_mpi_sec)
+        elif line.find('AVERAGE ANALYSIS WAITING TIME') == 0:
+            next_line = next(f)
+            bd_ana_sec = float(next_line.split()[2])
+            #print(bd_ana_sec)
 
-print(query_start, smd0_read_mbs, smd0_send_mbs, smd0_send_khz, smd0_wait_sec, eb_send_mbs, eb_send_khz, eb_wait_smd0_sec, eb_wait_bd_sec, bd_read_mbs, bd_process_khz, bd_read_avg_s, bd_gen_smd_batch, batch_size*bd_gen_evt, bd_mpi_sec)
+print(query_start, smd0_read_mbs, smd0_send_mbs, smd0_send_khz, smd0_wait_sec, eb_send_mbs, eb_send_khz, eb_wait_smd0_sec, eb_wait_bd_sec, bd_read_mbs, bd_process_khz, bd_read_avg_s, bd_gen_smd_batch, batch_size*bd_gen_evt, bd_mpi_sec, bd_ana_sec*batch_size)
