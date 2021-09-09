@@ -20,14 +20,15 @@ os.environ['PS_SMD_CHUNKSIZE'] = '16777216'
 os.environ['PS_SMD0_NUM_THREADS'] = '32'
 
 def run_smd0():
-    smd_dir = '/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/smalldata'
-    #smd_dir = '/reg/d/psdm/tmo/tmoc00118/xtc/smalldata/'
-    #smd_dir ='/cds/data/drpsrcf/users/monarin/tmoc00118/xtc/smalldata'
+    #smd_dir = '/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/smalldata'
+    smd_dir = '/cds/data/drpsrcf/users/monarin/tmoc00118/xtc/smalldata'
+    #filesize = 760045608 
+    filesize = 2295358456
     n_files = int(sys.argv[1])
     filenames = [None] * n_files
     for i in range(n_files):
-        filenames[i] = os.path.join(smd_dir,f'data-r0001-s{str(i).zfill(2)}.smd.xtc2')
-        #filenames[i] = os.path.join(smd_dir,f'tmoc00118-r0463-s{str(i).zfill(3)}-c000.smd.xtc2')
+        #filenames[i] = os.path.join(smd_dir,f'data-r0001-s{str(i).zfill(2)}.smd.xtc2')
+        filenames[i] = os.path.join(smd_dir,f'tmoc00118-r0463-s{str(i).zfill(3)}-c000.smd.xtc2')
 
     smd_fds = np.array([os.open(filename, os.O_DIRECT) for filename in filenames], dtype=np.int32)
 
@@ -52,7 +53,7 @@ def run_smd0():
     print(f'total search time: {smdr_man.smdr.total_time}')
     en = time.time()
     processed_events = smdr_man.processed_events
-    print(f"#Smdfiles: {n_files} #Events: {processed_events} Elapsed Time (s): {en-st:.2f} Rate (MHz): {processed_events/((en-st)*1e6):.2f} Bandwidth(GB/s):{760045608*n_files*1e-9/(en-st)}")
+    print(f"#Smdfiles: {n_files} #Events: {processed_events} Elapsed Time (s): {en-st:.2f} Rate (MHz): {processed_events/((en-st)*1e6):.2f} Bandwidth(GB/s):{filesize*n_files*1e-9/(en-st):.2f}")
 
 if __name__ == "__main__":
     run_smd0()
