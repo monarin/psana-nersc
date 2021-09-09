@@ -45,12 +45,13 @@ with open(filename, 'r') as f:
             #print(eb_wait_bd_sec)
         elif line.find('BIGDATA') == 0:
             _ = next(f) # DISK READING
-            next_line = next(f)
-            bd_read_mbs = float(next_line.split()[3])
+            # NOTE: In case of no bigdata read, comment out A,B,C,D
+            next_line = next(f)                            #A
+            bd_read_mbs = float(next_line.split()[3])      #B
             #bd_read_mbs = 0
             #print(bd_read_mbs)
-            next_line = next(f)
-            bd_read_avg_s = float(next_line.split()[1])
+            next_line = next(f)                            #C
+            bd_read_avg_s = float(next_line.split()[1])    #D
             #bd_read_avg_s = 0
             _ = next(f) # PROCESSING RATE
             next_line = next(f) 
