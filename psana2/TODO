@@ -1,5 +1,4 @@
 Running Live mode
-1 With one read out group, 
 NOTE: 
 - To be fix: psana2 did not exit when it sees EndRun (still continue read retry)
 - Disable seems to work - psana2 was waiting and when it sees Enable, it starts to
@@ -19,15 +18,11 @@ dgrampy (for 2023 epixhr)
 peakfinding + data writing
 1. Future -> test on real hexanode data (we still missing peaks). Backup plan -> roentdek hexanode alg works on quadanode non-fex data.
 
-
 control dynamically allocated hosts idea
 1. through SBATCH
 2. see detail of slurm host file for special config.
 3. ask Elliott 
 
-xtcreader
-xtcreader fails with -d reading chunked file w/o config
-add arg for config file
 
 
 
