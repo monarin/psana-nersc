@@ -27,7 +27,7 @@ def write_dgram(config, f_out, offset, skip=False):
     
 if __name__ == "__main__":
 
-    xtc_fname_in = "data-r0001-s01.xtc2"
+    xtc_fname_in = "data.xtc2"
     xtc_fd, xtc_f_size = open_file(xtc_fname_in)
     xtc_f_out = open(f"data-r0001-s01-c01.xtc2" ,"wb", buffering=buffering)
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     cn_events = 2
     #selected_events = list(range(2, 15+1)) # first chunk
-    selected_events = list(range(16, 23+1)) # second chunk
+    selected_events = list(range(16, 24+1)) # second chunk
     while xtc_offset < xtc_f_size:
         # write dgram only if event_id is in the selected events
         print(f"cn_events={cn_events}")

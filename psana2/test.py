@@ -1,16 +1,16 @@
-class Base(object):
-    def say(self):
-        print('base')
-    def __del__(self):
-        print('base exit')
+from psana import DataSource
 
-class Derived(Base):
-    def say(self):
-        print('derived')
-        super().say()
+import logging
+logger = logging.getLogger('psana.psexp')
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+xtc_dir='/cds/data/drpsrcf/tst/tstx00417/xtc'
+ds = DataSource(exp='tstx00417', run=214, dir=xtc_dir, live=True)
 
-b = Base()
-b.say()
-
-d = Derived()
-d.say()
+for run in ds.runs():
+    for evt in run.events():
+        print(evt.timestamp)

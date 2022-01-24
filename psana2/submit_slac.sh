@@ -1,13 +1,18 @@
 #!/bin/bash
-#SBATCH --partition=anagpu
+#SBATCH --partition=anaq
 #SBATCH --job-name=psana2-test
-#SBATCH --ntasks=4
-#SBATCH --ntasks-per-node=4
+#SBATCH --nodes=48
+#SBATCH --ntasks=2305
+##SBATCH --ntasks-per-node=50
 #SBATCH --output=%j.log
+#SBATCH --exclusive
  
-# -u flushes print statements which can otherwise be hidden if mpi hangs
+
 t_start=`date +%s`
-srun python ./test_mpi.py 
+
+source setup_hosts.sh
+echo SLURM_HOSTFILE $SLURM_HOSTFILE SLURM_NTASKS $SLURM_NTASKS 
+srun ./run_slac.sh
 
 #srun -n 339320 -c 4 --cpu_bind=cores -x=nid08201,nid11988 shifter ./index_lite.sh cxid9114 2 99 debug 0
 t_end=`date +%s`

@@ -1,0 +1,177 @@
+event 1,   Configure transition: time 987603706.075514632, env 0x02020001, payloadSize 27624 extent 27636
+*** DetName: hsd, Segment 12, DetType: hsd, DetId: serial1234, Alg: config, Version: 0x020000, namesid: 0x800, Names:
+Name: 'Data:dataModeEnum' Type: 12 Rank: 0
+Name: 'Ramp:dataModeEnum' Type: 12 Rank: 0
+Name: 'Spike11:dataModeEnum' Type: 12 Rank: 0
+Name: 'Spike12:dataModeEnum' Type: 12 Rank: 0
+Name: 'Spike16:dataModeEnum' Type: 12 Rank: 0
+Name: 'expert.enable' Type: 2 Rank: 0
+Name: 'expert.fex_gate' Type: 2 Rank: 0
+Name: 'expert.fex_prescale' Type: 2 Rank: 0
+Name: 'expert.fex_start' Type: 2 Rank: 0
+Name: 'expert.fex_xpost' Type: 2 Rank: 0
+Name: 'expert.fex_xpre' Type: 2 Rank: 0
+Name: 'expert.fex_ymax' Type: 2 Rank: 0
+Name: 'expert.fex_ymin' Type: 2 Rank: 0
+Name: 'expert.fs_range_vpp' Type: 2 Rank: 0
+Name: 'expert.full_event' Type: 2 Rank: 0
+Name: 'expert.full_size' Type: 2 Rank: 0
+Name: 'expert.raw_gate' Type: 2 Rank: 0
+Name: 'expert.raw_prescale' Type: 2 Rank: 0
+Name: 'expert.raw_start' Type: 2 Rank: 0
+Name: 'expert.readoutGroup' Type: 2 Rank: 0
+Name: 'expert.sync_ph_even' Type: 2 Rank: 0
+Name: 'expert.sync_ph_odd' Type: 2 Rank: 0
+Name: 'expert.test_pattern:dataModeEnum' Type: 11 Rank: 0
+Name: 'expert.trig_shift' Type: 2 Rank: 0
+Name: 'firmwareBuild' Type: 10 Rank: 1
+Name: 'firmwareVersion' Type: 2 Rank: 0
+Name: 'help' Type: 10 Rank: 1
+Name: 'user.fex.gate_ns' Type: 2 Rank: 0
+Name: 'user.fex.prescale' Type: 2 Rank: 0
+Name: 'user.fex.start_ns' Type: 2 Rank: 0
+Name: 'user.fex.xpost' Type: 2 Rank: 0
+Name: 'user.fex.xpre' Type: 2 Rank: 0
+Name: 'user.fex.ymax' Type: 2 Rank: 0
+Name: 'user.fex.ymin' Type: 2 Rank: 0
+Name: 'user.raw.gate_ns' Type: 2 Rank: 0
+Name: 'user.raw.prescale' Type: 2 Rank: 0
+Name: 'user.raw.start_ns' Type: 2 Rank: 0
+Found 37 names
+0: 'Data:dataModeEnum' rank 0, type 12
+'Data:dataModeEnum': -1
+1: 'Ramp:dataModeEnum' rank 0, type 12
+'Ramp:dataModeEnum': 0
+2: 'Spike11:dataModeEnum' rank 0, type 12
+'Spike11:dataModeEnum': 1
+3: 'Spike12:dataModeEnum' rank 0, type 12
+'Spike12:dataModeEnum': 3
+4: 'Spike16:dataModeEnum' rank 0, type 12
+'Spike16:dataModeEnum': 5
+5: 'expert.enable' rank 0, type 2
+'expert.enable': 1
+6: 'expert.fex_gate' rank 0, type 2
+'expert.fex_gate': 29
+7: 'expert.fex_prescale' rank 0, type 2
+'expert.fex_prescale': 0
+8: 'expert.fex_start' rank 0, type 2
+'expert.fex_start': 857
+9: 'expert.fex_xpost' rank 0, type 2
+'expert.fex_xpost': 2
+10: 'expert.fex_xpre' rank 0, type 2
+'expert.fex_xpre': 2
+11: 'expert.fex_ymax' rank 0, type 2
+'expert.fex_ymax': 2080
+12: 'expert.fex_ymin' rank 0, type 2
+'expert.fex_ymin': 2000
+13: 'expert.fs_range_vpp' rank 0, type 2
+'expert.fs_range_vpp': 65535
+14: 'expert.full_event' rank 0, type 2
+'expert.full_event': 6
+15: 'expert.full_size' rank 0, type 2
+'expert.full_size': 3072
+16: 'expert.raw_gate' rank 0, type 2
+'expert.raw_gate': 1485
+17: 'expert.raw_prescale' rank 0, type 2
+'expert.raw_prescale': 1
+18: 'expert.raw_start' rank 0, type 2
+'expert.raw_start': 1451
+19: 'expert.readoutGroup' rank 0, type 2
+'expert.readoutGroup': 0
+20: 'expert.sync_ph_even' rank 0, type 2
+'expert.sync_ph_even': 0
+21: 'expert.sync_ph_odd' rank 0, type 2
+'expert.sync_ph_odd': 0
+22: 'expert.test_pattern:dataModeEnum' rank 0, type 11
+'expert.test_pattern:dataModeEnum': -1
+23: 'expert.trig_shift' rank 0, type 2
+'expert.trig_shift': 0
+24: 'firmwareBuild' rank 1, type 10
+'firmwareBuild': "hsd_6400m: Vivado v2019.1, rdsrv300 (x86_64), Built Fri 31 Jul 2020 03:05:55 PM PDT by weaver"
+25: 'firmwareVersion' rank 0, type 2
+'firmwareVersion': 11
+26: 'help' rank 1, type 10
+'help': "-- user fields --
+user.raw.start_ns : nanoseconds from fiducial to sampling start
+user.raw.gate_ns  : nanoseconds from sampling start to end
+user.raw.prescale : event downsampling; record 1-out-of-N
+user.fex.start_ns : nanoseconds from fiducial to sparsify start
+user.fex.gate_ns  : nanoseconds from sparsify start to end
+user.fex.prescale : event downsampling; record 1-out-of-N
+user.fex.ymin     : minimum ADC value to sparsify
+user.fex.ymax     : maximum ADC value to sparsify
+user.fex.xpre     : keep N samples leading excursion
+user.fex.xpost    : keep N samples trailing excursion"
+27: 'user.fex.gate_ns' rank 0, type 2
+'user.fex.gate_ns': 200
+28: 'user.fex.prescale' rank 0, type 2
+'user.fex.prescale': 0
+29: 'user.fex.start_ns' rank 0, type 2
+'user.fex.start_ns': 93000
+30: 'user.fex.xpost' rank 0, type 2
+'user.fex.xpost': 8
+31: 'user.fex.xpre' rank 0, type 2
+'user.fex.xpre': 8
+32: 'user.fex.ymax' rank 0, type 2
+'user.fex.ymax': 2080
+33: 'user.fex.ymin' rank 0, type 2
+'user.fex.ymin': 2000
+34: 'user.raw.gate_ns' rank 0, type 2
+'user.raw.gate_ns': 10000
+35: 'user.raw.prescale' rank 0, type 2
+'user.raw.prescale': 1
+36: 'user.raw.start_ns' rank 0, type 2
+'user.raw.start_ns': 97000
+*** DetName: hsd, Segment 12, DetType: hsd, DetId: , Alg: raw, Version: 0x020000, namesid: 0x801, Names:
+Name: 'eventHeader' Type: 2 Rank: 1
+Name: 'chan00' Type: 0 Rank: 1
+*** DetName: runinfo, Segment 0, DetType: runinfo, DetId: , Alg: runinfo, Version: 0x000001, namesid: 0x8ff, Names:
+Name: 'expt' Type: 10 Rank: 1
+Name: 'runnum' Type: 2 Rank: 0
+*** DetName: smdinfo, Segment 0, DetType: offset, DetId: , Alg: offsetAlg, Version: 0x000000, namesid: 0x8fe, Names:
+Name: 'intOffset' Type: 3 Rank: 0
+Name: 'intDgramSize' Type: 3 Rank: 0
+event 2,    BeginRun transition: time 987684502.696268935, env 0x04020001, payloadSize 72 extent 84
+Found 2 names
+0: 'expt' rank 1, type 10
+'expt': "tmolv9418"
+1: 'runnum' rank 0, type 2
+'runnum': 175
+event 3,   BeginStep transition: time 987684503.549205640, env 0x06040001, payloadSize 0 extent 12
+event 4,      Enable transition: time 987684503.554842489, env 0x08060001, payloadSize 0 extent 12
+event 5,    L1Accept transition: time 987684503.563098059, env 0x0c090001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 25696
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 118924
+event 6,    L1Accept transition: time 987684503.571486670, env 0x0c0b0001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 144620
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 118924
+event 7,    L1Accept transition: time 987684503.579875281, env 0x0c0d0001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 263544
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 118924
+event 8,    L1Accept transition: time 987684503.588132820, env 0x0c0f0001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 382468
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 118924
+event 9,    L1Accept transition: time 987684503.596521431, env 0x0c110001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 501392
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 118924
+event 10,    L1Accept transition: time 987684503.604778970, env 0x0c130001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 620316
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 118924

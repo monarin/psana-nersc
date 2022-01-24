@@ -17,8 +17,8 @@ print(f'DONE IMPORT AT: {time.time()} RANK {rank} PID={os.getpid()} on HOST  {MP
 
 
 #import logging
-#logging.basicConfig(filename='/tmp/test_psana2_perf.log', filemode='w')
-#logger = logging.getLogger('psana.psexp.node')
+#logging.basicConfig(filename='test_psana2_perf.log', filemode='w')
+#logger = logging.getLogger('psana.psexp.event_manager')
 #logger.setLevel(logging.DEBUG)
 #ch = logging.StreamHandler()
 #ch.setLevel(logging.DEBUG)
@@ -33,40 +33,46 @@ def filter_fn(evt):
 
 st = MPI.Wtime()
 
-#xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/"
-#xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M16n/"
-#xtc_dir = "/cds/home/m/monarin/lcls2/psana/psana/tests/.tmp"
-xtc_dir = "/cds/data/drpsrcf/users/monarin/tmoc00118/xtc"
-batch_size = 10000
+#xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M4n"
+xtc_dir = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc32n'
+batch_size = 1000
+monitor = False
 #ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
-ds = DataSource(exp='tmoc00118', run=463, batch_size=batch_size, max_events=max_events, monitor=False, dir=xtc_dir)
+ds = DataSource(exp='tmolv9418', run=175, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
 sendbuf = np.zeros(1, dtype='i')
 recvbuf = None
 if rank == 0:
     recvbuf = np.empty([size, 1], dtype='i')
 
+#import inspect
 def bd_task(det, evt):
     hsd_num   = 10
     chan_num  = 0
     peaks     = det.raw.peaks(evt)
-    mypeak = peaks[hsd_num][chan_num][1][0] # randonly do someting
-    return np.sum(mypeak)
+    #print(inspect.getfile(det.raw.__class__))
+    #mypeak = peaks[hsd_num][chan_num][1][0] # randonly do someting
+    #return np.sum(mypeak)
 
 st_batch = time.time()
 for run in ds.runs():
-    det = run.Detector('hsd')
+    #det = run.Detector('hsd')
     mysum = 0.0
     for i, evt in enumerate(run.events()):
         if i == 0:
-            print(f'RANK:{rank} GOT FIRST EVT AT {time.time()} ON HOST {MPI.Get_processor_name()}', flush=True)
+            print(f'RANK:{rank} GOT FIRST EVT AT {time.time()} ON HOST {MPI.Get_processor_name()} n_dgrams:{len(evt._dgrams)}', flush=True)
         
         # analysis code
-        mysum += bd_task(det, evt)
+        #mysum += bd_task(det, evt)
+        #bd_task(det, evt)
+
+        #peaks     = det.raw.peaks(evt)
+        #print(i, len(peaks[0][0][0]), len(peaks[0][0][1]))
         
         sendbuf += 1
         if i % batch_size == 0:
             en_batch = time.time()
-            print(f'RANK:{rank} processed {i} events rate:{(batch_size/(en_batch-st_batch))*1e-3:.2f}kHz mysum={mysum:.2f}', flush=True)
+            #print(f'RANK:{rank} processed {i} events rate:{(batch_size/(en_batch-st_batch))*1e-3:.2f}kHz mysum={mysum:.2f}', flush=True)
+            print((batch_size/(en_batch-st_batch))*1e-3, flush=True)
             st_batch = time.time()
 
 

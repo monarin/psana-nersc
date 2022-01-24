@@ -1,0 +1,886 @@
+event 1,   Configure transition: time 987603706.075514632, env 0x02020001, payloadSize 233772 extent 233784
+*** DetName: epics, Segment 0, DetType: epics, DetId: detnum1234, Alg: raw, Version: 0x020000, namesid: 0x900, Names:
+Name: 'StaleFlags' Type: 2 Rank: 1
+Name: 'Keithley_Sum' Type: 9 Rank: 0
+Name: 'IM2K4_XrayPower' Type: 9 Rank: 0
+Name: 'IM3K4_XrayPower' Type: 9 Rank: 0
+Name: 'IM4K4_XrayPower' Type: 9 Rank: 0
+Name: 'IM5K4_XrayPower' Type: 9 Rank: 0
+Name: 'MR1K4_xup' Type: 9 Rank: 0
+Name: 'MR1K4_yup' Type: 9 Rank: 0
+Name: 'MR1K4_pitch' Type: 9 Rank: 0
+Name: 'MR2K4_x' Type: 9 Rank: 0
+Name: 'MR2K4_y' Type: 9 Rank: 0
+Name: 'MR2K4_pitch' Type: 9 Rank: 0
+Name: 'MR2K4_bender_us' Type: 9 Rank: 0
+Name: 'MR2K4_bender_ds' Type: 9 Rank: 0
+Name: 'MR3K4_x' Type: 9 Rank: 0
+Name: 'MR3K4_y' Type: 9 Rank: 0
+Name: 'MR3K4_pitch' Type: 9 Rank: 0
+Name: 'MR3K4_bender_us' Type: 9 Rank: 0
+Name: 'MR3K4_bender_ds' Type: 9 Rank: 0
+Name: 'PF1K4_y' Type: 9 Rank: 0
+Name: 'PF1K4_z' Type: 9 Rank: 0
+Name: 'AT1K0_gas_photE' Type: 9 Rank: 0
+Name: 'AT1K0_actual_transm' Type: 9 Rank: 0
+Name: 'scan_var_A0327' Type: 9 Rank: 0
+Name: 'scan_var_A0326' Type: 9 Rank: 0
+Name: 'scan_var_A0325' Type: 9 Rank: 0
+Name: 'sxrss_delay' Type: 9 Rank: 0
+Name: 'sxrss_bend_bact' Type: 9 Rank: 0
+Name: 'sxrss_bend_bdes' Type: 9 Rank: 0
+Name: 'sxrss_bend_bctrl' Type: 9 Rank: 0
+Name: 'ebeam_energy_des' Type: 9 Rank: 0
+Name: 'ebeam_energy_act' Type: 9 Rank: 0
+Name: 'lamp_jet_delay' Type: 9 Rank: 0
+Name: 'UND_26_gap_act' Type: 9 Rank: 0
+Name: 'UND_26_gap_des' Type: 9 Rank: 0
+Name: 'UND_26_phase_integral' Type: 9 Rank: 0
+Name: 'UND_26_k' Type: 9 Rank: 0
+Name: 'UND_26_dphi' Type: 9 Rank: 0
+Name: 'UND_27_gap_act' Type: 9 Rank: 0
+Name: 'UND_27_gap_des' Type: 9 Rank: 0
+Name: 'UND_27_phase_integral' Type: 9 Rank: 0
+Name: 'UND_27_k' Type: 9 Rank: 0
+Name: 'UND_27_dphi' Type: 9 Rank: 0
+Name: 'UND_28_gap_act' Type: 9 Rank: 0
+Name: 'UND_28_gap_des' Type: 9 Rank: 0
+Name: 'UND_28_phase_integral' Type: 9 Rank: 0
+Name: 'UND_28_k' Type: 9 Rank: 0
+Name: 'UND_28_dphi' Type: 9 Rank: 0
+Name: 'UND_29_gap_act' Type: 9 Rank: 0
+Name: 'UND_29_gap_des' Type: 9 Rank: 0
+Name: 'UND_29_phase_integral' Type: 9 Rank: 0
+Name: 'UND_29_k' Type: 9 Rank: 0
+Name: 'UND_29_dphi' Type: 9 Rank: 0
+Name: 'UND_30_gap_act' Type: 9 Rank: 0
+Name: 'UND_30_gap_des' Type: 9 Rank: 0
+Name: 'UND_30_phase_integral' Type: 9 Rank: 0
+Name: 'UND_30_k' Type: 9 Rank: 0
+Name: 'UND_30_dphi' Type: 9 Rank: 0
+Name: 'UND_31_gap_act' Type: 9 Rank: 0
+Name: 'UND_31_gap_des' Type: 9 Rank: 0
+Name: 'UND_31_phase_integral' Type: 9 Rank: 0
+Name: 'UND_31_k' Type: 9 Rank: 0
+Name: 'UND_31_dphi' Type: 9 Rank: 0
+Name: 'UND_32_gap_act' Type: 9 Rank: 0
+Name: 'UND_32_gap_des' Type: 9 Rank: 0
+Name: 'UND_32_phase_integral' Type: 9 Rank: 0
+Name: 'UND_32_k' Type: 9 Rank: 0
+Name: 'UND_32_dphi' Type: 9 Rank: 0
+Name: 'UND_33_gap_act' Type: 9 Rank: 0
+Name: 'UND_33_gap_des' Type: 9 Rank: 0
+Name: 'UND_33_phase_integral' Type: 9 Rank: 0
+Name: 'UND_33_k' Type: 9 Rank: 0
+Name: 'UND_33_dphi' Type: 9 Rank: 0
+Name: 'UND_34_gap_act' Type: 9 Rank: 0
+Name: 'UND_34_gap_des' Type: 9 Rank: 0
+Name: 'UND_34_phase_integral' Type: 9 Rank: 0
+Name: 'UND_34_k' Type: 9 Rank: 0
+Name: 'UND_34_dphi' Type: 9 Rank: 0
+Name: 'UND_36_gap_act' Type: 9 Rank: 0
+Name: 'UND_36_gap_des' Type: 9 Rank: 0
+Name: 'UND_36_phase_integral' Type: 9 Rank: 0
+Name: 'UND_36_k' Type: 9 Rank: 0
+Name: 'UND_36_dphi' Type: 9 Rank: 0
+Name: 'UND_37_gap_act' Type: 9 Rank: 0
+Name: 'UND_37_gap_des' Type: 9 Rank: 0
+Name: 'UND_37_phase_integral' Type: 9 Rank: 0
+Name: 'UND_37_k' Type: 9 Rank: 0
+Name: 'UND_37_dphi' Type: 9 Rank: 0
+Name: 'UND_38_gap_act' Type: 9 Rank: 0
+Name: 'UND_38_gap_des' Type: 9 Rank: 0
+Name: 'UND_38_phase_integral' Type: 9 Rank: 0
+Name: 'UND_38_k' Type: 9 Rank: 0
+Name: 'UND_38_dphi' Type: 9 Rank: 0
+Name: 'UND_39_gap_act' Type: 9 Rank: 0
+Name: 'UND_39_gap_des' Type: 9 Rank: 0
+Name: 'UND_39_phase_integral' Type: 9 Rank: 0
+Name: 'UND_39_k' Type: 9 Rank: 0
+Name: 'UND_39_dphi' Type: 9 Rank: 0
+Name: 'UND_40_gap_act' Type: 9 Rank: 0
+Name: 'UND_40_gap_des' Type: 9 Rank: 0
+Name: 'UND_40_phase_integral' Type: 9 Rank: 0
+Name: 'UND_40_k' Type: 9 Rank: 0
+Name: 'UND_40_dphi' Type: 9 Rank: 0
+Name: 'UND_41_gap_act' Type: 9 Rank: 0
+Name: 'UND_41_gap_des' Type: 9 Rank: 0
+Name: 'UND_41_phase_integral' Type: 9 Rank: 0
+Name: 'UND_41_k' Type: 9 Rank: 0
+Name: 'UND_41_dphi' Type: 9 Rank: 0
+Name: 'UND_42_gap_act' Type: 9 Rank: 0
+Name: 'UND_42_gap_des' Type: 9 Rank: 0
+Name: 'UND_42_phase_integral' Type: 9 Rank: 0
+Name: 'UND_42_k' Type: 9 Rank: 0
+Name: 'UND_42_dphi' Type: 9 Rank: 0
+Name: 'UND_43_gap_act' Type: 9 Rank: 0
+Name: 'UND_43_gap_des' Type: 9 Rank: 0
+Name: 'UND_43_phase_integral' Type: 9 Rank: 0
+Name: 'UND_43_k' Type: 9 Rank: 0
+Name: 'UND_43_dphi' Type: 9 Rank: 0
+Name: 'UND_44_gap_act' Type: 9 Rank: 0
+Name: 'UND_44_gap_des' Type: 9 Rank: 0
+Name: 'UND_44_phase_integral' Type: 9 Rank: 0
+Name: 'UND_44_k' Type: 9 Rank: 0
+Name: 'UND_44_dphi' Type: 9 Rank: 0
+Name: 'UND_45_gap_act' Type: 9 Rank: 0
+Name: 'UND_45_gap_des' Type: 9 Rank: 0
+Name: 'UND_45_phase_integral' Type: 9 Rank: 0
+Name: 'UND_45_k' Type: 9 Rank: 0
+Name: 'UND_45_dphi' Type: 9 Rank: 0
+Name: 'UND_46_gap_act' Type: 9 Rank: 0
+Name: 'UND_46_gap_des' Type: 9 Rank: 0
+Name: 'UND_46_phase_integral' Type: 9 Rank: 0
+Name: 'UND_46_k' Type: 9 Rank: 0
+Name: 'UND_46_dphi' Type: 9 Rank: 0
+Name: 'y_corr_und_35' Type: 9 Rank: 0
+Name: 'y_corr_und_36' Type: 9 Rank: 0
+Name: 'y_corr_und_37' Type: 9 Rank: 0
+Name: 'y_corr_und_38' Type: 9 Rank: 0
+Name: 'y_corr_und_39' Type: 9 Rank: 0
+Name: 'y_corr_und_40' Type: 9 Rank: 0
+Name: 'y_corr_und_41' Type: 9 Rank: 0
+Name: 'y_corr_und_42' Type: 9 Rank: 0
+Name: 'y_corr_und_43' Type: 9 Rank: 0
+Name: 'y_corr_und_44' Type: 9 Rank: 0
+Name: 'y_corr_und_45' Type: 9 Rank: 0
+Name: 'y_corr_und_46' Type: 9 Rank: 0
+Name: 'm0c0_vset' Type: 9 Rank: 0
+Name: 'm0c1_vset' Type: 9 Rank: 0
+Name: 'm0c2_vset' Type: 9 Rank: 0
+Name: 'm0c3_vset' Type: 9 Rank: 0
+Name: 'm0c4_vset' Type: 9 Rank: 0
+Name: 'm0c5_vset' Type: 9 Rank: 0
+Name: 'm0c6_vset' Type: 9 Rank: 0
+Name: 'm0c7_vset' Type: 9 Rank: 0
+Name: 'm2c0_vset' Type: 9 Rank: 0
+Name: 'm2c1_vset' Type: 9 Rank: 0
+Name: 'm2c2_vset' Type: 9 Rank: 0
+Name: 'm2c3_vset' Type: 9 Rank: 0
+Name: 'm2c4_vset' Type: 9 Rank: 0
+Name: 'm2c5_vset' Type: 9 Rank: 0
+Name: 'm2c6_vset' Type: 9 Rank: 0
+Name: 'm2c7_vset' Type: 9 Rank: 0
+Name: 'm3c0_vset' Type: 9 Rank: 0
+Name: 'm3c1_vset' Type: 9 Rank: 0
+Name: 'm3c2_vset' Type: 9 Rank: 0
+Name: 'm3c3_vset' Type: 9 Rank: 0
+Name: 'm4c0_vset' Type: 9 Rank: 0
+Name: 'm4c1_vset' Type: 9 Rank: 0
+Name: 'm4c2_vset' Type: 9 Rank: 0
+Name: 'm5c0_vset' Type: 9 Rank: 0
+Name: 'm6c0_vset' Type: 9 Rank: 0
+Name: 'm6c1_vset' Type: 9 Rank: 0
+Name: 'm6c2_vset' Type: 9 Rank: 0
+Name: 'm6c3_vset' Type: 9 Rank: 0
+Name: 'm7c0_vset' Type: 9 Rank: 0
+Name: 'm7c1_vset' Type: 9 Rank: 0
+Name: 'mbes_mcp_mesh' Type: 9 Rank: 0
+Name: 'mbes_coil_bias' Type: 9 Rank: 0
+Name: 'mbes_mcp_anode' Type: 9 Rank: 0
+Name: 'evr_ch0_ec' Type: 6 Rank: 0
+Name: 'evr_ch0_delay' Type: 9 Rank: 0
+Name: 'las_fs14_controller_time' Type: 9 Rank: 0
+Name: 'las_fs14_phase_shifter' Type: 9 Rank: 0
+Name: 'las_fs14_target_time' Type: 9 Rank: 0
+Name: 'las_fs14_target_time_dial' Type: 9 Rank: 0
+Name: 'las_ejx_MP2_lens_X' Type: 9 Rank: 0
+Name: 'las_ejx_MP2_lens_Y' Type: 9 Rank: 0
+Name: 'las_inj_MP1_att1' Type: 9 Rank: 0
+Name: 'las_inj_stage' Type: 9 Rank: 0
+Name: 'las_atm_dly' Type: 9 Rank: 0
+Name: 'las_int_dly' Type: 9 Rank: 0
+Name: 'main_chamber_vac' Type: 9 Rank: 0
+Name: 'gas_needle_y' Type: 9 Rank: 0
+Name: 'gas_needle_x' Type: 9 Rank: 0
+Name: 'gas_needle_z' Type: 9 Rank: 0
+Name: 'gass_needle_theta' Type: 9 Rank: 0
+Name: 'magnet_x' Type: 9 Rank: 0
+Name: 'magnet_y' Type: 9 Rank: 0
+Name: 'magnet_z' Type: 9 Rank: 0
+Name: 'vls_focus_mirror' Type: 9 Rank: 0
+Name: 'vls_camera_pitch' Type: 9 Rank: 0
+Name: 'vls_grating_pitch' Type: 9 Rank: 0
+Name: 'vls_slits_disp_center' Type: 9 Rank: 0
+Name: 'vls_slits_disp_gap' Type: 9 Rank: 0
+Name: 'vls_slits_nondisp_center' Type: 9 Rank: 0
+Name: 'vls_slits_nondisp_gap' Type: 9 Rank: 0
+Name: 'atm_x' Type: 9 Rank: 0
+Name: 'atm_y' Type: 9 Rank: 0
+Name: 'gas_att_transmission' Type: 9 Rank: 0
+*** DetName: epicsinfo, Segment 0, DetType: epicsinfo, DetId: detnum1234, Alg: epicsinfo, Version: 0x010000, namesid: 0x901, Names:
+Name: 'keys' Type: 10 Rank: 1
+Name: 'Keithley_Sum' Type: 10 Rank: 1
+Name: 'IM2K4_XrayPower' Type: 10 Rank: 1
+Name: 'IM3K4_XrayPower' Type: 10 Rank: 1
+Name: 'IM4K4_XrayPower' Type: 10 Rank: 1
+Name: 'IM5K4_XrayPower' Type: 10 Rank: 1
+Name: 'MR1K4_xup' Type: 10 Rank: 1
+Name: 'MR1K4_yup' Type: 10 Rank: 1
+Name: 'MR1K4_pitch' Type: 10 Rank: 1
+Name: 'MR2K4_x' Type: 10 Rank: 1
+Name: 'MR2K4_y' Type: 10 Rank: 1
+Name: 'MR2K4_pitch' Type: 10 Rank: 1
+Name: 'MR2K4_bender_us' Type: 10 Rank: 1
+Name: 'MR2K4_bender_ds' Type: 10 Rank: 1
+Name: 'MR3K4_x' Type: 10 Rank: 1
+Name: 'MR3K4_y' Type: 10 Rank: 1
+Name: 'MR3K4_pitch' Type: 10 Rank: 1
+Name: 'MR3K4_bender_us' Type: 10 Rank: 1
+Name: 'MR3K4_bender_ds' Type: 10 Rank: 1
+Name: 'PF1K4_y' Type: 10 Rank: 1
+Name: 'PF1K4_z' Type: 10 Rank: 1
+Name: 'AT1K0_gas_photE' Type: 10 Rank: 1
+Name: 'AT1K0_actual_transm' Type: 10 Rank: 1
+Name: 'scan_var_A0327' Type: 10 Rank: 1
+Name: 'scan_var_A0326' Type: 10 Rank: 1
+Name: 'scan_var_A0325' Type: 10 Rank: 1
+Name: 'sxrss_delay' Type: 10 Rank: 1
+Name: 'sxrss_bend_bact' Type: 10 Rank: 1
+Name: 'sxrss_bend_bdes' Type: 10 Rank: 1
+Name: 'sxrss_bend_bctrl' Type: 10 Rank: 1
+Name: 'ebeam_energy_des' Type: 10 Rank: 1
+Name: 'ebeam_energy_act' Type: 10 Rank: 1
+Name: 'lamp_jet_delay' Type: 10 Rank: 1
+Name: 'UND_26_gap_act' Type: 10 Rank: 1
+Name: 'UND_26_gap_des' Type: 10 Rank: 1
+Name: 'UND_26_phase_integral' Type: 10 Rank: 1
+Name: 'UND_26_k' Type: 10 Rank: 1
+Name: 'UND_26_dphi' Type: 10 Rank: 1
+Name: 'UND_27_gap_act' Type: 10 Rank: 1
+Name: 'UND_27_gap_des' Type: 10 Rank: 1
+Name: 'UND_27_phase_integral' Type: 10 Rank: 1
+Name: 'UND_27_k' Type: 10 Rank: 1
+Name: 'UND_27_dphi' Type: 10 Rank: 1
+Name: 'UND_28_gap_act' Type: 10 Rank: 1
+Name: 'UND_28_gap_des' Type: 10 Rank: 1
+Name: 'UND_28_phase_integral' Type: 10 Rank: 1
+Name: 'UND_28_k' Type: 10 Rank: 1
+Name: 'UND_28_dphi' Type: 10 Rank: 1
+Name: 'UND_29_gap_act' Type: 10 Rank: 1
+Name: 'UND_29_gap_des' Type: 10 Rank: 1
+Name: 'UND_29_phase_integral' Type: 10 Rank: 1
+Name: 'UND_29_k' Type: 10 Rank: 1
+Name: 'UND_29_dphi' Type: 10 Rank: 1
+Name: 'UND_30_gap_act' Type: 10 Rank: 1
+Name: 'UND_30_gap_des' Type: 10 Rank: 1
+Name: 'UND_30_phase_integral' Type: 10 Rank: 1
+Name: 'UND_30_k' Type: 10 Rank: 1
+Name: 'UND_30_dphi' Type: 10 Rank: 1
+Name: 'UND_31_gap_act' Type: 10 Rank: 1
+Name: 'UND_31_gap_des' Type: 10 Rank: 1
+Name: 'UND_31_phase_integral' Type: 10 Rank: 1
+Name: 'UND_31_k' Type: 10 Rank: 1
+Name: 'UND_31_dphi' Type: 10 Rank: 1
+Name: 'UND_32_gap_act' Type: 10 Rank: 1
+Name: 'UND_32_gap_des' Type: 10 Rank: 1
+Name: 'UND_32_phase_integral' Type: 10 Rank: 1
+Name: 'UND_32_k' Type: 10 Rank: 1
+Name: 'UND_32_dphi' Type: 10 Rank: 1
+Name: 'UND_33_gap_act' Type: 10 Rank: 1
+Name: 'UND_33_gap_des' Type: 10 Rank: 1
+Name: 'UND_33_phase_integral' Type: 10 Rank: 1
+Name: 'UND_33_k' Type: 10 Rank: 1
+Name: 'UND_33_dphi' Type: 10 Rank: 1
+Name: 'UND_34_gap_act' Type: 10 Rank: 1
+Name: 'UND_34_gap_des' Type: 10 Rank: 1
+Name: 'UND_34_phase_integral' Type: 10 Rank: 1
+Name: 'UND_34_k' Type: 10 Rank: 1
+Name: 'UND_34_dphi' Type: 10 Rank: 1
+Name: 'UND_36_gap_act' Type: 10 Rank: 1
+Name: 'UND_36_gap_des' Type: 10 Rank: 1
+Name: 'UND_36_phase_integral' Type: 10 Rank: 1
+Name: 'UND_36_k' Type: 10 Rank: 1
+Name: 'UND_36_dphi' Type: 10 Rank: 1
+Name: 'UND_37_gap_act' Type: 10 Rank: 1
+Name: 'UND_37_gap_des' Type: 10 Rank: 1
+Name: 'UND_37_phase_integral' Type: 10 Rank: 1
+Name: 'UND_37_k' Type: 10 Rank: 1
+Name: 'UND_37_dphi' Type: 10 Rank: 1
+Name: 'UND_38_gap_act' Type: 10 Rank: 1
+Name: 'UND_38_gap_des' Type: 10 Rank: 1
+Name: 'UND_38_phase_integral' Type: 10 Rank: 1
+Name: 'UND_38_k' Type: 10 Rank: 1
+Name: 'UND_38_dphi' Type: 10 Rank: 1
+Name: 'UND_39_gap_act' Type: 10 Rank: 1
+Name: 'UND_39_gap_des' Type: 10 Rank: 1
+Name: 'UND_39_phase_integral' Type: 10 Rank: 1
+Name: 'UND_39_k' Type: 10 Rank: 1
+Name: 'UND_39_dphi' Type: 10 Rank: 1
+Name: 'UND_40_gap_act' Type: 10 Rank: 1
+Name: 'UND_40_gap_des' Type: 10 Rank: 1
+Name: 'UND_40_phase_integral' Type: 10 Rank: 1
+Name: 'UND_40_k' Type: 10 Rank: 1
+Name: 'UND_40_dphi' Type: 10 Rank: 1
+Name: 'UND_41_gap_act' Type: 10 Rank: 1
+Name: 'UND_41_gap_des' Type: 10 Rank: 1
+Name: 'UND_41_phase_integral' Type: 10 Rank: 1
+Name: 'UND_41_k' Type: 10 Rank: 1
+Name: 'UND_41_dphi' Type: 10 Rank: 1
+Name: 'UND_42_gap_act' Type: 10 Rank: 1
+Name: 'UND_42_gap_des' Type: 10 Rank: 1
+Name: 'UND_42_phase_integral' Type: 10 Rank: 1
+Name: 'UND_42_k' Type: 10 Rank: 1
+Name: 'UND_42_dphi' Type: 10 Rank: 1
+Name: 'UND_43_gap_act' Type: 10 Rank: 1
+Name: 'UND_43_gap_des' Type: 10 Rank: 1
+Name: 'UND_43_phase_integral' Type: 10 Rank: 1
+Name: 'UND_43_k' Type: 10 Rank: 1
+Name: 'UND_43_dphi' Type: 10 Rank: 1
+Name: 'UND_44_gap_act' Type: 10 Rank: 1
+Name: 'UND_44_gap_des' Type: 10 Rank: 1
+Name: 'UND_44_phase_integral' Type: 10 Rank: 1
+Name: 'UND_44_k' Type: 10 Rank: 1
+Name: 'UND_44_dphi' Type: 10 Rank: 1
+Name: 'UND_45_gap_act' Type: 10 Rank: 1
+Name: 'UND_45_gap_des' Type: 10 Rank: 1
+Name: 'UND_45_phase_integral' Type: 10 Rank: 1
+Name: 'UND_45_k' Type: 10 Rank: 1
+Name: 'UND_45_dphi' Type: 10 Rank: 1
+Name: 'UND_46_gap_act' Type: 10 Rank: 1
+Name: 'UND_46_gap_des' Type: 10 Rank: 1
+Name: 'UND_46_phase_integral' Type: 10 Rank: 1
+Name: 'UND_46_k' Type: 10 Rank: 1
+Name: 'UND_46_dphi' Type: 10 Rank: 1
+Name: 'y_corr_und_35' Type: 10 Rank: 1
+Name: 'y_corr_und_36' Type: 10 Rank: 1
+Name: 'y_corr_und_37' Type: 10 Rank: 1
+Name: 'y_corr_und_38' Type: 10 Rank: 1
+Name: 'y_corr_und_39' Type: 10 Rank: 1
+Name: 'y_corr_und_40' Type: 10 Rank: 1
+Name: 'y_corr_und_41' Type: 10 Rank: 1
+Name: 'y_corr_und_42' Type: 10 Rank: 1
+Name: 'y_corr_und_43' Type: 10 Rank: 1
+Name: 'y_corr_und_44' Type: 10 Rank: 1
+Name: 'y_corr_und_45' Type: 10 Rank: 1
+Name: 'y_corr_und_46' Type: 10 Rank: 1
+Name: 'm0c0_vset' Type: 10 Rank: 1
+Name: 'm0c1_vset' Type: 10 Rank: 1
+Name: 'm0c2_vset' Type: 10 Rank: 1
+Name: 'm0c3_vset' Type: 10 Rank: 1
+Name: 'm0c4_vset' Type: 10 Rank: 1
+Name: 'm0c5_vset' Type: 10 Rank: 1
+Name: 'm0c6_vset' Type: 10 Rank: 1
+Name: 'm0c7_vset' Type: 10 Rank: 1
+Name: 'm2c0_vset' Type: 10 Rank: 1
+Name: 'm2c1_vset' Type: 10 Rank: 1
+Name: 'm2c2_vset' Type: 10 Rank: 1
+Name: 'm2c3_vset' Type: 10 Rank: 1
+Name: 'm2c4_vset' Type: 10 Rank: 1
+Name: 'm2c5_vset' Type: 10 Rank: 1
+Name: 'm2c6_vset' Type: 10 Rank: 1
+Name: 'm2c7_vset' Type: 10 Rank: 1
+Name: 'm3c0_vset' Type: 10 Rank: 1
+Name: 'm3c1_vset' Type: 10 Rank: 1
+Name: 'm3c2_vset' Type: 10 Rank: 1
+Name: 'm3c3_vset' Type: 10 Rank: 1
+Name: 'm4c0_vset' Type: 10 Rank: 1
+Name: 'm4c1_vset' Type: 10 Rank: 1
+Name: 'm4c2_vset' Type: 10 Rank: 1
+Name: 'm5c0_vset' Type: 10 Rank: 1
+Name: 'm6c0_vset' Type: 10 Rank: 1
+Name: 'm6c1_vset' Type: 10 Rank: 1
+Name: 'm6c2_vset' Type: 10 Rank: 1
+Name: 'm6c3_vset' Type: 10 Rank: 1
+Name: 'm7c0_vset' Type: 10 Rank: 1
+Name: 'm7c1_vset' Type: 10 Rank: 1
+Name: 'mbes_mcp_mesh' Type: 10 Rank: 1
+Name: 'mbes_coil_bias' Type: 10 Rank: 1
+Name: 'mbes_mcp_anode' Type: 10 Rank: 1
+Name: 'evr_ch0_ec' Type: 10 Rank: 1
+Name: 'evr_ch0_delay' Type: 10 Rank: 1
+Name: 'las_fs14_controller_time' Type: 10 Rank: 1
+Name: 'las_fs14_phase_shifter' Type: 10 Rank: 1
+Name: 'las_fs14_target_time' Type: 10 Rank: 1
+Name: 'las_fs14_target_time_dial' Type: 10 Rank: 1
+Name: 'las_ejx_MP2_lens_X' Type: 10 Rank: 1
+Name: 'las_ejx_MP2_lens_Y' Type: 10 Rank: 1
+Name: 'las_inj_MP1_att1' Type: 10 Rank: 1
+Name: 'las_inj_stage' Type: 10 Rank: 1
+Name: 'las_atm_dly' Type: 10 Rank: 1
+Name: 'las_int_dly' Type: 10 Rank: 1
+Name: 'main_chamber_vac' Type: 10 Rank: 1
+Name: 'gas_needle_y' Type: 10 Rank: 1
+Name: 'gas_needle_x' Type: 10 Rank: 1
+Name: 'gas_needle_z' Type: 10 Rank: 1
+Name: 'gass_needle_theta' Type: 10 Rank: 1
+Name: 'magnet_x' Type: 10 Rank: 1
+Name: 'magnet_y' Type: 10 Rank: 1
+Name: 'magnet_z' Type: 10 Rank: 1
+Name: 'vls_focus_mirror' Type: 10 Rank: 1
+Name: 'vls_camera_pitch' Type: 10 Rank: 1
+Name: 'vls_grating_pitch' Type: 10 Rank: 1
+Name: 'vls_slits_disp_center' Type: 10 Rank: 1
+Name: 'vls_slits_disp_gap' Type: 10 Rank: 1
+Name: 'vls_slits_nondisp_center' Type: 10 Rank: 1
+Name: 'vls_slits_nondisp_gap' Type: 10 Rank: 1
+Name: 'atm_x' Type: 10 Rank: 1
+Name: 'atm_y' Type: 10 Rank: 1
+Name: 'gas_att_transmission' Type: 10 Rank: 1
+Found 208 names
+0: 'keys' rank 1, type 10
+'keys': "epicsname"
+1: 'Keithley_Sum' rank 1, type 10
+'Keithley_Sum': "EM2K0:XGMD:HPS:KeithleySum"
+2: 'IM2K4_XrayPower' rank 1, type 10
+'IM2K4_XrayPower': "IM2K4:PPM:SPM:VOLT_RBV"
+3: 'IM3K4_XrayPower' rank 1, type 10
+'IM3K4_XrayPower': "IM3K4:PPM:SPM:VOLT_RBV"
+4: 'IM4K4_XrayPower' rank 1, type 10
+'IM4K4_XrayPower': "IM4K4:PPM:SPM:VOLT_RBV"
+5: 'IM5K4_XrayPower' rank 1, type 10
+'IM5K4_XrayPower': "IM5K4:PPM:SPM:VOLT_RBV"
+6: 'MR1K4_xup' rank 1, type 10
+'MR1K4_xup': "MR1K4:SOMS:MMS:XUP.RBV"
+7: 'MR1K4_yup' rank 1, type 10
+'MR1K4_yup': "MR1K4:SOMS:MMS:YUP.RBV"
+8: 'MR1K4_pitch' rank 1, type 10
+'MR1K4_pitch': "MR1K4:SOMS:MMS:PITCH.RBV"
+9: 'MR2K4_x' rank 1, type 10
+'MR2K4_x': "MR2K4:KBO:MMS:X.RBV"
+10: 'MR2K4_y' rank 1, type 10
+'MR2K4_y': "MR2K4:KBO:MMS:Y.RBV"
+11: 'MR2K4_pitch' rank 1, type 10
+'MR2K4_pitch': "MR2K4:KBO:MMS:PITCH.RBV"
+12: 'MR2K4_bender_us' rank 1, type 10
+'MR2K4_bender_us': "MR2K4:KBO:MMS:BEND:US.RBV"
+13: 'MR2K4_bender_ds' rank 1, type 10
+'MR2K4_bender_ds': "MR2K4:KBO:MMS:BEND:DS.RBV"
+14: 'MR3K4_x' rank 1, type 10
+'MR3K4_x': "MR3K4:KBO:MMS:X.RBV"
+15: 'MR3K4_y' rank 1, type 10
+'MR3K4_y': "MR3K4:KBO:MMS:Y.RBV"
+16: 'MR3K4_pitch' rank 1, type 10
+'MR3K4_pitch': "MR3K4:KBO:MMS:PITCH.RBV"
+17: 'MR3K4_bender_us' rank 1, type 10
+'MR3K4_bender_us': "MR3K4:KBO:MMS:BEND:US.RBV"
+18: 'MR3K4_bender_ds' rank 1, type 10
+'MR3K4_bender_ds': "MR3K4:KBO:MMS:BEND:DS.RBV"
+19: 'PF1K4_y' rank 1, type 10
+'PF1K4_y': "PF1K4:WFS:MMS:Y.RBV"
+20: 'PF1K4_z' rank 1, type 10
+'PF1K4_z': "PF1K4:WFS:MMS:Z.RBV"
+21: 'AT1K0_gas_photE' rank 1, type 10
+'AT1K0_gas_photE': "AT1K0:GAS:PhotonEnergy_RBV"
+22: 'AT1K0_actual_transm' rank 1, type 10
+'AT1K0_actual_transm': "AT1K0:GAS:TRANS_RBV"
+23: 'scan_var_A0327' rank 1, type 10
+'scan_var_A0327': "SIOC:SYS0:ML02:AO327"
+24: 'scan_var_A0326' rank 1, type 10
+'scan_var_A0326': "SIOC:SYS0:ML02:AO326"
+25: 'scan_var_A0325' rank 1, type 10
+'scan_var_A0325': "SIOC:SYS0:ML02:AO325"
+26: 'sxrss_delay' rank 1, type 10
+'sxrss_delay': "SIOC:SYS0:ML01:AO809"
+27: 'sxrss_bend_bact' rank 1, type 10
+'sxrss_bend_bact': "BEND:UNDS:3510:BACT"
+28: 'sxrss_bend_bdes' rank 1, type 10
+'sxrss_bend_bdes': "BEND:UNDS:3510:BDES"
+29: 'sxrss_bend_bctrl' rank 1, type 10
+'sxrss_bend_bctrl': "BEND:UNDS:3510:BCTRL"
+30: 'ebeam_energy_des' rank 1, type 10
+'ebeam_energy_des': "BEND:LTUS:525:BDES"
+31: 'ebeam_energy_act' rank 1, type 10
+'ebeam_energy_act': "BEND:LTUS:525:BACT"
+32: 'lamp_jet_delay' rank 1, type 10
+'lamp_jet_delay': "TMO:MISC:EVR:01:TRIG0:BW_TDES"
+33: 'UND_26_gap_act' rank 1, type 10
+'UND_26_gap_act': "PHAS:UNDS:2670:GapAct"
+34: 'UND_26_gap_des' rank 1, type 10
+'UND_26_gap_des': "PHAS:UNDS:2670:GapDes"
+35: 'UND_26_phase_integral' rank 1, type 10
+'UND_26_phase_integral': "PHAS:UNDS:2670:PIAct"
+36: 'UND_26_k' rank 1, type 10
+'UND_26_k': "USEG:UNDS:2650:KAct"
+37: 'UND_26_dphi' rank 1, type 10
+'UND_26_dphi': "PHAS:UNDS:2670:DPHI"
+38: 'UND_27_gap_act' rank 1, type 10
+'UND_27_gap_act': "PHAS:UNDS:2770:GapAct"
+39: 'UND_27_gap_des' rank 1, type 10
+'UND_27_gap_des': "PHAS:UNDS:2770:GapDes"
+40: 'UND_27_phase_integral' rank 1, type 10
+'UND_27_phase_integral': "PHAS:UNDS:2770:PIAct"
+41: 'UND_27_k' rank 1, type 10
+'UND_27_k': "USEG:UNDS:2750:KAct"
+42: 'UND_27_dphi' rank 1, type 10
+'UND_27_dphi': "PHAS:UNDS:2770:DPHI"
+43: 'UND_28_gap_act' rank 1, type 10
+'UND_28_gap_act': "PHAS:UNDS:2870:GapAct"
+44: 'UND_28_gap_des' rank 1, type 10
+'UND_28_gap_des': "PHAS:UNDS:2870:GapDes"
+45: 'UND_28_phase_integral' rank 1, type 10
+'UND_28_phase_integral': "PHAS:UNDS:2870:PIAct"
+46: 'UND_28_k' rank 1, type 10
+'UND_28_k': "USEG:UNDS:2850:KAct"
+47: 'UND_28_dphi' rank 1, type 10
+'UND_28_dphi': "PHAS:UNDS:2870:DPHI"
+48: 'UND_29_gap_act' rank 1, type 10
+'UND_29_gap_act': "PHAS:UNDS:2970:GapAct"
+49: 'UND_29_gap_des' rank 1, type 10
+'UND_29_gap_des': "PHAS:UNDS:2970:GapDes"
+50: 'UND_29_phase_integral' rank 1, type 10
+'UND_29_phase_integral': "PHAS:UNDS:2970:PIAct"
+51: 'UND_29_k' rank 1, type 10
+'UND_29_k': "USEG:UNDS:2950:KAct"
+52: 'UND_29_dphi' rank 1, type 10
+'UND_29_dphi': "PHAS:UNDS:2970:DPHI"
+53: 'UND_30_gap_act' rank 1, type 10
+'UND_30_gap_act': "PHAS:UNDS:3070:GapAct"
+54: 'UND_30_gap_des' rank 1, type 10
+'UND_30_gap_des': "PHAS:UNDS:3070:GapDes"
+55: 'UND_30_phase_integral' rank 1, type 10
+'UND_30_phase_integral': "PHAS:UNDS:3070:PIAct"
+56: 'UND_30_k' rank 1, type 10
+'UND_30_k': "USEG:UNDS:3050:KAct"
+57: 'UND_30_dphi' rank 1, type 10
+'UND_30_dphi': "PHAS:UNDS:3070:DPHI"
+58: 'UND_31_gap_act' rank 1, type 10
+'UND_31_gap_act': "PHAS:UNDS:3170:GapAct"
+59: 'UND_31_gap_des' rank 1, type 10
+'UND_31_gap_des': "PHAS:UNDS:3170:GapDes"
+60: 'UND_31_phase_integral' rank 1, type 10
+'UND_31_phase_integral': "PHAS:UNDS:3170:PIAct"
+61: 'UND_31_k' rank 1, type 10
+'UND_31_k': "USEG:UNDS:3150:KAct"
+62: 'UND_31_dphi' rank 1, type 10
+'UND_31_dphi': "PHAS:UNDS:3170:DPHI"
+63: 'UND_32_gap_act' rank 1, type 10
+'UND_32_gap_act': "PHAS:UNDS:3270:GapAct"
+64: 'UND_32_gap_des' rank 1, type 10
+'UND_32_gap_des': "PHAS:UNDS:3270:GapDes"
+65: 'UND_32_phase_integral' rank 1, type 10
+'UND_32_phase_integral': "PHAS:UNDS:3270:PIAct"
+66: 'UND_32_k' rank 1, type 10
+'UND_32_k': "USEG:UNDS:3250:KAct"
+67: 'UND_32_dphi' rank 1, type 10
+'UND_32_dphi': "PHAS:UNDS:3270:DPHI"
+68: 'UND_33_gap_act' rank 1, type 10
+'UND_33_gap_act': "PHAS:UNDS:3370:GapAct"
+69: 'UND_33_gap_des' rank 1, type 10
+'UND_33_gap_des': "PHAS:UNDS:3370:GapDes"
+70: 'UND_33_phase_integral' rank 1, type 10
+'UND_33_phase_integral': "PHAS:UNDS:3370:PIAct"
+71: 'UND_33_k' rank 1, type 10
+'UND_33_k': "USEG:UNDS:3350:KAct"
+72: 'UND_33_dphi' rank 1, type 10
+'UND_33_dphi': "PHAS:UNDS:3370:DPHI"
+73: 'UND_34_gap_act' rank 1, type 10
+'UND_34_gap_act': "PHAS:UNDS:3470:GapAct"
+74: 'UND_34_gap_des' rank 1, type 10
+'UND_34_gap_des': "PHAS:UNDS:3470:GapDes"
+75: 'UND_34_phase_integral' rank 1, type 10
+'UND_34_phase_integral': "PHAS:UNDS:3470:PIAct"
+76: 'UND_34_k' rank 1, type 10
+'UND_34_k': "USEG:UNDS:3450:KAct"
+77: 'UND_34_dphi' rank 1, type 10
+'UND_34_dphi': "PHAS:UNDS:3470:DPHI"
+78: 'UND_36_gap_act' rank 1, type 10
+'UND_36_gap_act': "PHAS:UNDS:3670:GapAct"
+79: 'UND_36_gap_des' rank 1, type 10
+'UND_36_gap_des': "PHAS:UNDS:3670:GapDes"
+80: 'UND_36_phase_integral' rank 1, type 10
+'UND_36_phase_integral': "PHAS:UNDS:3670:PIAct"
+81: 'UND_36_k' rank 1, type 10
+'UND_36_k': "USEG:UNDS:3650:KAct"
+82: 'UND_36_dphi' rank 1, type 10
+'UND_36_dphi': "PHAS:UNDS:3670:DPHI"
+83: 'UND_37_gap_act' rank 1, type 10
+'UND_37_gap_act': "PHAS:UNDS:3770:GapAct"
+84: 'UND_37_gap_des' rank 1, type 10
+'UND_37_gap_des': "PHAS:UNDS:3770:GapDes"
+85: 'UND_37_phase_integral' rank 1, type 10
+'UND_37_phase_integral': "PHAS:UNDS:3770:PIAct"
+86: 'UND_37_k' rank 1, type 10
+'UND_37_k': "USEG:UNDS:3750:KAct"
+87: 'UND_37_dphi' rank 1, type 10
+'UND_37_dphi': "PHAS:UNDS:3770:DPHI"
+88: 'UND_38_gap_act' rank 1, type 10
+'UND_38_gap_act': "PHAS:UNDS:3870:GapAct"
+89: 'UND_38_gap_des' rank 1, type 10
+'UND_38_gap_des': "PHAS:UNDS:3870:GapDes"
+90: 'UND_38_phase_integral' rank 1, type 10
+'UND_38_phase_integral': "PHAS:UNDS:3870:PIAct"
+91: 'UND_38_k' rank 1, type 10
+'UND_38_k': "USEG:UNDS:3850:KAct"
+92: 'UND_38_dphi' rank 1, type 10
+'UND_38_dphi': "PHAS:UNDS:3870:DPHI"
+93: 'UND_39_gap_act' rank 1, type 10
+'UND_39_gap_act': "PHAS:UNDS:3970:GapAct"
+94: 'UND_39_gap_des' rank 1, type 10
+'UND_39_gap_des': "PHAS:UNDS:3970:GapDes"
+95: 'UND_39_phase_integral' rank 1, type 10
+'UND_39_phase_integral': "PHAS:UNDS:3970:PIAct"
+96: 'UND_39_k' rank 1, type 10
+'UND_39_k': "USEG:UNDS:3950:KAct"
+97: 'UND_39_dphi' rank 1, type 10
+'UND_39_dphi': "PHAS:UNDS:3970:DPHI"
+98: 'UND_40_gap_act' rank 1, type 10
+'UND_40_gap_act': "PHAS:UNDS:4070:GapAct"
+99: 'UND_40_gap_des' rank 1, type 10
+'UND_40_gap_des': "PHAS:UNDS:4070:GapDes"
+100: 'UND_40_phase_integral' rank 1, type 10
+'UND_40_phase_integral': "PHAS:UNDS:4070:PIAct"
+101: 'UND_40_k' rank 1, type 10
+'UND_40_k': "USEG:UNDS:4050:KAct"
+102: 'UND_40_dphi' rank 1, type 10
+'UND_40_dphi': "PHAS:UNDS:4070:DPHI"
+103: 'UND_41_gap_act' rank 1, type 10
+'UND_41_gap_act': "PHAS:UNDS:4170:GapAct"
+104: 'UND_41_gap_des' rank 1, type 10
+'UND_41_gap_des': "PHAS:UNDS:4170:GapDes"
+105: 'UND_41_phase_integral' rank 1, type 10
+'UND_41_phase_integral': "PHAS:UNDS:4170:PIAct"
+106: 'UND_41_k' rank 1, type 10
+'UND_41_k': "USEG:UNDS:4150:KAct"
+107: 'UND_41_dphi' rank 1, type 10
+'UND_41_dphi': "PHAS:UNDS:4170:DPHI"
+108: 'UND_42_gap_act' rank 1, type 10
+'UND_42_gap_act': "PHAS:UNDS:4270:GapAct"
+109: 'UND_42_gap_des' rank 1, type 10
+'UND_42_gap_des': "PHAS:UNDS:4270:GapDes"
+110: 'UND_42_phase_integral' rank 1, type 10
+'UND_42_phase_integral': "PHAS:UNDS:4270:PIAct"
+111: 'UND_42_k' rank 1, type 10
+'UND_42_k': "USEG:UNDS:4250:KAct"
+112: 'UND_42_dphi' rank 1, type 10
+'UND_42_dphi': "PHAS:UNDS:4270:DPHI"
+113: 'UND_43_gap_act' rank 1, type 10
+'UND_43_gap_act': "PHAS:UNDS:4370:GapAct"
+114: 'UND_43_gap_des' rank 1, type 10
+'UND_43_gap_des': "PHAS:UNDS:4370:GapDes"
+115: 'UND_43_phase_integral' rank 1, type 10
+'UND_43_phase_integral': "PHAS:UNDS:4370:PIAct"
+116: 'UND_43_k' rank 1, type 10
+'UND_43_k': "USEG:UNDS:4350:KAct"
+117: 'UND_43_dphi' rank 1, type 10
+'UND_43_dphi': "PHAS:UNDS:4370:DPHI"
+118: 'UND_44_gap_act' rank 1, type 10
+'UND_44_gap_act': "PHAS:UNDS:4470:GapAct"
+119: 'UND_44_gap_des' rank 1, type 10
+'UND_44_gap_des': "PHAS:UNDS:4470:GapDes"
+120: 'UND_44_phase_integral' rank 1, type 10
+'UND_44_phase_integral': "PHAS:UNDS:4470:PIAct"
+121: 'UND_44_k' rank 1, type 10
+'UND_44_k': "USEG:UNDS:4450:KAct"
+122: 'UND_44_dphi' rank 1, type 10
+'UND_44_dphi': "PHAS:UNDS:4470:DPHI"
+123: 'UND_45_gap_act' rank 1, type 10
+'UND_45_gap_act': "PHAS:UNDS:4570:GapAct"
+124: 'UND_45_gap_des' rank 1, type 10
+'UND_45_gap_des': "PHAS:UNDS:4570:GapDes"
+125: 'UND_45_phase_integral' rank 1, type 10
+'UND_45_phase_integral': "PHAS:UNDS:4570:PIAct"
+126: 'UND_45_k' rank 1, type 10
+'UND_45_k': "USEG:UNDS:4550:KAct"
+127: 'UND_45_dphi' rank 1, type 10
+'UND_45_dphi': "PHAS:UNDS:4570:DPHI"
+128: 'UND_46_gap_act' rank 1, type 10
+'UND_46_gap_act': "PHAS:UNDS:4670:GapAct"
+129: 'UND_46_gap_des' rank 1, type 10
+'UND_46_gap_des': "PHAS:UNDS:4670:GapDes"
+130: 'UND_46_phase_integral' rank 1, type 10
+'UND_46_phase_integral': "PHAS:UNDS:4670:PIAct"
+131: 'UND_46_k' rank 1, type 10
+'UND_46_k': "USEG:UNDS:4650:KAct"
+132: 'UND_46_dphi' rank 1, type 10
+'UND_46_dphi': "PHAS:UNDS:4670:DPHI"
+133: 'y_corr_und_35' rank 1, type 10
+'y_corr_und_35': "YCOR:UNDS:3580:BACT"
+134: 'y_corr_und_36' rank 1, type 10
+'y_corr_und_36': "YCOR:UNDS:3680:BACT"
+135: 'y_corr_und_37' rank 1, type 10
+'y_corr_und_37': "YCOR:UNDS:3780:BACT"
+136: 'y_corr_und_38' rank 1, type 10
+'y_corr_und_38': "YCOR:UNDS:3880:BACT"
+137: 'y_corr_und_39' rank 1, type 10
+'y_corr_und_39': "YCOR:UNDS:3980:BACT"
+138: 'y_corr_und_40' rank 1, type 10
+'y_corr_und_40': "YCOR:UNDS:4080:BACT"
+139: 'y_corr_und_41' rank 1, type 10
+'y_corr_und_41': "YCOR:UNDS:4180:BACT"
+140: 'y_corr_und_42' rank 1, type 10
+'y_corr_und_42': "YCOR:UNDS:4280:BACT"
+141: 'y_corr_und_43' rank 1, type 10
+'y_corr_und_43': "YCOR:UNDS:4380:BACT"
+142: 'y_corr_und_44' rank 1, type 10
+'y_corr_und_44': "YCOR:UNDS:4480:BACT"
+143: 'y_corr_und_45' rank 1, type 10
+'y_corr_und_45': "YCOR:UNDS:4580:BACT"
+144: 'y_corr_und_46' rank 1, type 10
+'y_corr_und_46': "YCOR:UNDS:4680:BACT"
+145: 'm0c0_vset' rank 1, type 10
+'m0c0_vset': "TMO:PRO2:MPOD:01:M0:C0:VoltageMeasure"
+146: 'm0c1_vset' rank 1, type 10
+'m0c1_vset': "TMO:PRO2:MPOD:01:M0:C1:VoltageMeasure"
+147: 'm0c2_vset' rank 1, type 10
+'m0c2_vset': "TMO:PRO2:MPOD:01:M0:C2:VoltageMeasure"
+148: 'm0c3_vset' rank 1, type 10
+'m0c3_vset': "TMO:PRO2:MPOD:01:M0:C3:VoltageMeasure"
+149: 'm0c4_vset' rank 1, type 10
+'m0c4_vset': "TMO:PRO2:MPOD:01:M0:C4:VoltageMeasure"
+150: 'm0c5_vset' rank 1, type 10
+'m0c5_vset': "TMO:PRO2:MPOD:01:M0:C5:VoltageMeasure"
+151: 'm0c6_vset' rank 1, type 10
+'m0c6_vset': "TMO:PRO2:MPOD:01:M0:C6:VoltageMeasure"
+152: 'm0c7_vset' rank 1, type 10
+'m0c7_vset': "TMO:PRO2:MPOD:01:M0:C7:VoltageMeasure"
+153: 'm2c0_vset' rank 1, type 10
+'m2c0_vset': "TMO:PRO2:MPOD:01:M2:C0:VoltageMeasure"
+154: 'm2c1_vset' rank 1, type 10
+'m2c1_vset': "TMO:PRO2:MPOD:01:M2:C1:VoltageMeasure"
+155: 'm2c2_vset' rank 1, type 10
+'m2c2_vset': "TMO:PRO2:MPOD:01:M2:C2:VoltageMeasure"
+156: 'm2c3_vset' rank 1, type 10
+'m2c3_vset': "TMO:PRO2:MPOD:01:M2:C3:VoltageMeasure"
+157: 'm2c4_vset' rank 1, type 10
+'m2c4_vset': "TMO:PRO2:MPOD:01:M2:C4:VoltageMeasure"
+158: 'm2c5_vset' rank 1, type 10
+'m2c5_vset': "TMO:PRO2:MPOD:01:M2:C5:VoltageMeasure"
+159: 'm2c6_vset' rank 1, type 10
+'m2c6_vset': "TMO:PRO2:MPOD:01:M2:C6:VoltageMeasure"
+160: 'm2c7_vset' rank 1, type 10
+'m2c7_vset': "TMO:PRO2:MPOD:01:M2:C7:VoltageMeasure"
+161: 'm3c0_vset' rank 1, type 10
+'m3c0_vset': "TMO:PRO2:MPOD:01:M3:C0:VoltageMeasure"
+162: 'm3c1_vset' rank 1, type 10
+'m3c1_vset': "TMO:PRO2:MPOD:01:M3:C1:VoltageMeasure"
+163: 'm3c2_vset' rank 1, type 10
+'m3c2_vset': "TMO:PRO2:MPOD:01:M3:C2:VoltageMeasure"
+164: 'm3c3_vset' rank 1, type 10
+'m3c3_vset': "TMO:PRO2:MPOD:01:M3:C3:VoltageMeasure"
+165: 'm4c0_vset' rank 1, type 10
+'m4c0_vset': "TMO:PRO2:MPOD:01:M4:C0:VoltageMeasure"
+166: 'm4c1_vset' rank 1, type 10
+'m4c1_vset': "TMO:PRO2:MPOD:01:M4:C1:VoltageMeasure"
+167: 'm4c2_vset' rank 1, type 10
+'m4c2_vset': "TMO:PRO2:MPOD:01:M4:C2:VoltageMeasure"
+168: 'm5c0_vset' rank 1, type 10
+'m5c0_vset': "TMO:PRO2:MPOD:01:M5:C0:VoltageMeasure"
+169: 'm6c0_vset' rank 1, type 10
+'m6c0_vset': "TMO:PRO2:MPOD:01:M6:C0:VoltageMeasure"
+170: 'm6c1_vset' rank 1, type 10
+'m6c1_vset': "TMO:PRO2:MPOD:01:M6:C1:VoltageMeasure"
+171: 'm6c2_vset' rank 1, type 10
+'m6c2_vset': "TMO:PRO2:MPOD:01:M6:C2:VoltageMeasure"
+172: 'm6c3_vset' rank 1, type 10
+'m6c3_vset': "TMO:PRO2:MPOD:01:M6:C3:VoltageMeasure"
+173: 'm7c0_vset' rank 1, type 10
+'m7c0_vset': "TMO:PRO2:MPOD:01:M7:C0:VoltageMeasure"
+174: 'm7c1_vset' rank 1, type 10
+'m7c1_vset': "TMO:PRO2:MPOD:01:M7:C1:VoltageMeasure"
+175: 'mbes_mcp_mesh' rank 1, type 10
+'mbes_mcp_mesh': "TMO:PRO2:MPOD:01:M3:C4:VoltageMeasure"
+176: 'mbes_coil_bias' rank 1, type 10
+'mbes_coil_bias': "TMO:PRO2:MPOD:01:M3:C5:VoltageMeasure"
+177: 'mbes_mcp_anode' rank 1, type 10
+'mbes_mcp_anode': "TMO:PRO2:MPOD:01:M5:C1:VoltageMeasure"
+178: 'evr_ch0_ec' rank 1, type 10
+'evr_ch0_ec': "TMO:MISC:EVR:01:TRIG0:TEC"
+179: 'evr_ch0_delay' rank 1, type 10
+'evr_ch0_delay': "TMO:MISC:EVR:01:TRIG0:TDES"
+180: 'las_fs14_controller_time' rank 1, type 10
+'las_fs14_controller_time': "LAS:FS14:VIT:FS_CTR_TIME"
+181: 'las_fs14_phase_shifter' rank 1, type 10
+'las_fs14_phase_shifter': "LAS:FS14:MMS:PH"
+182: 'las_fs14_target_time' rank 1, type 10
+'las_fs14_target_time': "LAS:FS14:VIT:FS_TGT_TIME"
+183: 'las_fs14_target_time_dial' rank 1, type 10
+'las_fs14_target_time_dial': "LAS:FS14:VIT:FS_TGT_TIME_DIAL"
+184: 'las_ejx_MP2_lens_X' rank 1, type 10
+'las_ejx_MP2_lens_X': "LM1K4:EJX_MP2_LS3_LM2.RBV"
+185: 'las_ejx_MP2_lens_Y' rank 1, type 10
+'las_ejx_MP2_lens_Y': "LM1K4:EJX_MP2_LS3_LM3.RBV"
+186: 'las_inj_MP1_att1' rank 1, type 10
+'las_inj_MP1_att1': "LM1K4:INJ_MP1_ATT1_WP1.RBV"
+187: 'las_inj_stage' rank 1, type 10
+'las_inj_stage': "LM1K4:INJ_DP2_MR1.RBV"
+188: 'las_atm_dly' rank 1, type 10
+'las_atm_dly': "LM1K4:COM_MP2_DLY1"
+189: 'las_int_dly' rank 1, type 10
+'las_int_dly': "LM1K4:INT_MP1_DLY1"
+190: 'main_chamber_vac' rank 1, type 10
+'main_chamber_vac': "LAMP:C2:GCC:01:PRESS_RBV"
+191: 'gas_needle_y' rank 1, type 10
+'gas_needle_y': "TMO:LAMP:MMS:01.RBV"
+192: 'gas_needle_x' rank 1, type 10
+'gas_needle_x': "TMO:LAMP:MMS:02.RBV"
+193: 'gas_needle_z' rank 1, type 10
+'gas_needle_z': "TMO:LAMP:MMS:03.RBV"
+194: 'gass_needle_theta' rank 1, type 10
+'gass_needle_theta': "TMO:LAMP:MMS:10.RBV"
+195: 'magnet_x' rank 1, type 10
+'magnet_x': "TMO:LAMP:MMS:05.RBV"
+196: 'magnet_y' rank 1, type 10
+'magnet_y': "TMO:LAMP:MMS:06.RBV"
+197: 'magnet_z' rank 1, type 10
+'magnet_z': "TMO:LAMP:MMS:04.RBV"
+198: 'vls_focus_mirror' rank 1, type 10
+'vls_focus_mirror': "TMO:VLS:MMS:FM.RBV"
+199: 'vls_camera_pitch' rank 1, type 10
+'vls_camera_pitch': "TMO:VLS:MMS:CP.RBV"
+200: 'vls_grating_pitch' rank 1, type 10
+'vls_grating_pitch': "TMO:VLS:MMS:GP.RBV"
+201: 'vls_slits_disp_center' rank 1, type 10
+'vls_slits_disp_center': "SL2K4:SCATTER:ACTUAL_XCENTER_RBV"
+202: 'vls_slits_disp_gap' rank 1, type 10
+'vls_slits_disp_gap': "SL2K4:SCATTER:ACTUAL_XWIDTH_RBV"
+203: 'vls_slits_nondisp_center' rank 1, type 10
+'vls_slits_nondisp_center': "SL2K4:SCATTER:ACTUAL_YCENTER_RBV"
+204: 'vls_slits_nondisp_gap' rank 1, type 10
+'vls_slits_nondisp_gap': "SL2K4:SCATTER:ACTUAL_YWIDTH_RBV"
+205: 'atm_x' rank 1, type 10
+'atm_x': "TM1K4:ATM:MMS:X.RBV"
+206: 'atm_y' rank 1, type 10
+'atm_y': "TM1K4:ATM:MMS:Y.RBV"
+207: 'gas_att_transmission' rank 1, type 10
+'gas_att_transmission': "AT1K0:GAS:TRANS_SP"
+*** DetName: runinfo, Segment 0, DetType: runinfo, DetId: , Alg: runinfo, Version: 0x000001, namesid: 0x9ff, Names:
+Name: 'expt' Type: 10 Rank: 1
+Name: 'runnum' Type: 2 Rank: 0
+*** DetName: smdinfo, Segment 0, DetType: offset, DetId: , Alg: offsetAlg, Version: 0x000000, namesid: 0x9fe, Names:
+Name: 'intOffset' Type: 3 Rank: 0
+Name: 'intDgramSize' Type: 3 Rank: 0
+event 2,    BeginRun transition: time 987684502.696268935, env 0x04020001, payloadSize 72 extent 84
+Found 2 names
+0: 'expt' rank 1, type 10
+'expt': "tmolv9418"
+1: 'runnum' rank 0, type 2
+'runnum': 175
+event 3,   BeginStep transition: time 987684503.549205640, env 0x06040001, payloadSize 0 extent 12
+event 4,      Enable transition: time 987684503.554842489, env 0x08060001, payloadSize 0 extent 12
+event 5,    L1Accept transition: time 987684503.563098059, env 0x0c090001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 231844
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 24
+event 6,    L1Accept transition: time 987684503.571486670, env 0x0c0b0001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 231868
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 24
+event 7,    L1Accept transition: time 987684503.579875281, env 0x0c0d0001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 231892
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 24
+event 8,    L1Accept transition: time 987684503.588132820, env 0x0c0f0001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 231916
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 24
+event 9,    L1Accept transition: time 987684503.596521431, env 0x0c110001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 231940
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 24
+event 10,    L1Accept transition: time 987684503.604778970, env 0x0c130001, payloadSize 52 extent 64
+Found 2 names
+0: 'intOffset' rank 0, type 3
+'intOffset': 231964
+1: 'intDgramSize' rank 0, type 3
+'intDgramSize': 24

@@ -31,28 +31,35 @@ run_psana2_perf() {
     t_start=`date +%s`
     echo "RUN PSANA2 SCRIPT SUBMITTED AT" $t_start 
 
+
     # for psana2
     export PS_SMD_N_EVENTS=10000
-    export PS_SMD0_NUM_THREADS=16
-    export PS_EB_NODES=32
+    export PS_SMD0_NUM_THREADS=32
+    export PS_EB_NODES=128
+    #export PS_R_MAX_RETRIES=30
+    export PS_SRV_NODES=128
     source $HOME/lcls2/setup_env.sh
     
     # preventing blas from openning too many threads?
     export OPENBLAS_NUM_THREADS=1 
     
     # for openmpi
-    #OMPI_MCA_btl=self,tcp
-    #export OMPI_MCA_btl
+    #export OMPI_MCA_btl=self,tcp,vader
+    export OMPI_MCA_btl_tcp_if_include=172.21.164.90/1072
+    #ompi_info --param btl all --level 9
     
-    python -u ./test_psana2_perf.py
+    #python -u ./test_psana2_perf.py
+    #python -u ./test_fex_cfd1.py
     #python -u ./test_mpi.py
+    python -u ./dummy2.py
     t_end=`date +%s`
-    echo "PSANA2 JOB COMPLETE AT" $t_end "TOTAL ELAPSED" $((t_end-t_start))
+    echo "PSANA2 JOB COMPLETE AT" $t_end "TOTAL ELAPSED" $((t_end-t_start)) "N_TASKS" $SLURM_NTASKS
 }
 
 run_smd0_perf() {
-    echo "RUN SMD0 TEST #FILES=16"
-    python ./dev_smd0.py 16
+    echo "RUN SMD0 TEST"
+    source $HOME/lcls2/setup_env.sh
+    python ./dev_smd0.py 60
 }
 
 run_psana2_perf
