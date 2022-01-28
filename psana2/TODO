@@ -20,5 +20,10 @@ Control dynamically allocated hosts idea
 3. ask Elliott 
 
 
+Convert xtc1 to xtc2
+1. Check how to read xtc1 and put or save them in an intermediate format (zmq or hdf5)
+2. Finish dgrampy
+3. For calibration constant, Chris mentioned that it’not recommended to port lcls1 calibration constant to lcls2. What have been done was to put directly calibrated data in xtc2 format. We can figure if this is also okay for us.
+
 
 
