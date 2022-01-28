@@ -1,12 +1,3 @@
-Running Live mode
-NOTE: 
-- To be fix: psana2 did not exit when it sees EndRun (still continue read retry)
-- Disable seems to work - psana2 was waiting and when it sees Enable, it starts to
-  read again. Ric mentioned that there could be a pause of says 5 minutes between
-  Diable and Enable. 
-
-TMO spectrum analysis
-
 dgrampy (for 2023 epixhr)
 1. Support different array types
 2. Support string/ scalar value
@@ -15,10 +6,15 @@ dgrampy (for 2023 epixhr)
 5. Autogenerate nodeId and namesId when not given
 6. Add remove(det, alg) method
 
-peakfinding + data writing
-1. Future -> test on real hexanode data (we still missing peaks). Backup plan -> roentdek hexanode alg works on quadanode non-fex data.
 
-control dynamically allocated hosts idea
+TMO Preparation for MHz run
+peakfinding + data writing
+  Future -> test on real hexanode data (we still missing peaks). Backup plan -> roentdek hexanode alg works on quadanode non-fex data.
+TMO spectrum analysis
+Covariance calculation w Taran's code
+
+
+Control dynamically allocated hosts idea
 1. through SBATCH
 2. see detail of slurm host file for special config.
 3. ask Elliott 
