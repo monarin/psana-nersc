@@ -66,6 +66,11 @@ class PsanaImg:
         
         return img
 
+    def timestamp(self, event_num):
+        ts = self.timestamps[int(event_num)]
+        return ts
+
+
 
 
 
