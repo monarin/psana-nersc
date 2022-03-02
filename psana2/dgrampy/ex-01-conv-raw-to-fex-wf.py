@@ -26,22 +26,53 @@ from psana.pyalgos.generic.Utils import str_kwargs, do_print
 
 import numpy as np
 
+from psana.hexanode.PyCFD import PyCFD
+import matplotlib.pyplot as plt
+
 USAGE = 'Usage: python %s' % sys.argv[0]
 
-def get_window_from_peaks(wf, wt, peak_ind, window_size=8):
+def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False, 
+        CFD=None, sample_period=None):
     """Returns a list of 1D waveforms and start positions.
     
     From each peak index in `peak_ind`, copy waveform per channel
     wf[i_peak, -window_size+1 to window_size] 
     to a new array. 
+
+    If CFD peakfinder is given, calculate peak from the caputured window.
     """
     n_peaks = len(peak_ind)
-    peaks_arr = np.zeros([n_peaks, window_size*2], dtype=wf.dtype)
+    peaks_arr = np.zeros([n_peaks, window_size], dtype=wf.dtype)
     startpos_arr = np.zeros(n_peaks, dtype=wt.dtype)
+
+    plt.plot(wt, wf, label=f'waveform window_size={window_size}')
     for i_peak, pkind in enumerate(peak_ind):
-        peaks_arr[i_peak,:] = wf[pkind-window_size+1: pkind+window_size+1]
-        startpos_arr[i_peak] = wt[pkind-window_size+1]
+        print(f'    i_peak={i_peak} start peak: {wt[pkind]} pkind={pkind}')
+        peaks_arr[i_peak,:] = wf[pkind: pkind+window_size]
+        startpos_arr[i_peak] = wt[pkind]
+        plt.plot(wt[pkind: pkind+window_size], wf[pkind: pkind+window_size], label=f'window #{i_peak}')
+
+    if plot:
+        plt.scatter(wt[peak_ind], wf[peak_ind], marker='o', c='r', label='peaks from found indices')
+        result_peaks = test_findpeaks_with_CFD(peaks_arr, startpos_arr, CFD, sample_period)
+        plt.legend()
+        plt.show()
     return peaks_arr, startpos_arr
+
+def test_findpeaks_with_CFD(peaks_arr, startpos_arr, CFD, sample_period):
+    """Test finding peaks from windows. The results should match with
+    the original peak finding results `pktsec`.
+    """
+    result_peaks = np.zeros(peaks_arr.shape[0], dtype=peaks_arr.dtype)
+    for i_peak in range(peaks_arr.shape[0]):
+        ts = np.array([startpos_arr[i_peak] + (i * sample_period) \
+                for i in range(peaks_arr.shape[1])])
+        #pks = CFD.CFD(peaks_arr[i_peak,:], ts) 
+        print(f'i_peak={i_peak}')
+        print(f'peaks_arr[i_peak,:]={peaks_arr[i_peak,:].shape} {peaks_arr[i_peak,:]}')
+        print(f'ts={ts.shape} {ts}')
+        #print(f'pks={pks}')
+    return result_peaks
 
 def proc_data(**kwargs):
 
@@ -54,7 +85,9 @@ def proc_data(**kwargs):
     EXP          = kwargs.get('exp', 'amox27716')
     RUN          = kwargs.get('run', 100)
     VERBOSE      = kwargs.get('verbose', True)
+    PLOT         = kwargs.get('plot', True)
     OFPREFIX     = kwargs.get('ofprefix','./')
+    PARAMSCFD    = kwargs.get('paramsCFD')
 
     peaks = WFPeaks(**kwargs)
 
@@ -81,24 +114,48 @@ def proc_data(**kwargs):
         # index of these peaks in wts. The indices will be used to identify
         # windows of waveform wfs and startpos in wts.
         n_chans = len(nhits)
-        window_size = 8
+        window_size = 64
         print(f'nev={nev}')
+
         for i_chan in range(n_chans):
-            print(f'  i_chan={i_chan}/{n_chans}')
+            print(f'  i_chan={i_chan}/{n_chans} dtype: pktsec={pktsec.dtype} wts={wts.dtype}')
             print(f'  nhits={nhits[i_chan]}')
             print(f'  pktsec={pktsec[i_chan]}')
+            
+            # Calculate sample interval
+            sample_intervals = wts[i_chan,1:] - wts[i_chan,:-1]
+            #print(f'  sample_intervals={sample_intervals}')
+            
+            # Find peak indices
             peak_ind = np.searchsorted(wts[i_chan,:], pktsec[i_chan][:nhits[i_chan]])
+            print(f'  pktsec*={wts[i_chan, peak_ind]}')
 
+            if PLOT:
+                plt.plot(wts[i_chan, :], wfs[i_chan,:], label='waveform')
+                # Get peak values from found indices
+                pktval = wfs[i_chan, peak_ind]
+                plt.scatter(pktsec[i_chan, :nhits[i_chan]], pktval, marker='o', c='r', label=f'CFD peaks #{nhits[i_chan]}')
+                plt.scatter(wts[i_chan, peak_ind], pktval, marker='x', c='g', label=f'ts from found indices #{len(wts[i_chan, peak_ind])}')
+                plt.legend()
+                plt.show()
+            
+            # Use CFD to verify that peak windows returns correct peaks
+            CFD_params = PARAMSCFD[i_chan]
+            CFD = PyCFD(CFD_params)
+            
             # Find peak windows
             peaks_arr, startpos_arr = get_window_from_peaks(
-                    wfs[i_chan,:], wts[i_chan,:], peak_ind, window_size)
+                    wfs[i_chan,:], wts[i_chan,:], peak_ind, window_size, plot=PLOT,
+                    CFD=CFD, sample_period=CFD_params['sample_interval'])
+
+            break
             
             n_peaks = nhits[i_chan]
             for i_peak in range(n_peaks):
                 print(f'    i_peak={i_peak}')
                 print(f'    peaks={peaks_arr[i_peak,:]}')
                 print(f'    startpos={startpos_arr[i_peak]}')
-
+            
         if VERBOSE:
             print("  ev:%4d waveforms processing time = %.6f sec" % (nev, time()-t0_sec))
             print_ndarr(wfs,    '    waveforms      : ', last=4)
@@ -122,7 +179,7 @@ if __name__ == "__main__":
               'numchs'   : 5,
               'numhits'  : 16,
               'evskip'   : 0,
-              'events'   : 1,
+              'events'   : 0,
               'ofprefix' : './',
               'run'      : 100,
               'exp'      : 'amox27716',
