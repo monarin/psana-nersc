@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 USAGE = 'Usage: python %s' % sys.argv[0]
 
 def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False, 
-        CFD=None, sample_period=None):
+        CFD=None, sample_period=None, threshold=None):
     """Returns a list of 1D waveforms and start positions.
 
     Note that no. of windows may not necessary match with no. of peaks. This is
@@ -57,16 +57,26 @@ def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False,
         # Check if this peak index is included in the previous windows
         if pkind in range(st, en): continue
 
-        st = pkind - window_size
-        en = st
-        thres = 0.003
-        while wf[en] <= thres:
-            print(f'        en={en} wf[{en}]={wf[en]} thres={thres} en+1={en+1} wf[{en+1}]={wf[en+1]}')
+        st = pkind
+        en = pkind 
+        threshold = 0.003
+
+        # Walk left
+        while wf[st] <= threshold and st > 0:
+            st -= 1
+            print(f'        st={st} wf[{st}]={wf[st]}')
+        if st > window_size:
+            st -= window_size
+
+        # Walk right
+        while wf[en] <= threshold and en < wf.shape[0]-1:
+            print(f'        en={en} wf[{en}]={wf[en]}')
             en += 1
-        en += window_size 
+        if en < wf.shape[0] - window_size:
+            en += window_size 
         pkwin_list.append(wf[st: en])
         startpos_list.append(wt[st])
-        print(f'    st: {st} en:{en} thres={thres}')
+        print(f'    st: {st} en:{en} threshold={threshold} ')
         plt.plot(wt[st:en], wf[st:en], label=f'window #{i_peak}')
 
     if plot:
@@ -84,6 +94,8 @@ def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period):
     """
     peaks_sizes = [peak.shape[0] for peak in pkwin_list]
     arr_size = np.sum(peaks_sizes)
+    if arr_size == 0: return []
+
     stimes = np.zeros(arr_size)
     swf = np.zeros(arr_size, dtype=pkwin_list[0].dtype)
     for ipeak, peak in enumerate(pkwin_list):
@@ -99,10 +111,13 @@ def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period):
     
     ts = stimes
     vs = swf
-    plt.scatter(ts, vs, marker='*', c='b', label=f'long window')
+    plt.scatter(ts, vs, marker='*', c='k', label=f'long window')
     
     pks = CFD.CFD(vs, ts) 
-    print(f'pks(CFD)={pks}')
+
+    if len(pks) > 0:
+        peak_ind = np.searchsorted(stimes, pks)
+        plt.scatter(pks, swf[peak_ind], marker='o', c='m', label=f'CFD peaks') 
     return pks
 
 def proc_data(**kwargs):
@@ -161,7 +176,7 @@ def proc_data(**kwargs):
             peak_ind = np.searchsorted(wts[i_chan,:], pktsec[i_chan][:nhits[i_chan]])
             print(f'  pktsec*={wts[i_chan, peak_ind]}')
 
-            if PLOT:
+            if False:
                 plt.plot(wts[i_chan, :], wfs[i_chan,:], label='waveform')
                 # Get peak values from found indices
                 pktval = wfs[i_chan, peak_ind]
@@ -178,15 +193,15 @@ def proc_data(**kwargs):
             # Find peak windows
             pkwin_list, startpos_list = get_window_from_peaks(
                     wfs[i_chan,:], wts[i_chan,:], peak_ind, window_size, plot=PLOT,
-                    CFD=CFD, sample_period=CFD_params['sample_interval'])
+                    CFD=CFD, sample_period=CFD_params['sample_interval'],
+                    threshold=CFD_params['threshold'])
 
-            break
             
-            n_peaks = nhits[i_chan]
-            for i_peak in range(n_peaks):
-                print(f'    i_peak={i_peak}')
-                print(f'    peaks={pkwin_list[i_peak]}')
-                print(f'    startpos={startpos_list[i_peak]}')
+            n_windows = len(pkwin_list)
+            for i_window in range(n_windows):
+                print(f'    i_window={i_window}')
+                print(f'    peaks={pkwin_list[i_window]}')
+                print(f'    startpos={startpos_list[i_window]}')
             
         if VERBOSE:
             print("  ev:%4d waveforms processing time = %.6f sec" % (nev, time()-t0_sec))
@@ -211,7 +226,7 @@ if __name__ == "__main__":
               'numchs'   : 5,
               'numhits'  : 16,
               'evskip'   : 0,
-              'events'   : 0,
+              'events'   : 1,
               'ofprefix' : './',
               'run'      : 100,
               'exp'      : 'amox27716',
