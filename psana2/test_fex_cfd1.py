@@ -118,6 +118,7 @@ for nevt,evt in enumerate(myrun.events()):
         
                 if not startpos: continue
                 
+                # Concats waveform and timestamps from all channel into 1D array
                 peaks_sizes = [peak.shape[0] for peak in peaks]
                 arr_size = np.sum(peaks_sizes)
                 stimes = np.zeros(arr_size)

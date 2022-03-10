@@ -17,12 +17,17 @@ rank = comm.Get_rank()
 #ch.setFormatter(formatter)
 #logger.addHandler(ch)
 def test_standard():
+    #exp='tstx00417'
+    #runno=224
+    #xtc_dir='/cds/data/drpsrcf/tst/tstx00417/xtc'
+    exp='rixtst099'
+    runno=12
+    xtc_dir='/cds/data/drpsrcf/rix/rixtst099/xtc/'
     batch_size = 1000
     max_events = 0
     comm.Barrier()
     t0 = MPI.Wtime()
-    xtc_dir='/cds/data/drpsrcf/tst/tstx00417/xtc'
-    ds = DataSource(exp='tstx00417', run=224, batch_size=batch_size, max_events=max_events, dir=xtc_dir)
+    ds = DataSource(exp=exp, run=runno, batch_size=batch_size, max_events=max_events, dir=xtc_dir, live=True)
 
     sendbuf = np.zeros(1, dtype='i')
     recvbuf = None

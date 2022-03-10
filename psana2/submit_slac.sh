@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=anaq
 #SBATCH --job-name=psana2-test
-#SBATCH --nodes=48
-#SBATCH --ntasks=2305
+#SBATCH --nodes=13
+#SBATCH --ntasks=577
 ##SBATCH --ntasks-per-node=50
 #SBATCH --output=%j.log
 #SBATCH --exclusive

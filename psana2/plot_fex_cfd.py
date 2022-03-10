@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-csv_files = ['fex_pks_det.csv', 
-        'fex_pks_ana.csv',
-        'fex_pks_tot.csv',
-        'fex_pks_pks.csv']
-labels = ['det','ana','tot','pks']
+csv_files = ['spec_det.csv', 
+        'spec_ana.csv',
+        'spec_tot.csv',
+        'spec_r.csv']
+labels = ['det','ana-1','tot','read']
 
 data_dict = {}
 for i in range(len(labels)):
@@ -36,15 +36,16 @@ if plot:
     plt.legend(loc='best')
     plt.show()
 
-    plt.figure(figsize=(1,2))
-    plt.subplot(1,2,1)
-    plt.plot(data_dict['pks'], data_dict['det'], marker='o',linestyle='None',markerfacecolor='None')
-    plt.xlabel('#pks')
-    plt.ylabel('det(ms)')
-    plt.title('Correlation of #pks and time spent in Det interface')
-    plt.subplot(1,2,2)
-    plt.plot(data_dict['pks'], data_dict['ana'], marker='o',linestyle='None',markerfacecolor='None')
-    plt.xlabel('#pks')
-    plt.ylabel('ana(ms)')
-    plt.title('Correlation of #pks and peakfinding time')
-    plt.show()
+    if 'pks' in data_dict: # for plotting peak finding analysic
+        plt.figure(figsize=(1,2))
+        plt.subplot(1,2,1)
+        plt.plot(data_dict['pks'], data_dict['det'], marker='o',linestyle='None',markerfacecolor='None')
+        plt.xlabel('#pks')
+        plt.ylabel('det(ms)')
+        plt.title('Correlation of #pks and time spent in Det interface')
+        plt.subplot(1,2,2)
+        plt.plot(data_dict['pks'], data_dict['ana'], marker='o',linestyle='None',markerfacecolor='None')
+        plt.xlabel('#pks')
+        plt.ylabel('ana(ms)')
+        plt.title('Correlation of #pks and peakfinding time')
+        plt.show()
