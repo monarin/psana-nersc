@@ -34,45 +34,76 @@ USAGE = 'Usage: python %s' % sys.argv[0]
 def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False, 
         CFD=None, sample_period=None):
     """Returns a list of 1D waveforms and start positions.
-    
-    From each peak index in `peak_ind`, copy waveform per channel
-    wf[i_peak, -window_size+1 to window_size] 
-    to a new array. 
 
-    If CFD peakfinder is given, calculate peak from the caputured window.
+    Note that no. of windows may not necessary match with no. of peaks. This is
+    because adjacent peaks can appear in the same window.
+
+    From given locations of peaks (`peak_ind`), calculate threshold of something
+    like min(peak values). Anything more than this threshold (upside down peaks)
+    are considered as gaps. Starting with each peak_ind - window_size, we keep
+    extending the window until it hit the threshold. This is considered as one
+    window and as we move to the next peak_ind, we check if it has been merged
+    into the previous window. 
     """
     n_peaks = len(peak_ind)
-    peaks_arr = np.zeros([n_peaks, window_size], dtype=wf.dtype)
-    startpos_arr = np.zeros(n_peaks, dtype=wt.dtype)
+    pkwin_list = []
+    startpos_list = []
 
     plt.plot(wt, wf, label=f'waveform window_size={window_size}')
+    st, en = (0, 0)
     for i_peak, pkind in enumerate(peak_ind):
         print(f'    i_peak={i_peak} start peak: {wt[pkind]} pkind={pkind}')
-        peaks_arr[i_peak,:] = wf[pkind: pkind+window_size]
-        startpos_arr[i_peak] = wt[pkind]
-        plt.plot(wt[pkind: pkind+window_size], wf[pkind: pkind+window_size], label=f'window #{i_peak}')
+        
+        # Check if this peak index is included in the previous windows
+        if pkind in range(st, en): continue
+
+        st = pkind - window_size
+        en = st
+        thres = 0.003
+        while wf[en] <= thres:
+            print(f'        en={en} wf[{en}]={wf[en]} thres={thres} en+1={en+1} wf[{en+1}]={wf[en+1]}')
+            en += 1
+        en += window_size 
+        pkwin_list.append(wf[st: en])
+        startpos_list.append(wt[st])
+        print(f'    st: {st} en:{en} thres={thres}')
+        plt.plot(wt[st:en], wf[st:en], label=f'window #{i_peak}')
 
     if plot:
         plt.scatter(wt[peak_ind], wf[peak_ind], marker='o', c='r', label='peaks from found indices')
-        result_peaks = test_findpeaks_with_CFD(peaks_arr, startpos_arr, CFD, sample_period)
+        first_pks = [pkwin[0] for pkwin in pkwin_list]
+        plt.scatter(startpos_list, first_pks, marker='x', c='g', label='begin window')
+        result_peaks = test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period)
         plt.legend()
         plt.show()
-    return peaks_arr, startpos_arr
+    return pkwin_list, startpos_list
 
-def test_findpeaks_with_CFD(peaks_arr, startpos_arr, CFD, sample_period):
+def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period):
     """Test finding peaks from windows. The results should match with
     the original peak finding results `pktsec`.
     """
-    result_peaks = np.zeros(peaks_arr.shape[0], dtype=peaks_arr.dtype)
-    for i_peak in range(peaks_arr.shape[0]):
-        ts = np.array([startpos_arr[i_peak] + (i * sample_period) \
-                for i in range(peaks_arr.shape[1])])
-        #pks = CFD.CFD(peaks_arr[i_peak,:], ts) 
-        print(f'i_peak={i_peak}')
-        print(f'peaks_arr[i_peak,:]={peaks_arr[i_peak,:].shape} {peaks_arr[i_peak,:]}')
-        print(f'ts={ts.shape} {ts}')
-        #print(f'pks={pks}')
-    return result_peaks
+    peaks_sizes = [peak.shape[0] for peak in pkwin_list]
+    arr_size = np.sum(peaks_sizes)
+    stimes = np.zeros(arr_size)
+    swf = np.zeros(arr_size, dtype=pkwin_list[0].dtype)
+    for ipeak, peak in enumerate(pkwin_list):
+        if ipeak == 0:
+            st = 0
+        else:
+            st = np.sum(peaks_sizes[:ipeak])
+        en = st + peaks_sizes[ipeak]
+        _stimes = np.arange(startpos_list[ipeak], 
+                startpos_list[ipeak]+(peaks_sizes[ipeak]*sample_period), sample_period)
+        stimes[st:en] = _stimes[:peaks_sizes[ipeak]]
+        swf[st:en]  = peak 
+    
+    ts = stimes
+    vs = swf
+    plt.scatter(ts, vs, marker='*', c='b', label=f'long window')
+    
+    pks = CFD.CFD(vs, ts) 
+    print(f'pks(CFD)={pks}')
+    return pks
 
 def proc_data(**kwargs):
 
@@ -83,7 +114,7 @@ def proc_data(**kwargs):
     EVSKIP       = kwargs.get('evskip', 0)
     EVENTS       = kwargs.get('events', 10) + EVSKIP
     EXP          = kwargs.get('exp', 'amox27716')
-    RUN          = kwargs.get('run', 100)
+    RUN          = kwargs.get('run', 85)
     VERBOSE      = kwargs.get('verbose', True)
     PLOT         = kwargs.get('plot', True)
     OFPREFIX     = kwargs.get('ofprefix','./')
@@ -114,7 +145,7 @@ def proc_data(**kwargs):
         # index of these peaks in wts. The indices will be used to identify
         # windows of waveform wfs and startpos in wts.
         n_chans = len(nhits)
-        window_size = 64
+        window_size = 8
         print(f'nev={nev}')
 
         for i_chan in range(n_chans):
@@ -124,7 +155,7 @@ def proc_data(**kwargs):
             
             # Calculate sample interval
             sample_intervals = wts[i_chan,1:] - wts[i_chan,:-1]
-            #print(f'  sample_intervals={sample_intervals}')
+            print(f'  sample_intervals={sample_intervals}')
             
             # Find peak indices
             peak_ind = np.searchsorted(wts[i_chan,:], pktsec[i_chan][:nhits[i_chan]])
@@ -139,12 +170,13 @@ def proc_data(**kwargs):
                 plt.legend()
                 plt.show()
             
-            # Use CFD to verify that peak windows returns correct peaks
+            # Inits and passes CFD for peaks verfication after got the windows 
             CFD_params = PARAMSCFD[i_chan]
+            print(f'CFD_params={CFD_params}')
             CFD = PyCFD(CFD_params)
             
             # Find peak windows
-            peaks_arr, startpos_arr = get_window_from_peaks(
+            pkwin_list, startpos_list = get_window_from_peaks(
                     wfs[i_chan,:], wts[i_chan,:], peak_ind, window_size, plot=PLOT,
                     CFD=CFD, sample_period=CFD_params['sample_interval'])
 
@@ -153,8 +185,8 @@ def proc_data(**kwargs):
             n_peaks = nhits[i_chan]
             for i_peak in range(n_peaks):
                 print(f'    i_peak={i_peak}')
-                print(f'    peaks={peaks_arr[i_peak,:]}')
-                print(f'    startpos={startpos_arr[i_peak]}')
+                print(f'    peaks={pkwin_list[i_peak]}')
+                print(f'    startpos={startpos_list[i_peak]}')
             
         if VERBOSE:
             print("  ev:%4d waveforms processing time = %.6f sec" % (nev, time()-t0_sec))
@@ -174,7 +206,7 @@ if __name__ == "__main__":
     tname = sys.argv[1] if len(sys.argv) > 1 else '1'
     print('%s\nTEST %s' % (50*'_', tname))
 
-    kwargs = {'dsname'   : '/reg/g/psdm/detector/data2_test/xtc/data-amox27716-r0100-acqiris-e001000.xtc2',
+    kwargs = {'dsname'   : '/reg/g/psdm/detector/data2_test/xtc/data-amox27716-r0085-acqiris-e001000.xtc2',
               'detname'  : 'tmo_quadanode',
               'numchs'   : 5,
               'numhits'  : 16,
