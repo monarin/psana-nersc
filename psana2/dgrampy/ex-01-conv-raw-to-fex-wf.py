@@ -19,7 +19,6 @@ import sys
 from time import time
 
 from psana import DataSource
-from psana.hexanode.WFPeaks import WFPeaks
 
 from psana.pyalgos.generic.NDArrUtils import print_ndarr
 from psana.pyalgos.generic.Utils import str_kwargs, do_print
@@ -32,7 +31,7 @@ import matplotlib.pyplot as plt
 USAGE = 'Usage: python %s' % sys.argv[0]
 
 def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False, 
-        CFD=None, sample_period=None, threshold=None, peaks=None):
+        CFD=None, sample_period=None, threshold=None):
     """Returns a list of 1D waveforms and start positions.
 
     Note that no. of windows may not necessary match with no. of peaks. This is
@@ -77,8 +76,7 @@ def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False,
         #print(f'    st: {st} en:{en} threshold={threshold} ')
         #plt.plot(wt[st:en], wf[st:en], label=f'window #{i_peak}')
 
-    result_peaks = test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period, peaks)
-    #result_peaks = test_findpeaks_with_CFD([wf], [0], CFD, sample_period, peaks)
+    result_peaks = test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period)
     
     if plot:
         plt.scatter(wt[peak_ind], wf[peak_ind], marker='o', c='r', label='peaks from found indices')
@@ -86,9 +84,9 @@ def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False,
         plt.scatter(startpos_list, first_pks, marker='x', c='g', label='begin window')
         plt.legend()
         plt.show()
-    return pkwin_list, startpos_list
+    return pkwin_list, startpos_list, result_peaks
 
-def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period, peaks):
+def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period):
     """Test finding peaks from windows. The results should match with
     the original peak finding results `pktsec`.
     """
@@ -112,21 +110,15 @@ def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period, peaks
         
         ts = stimes
         vs = swf
-        #plt.scatter(ts, vs, marker='*', c='k', label=f'long window')
         plt.plot(ts, vs, label=f'long window')
         
         pks = CFD.CFD(vs, ts) 
-        #vs_5chan = np.zeros([5, vs.shape[0]], dtype=vs.dtype)
-        #vs_5chan[0,:] vs
-        #ts_5chan = np.zeros([5, ts.shape[
-        #nhits, pkinds, pkvals, pktsec = peaks(vs,ts)
-        #print(f'  pktsec(WFPeaks): {pktsec}')
 
         if len(pks) > 0:
             peak_ind = np.searchsorted(stimes, pks)
             plt.scatter(pks, swf[peak_ind], marker='o', c='m', label=f'CFD peaks') 
     
-    print(f'  pktsec(CFD): {pks}')
+    print(f'  pktsec(CFD-win): {pks}')
     return pks
 
 def proc_data(**kwargs):
@@ -140,11 +132,10 @@ def proc_data(**kwargs):
     EXP          = kwargs.get('exp', 'amox27716')
     RUN          = kwargs.get('run', 85)
     VERBOSE      = kwargs.get('verbose', True)
-    PLOT         = kwargs.get('plot', True)
+    PLOT         = kwargs.get('plot', False)
     OFPREFIX     = kwargs.get('ofprefix','./')
     PARAMSCFD    = kwargs.get('paramsCFD')
 
-    peaks = WFPeaks(**kwargs)
 
     ds    = DataSource(files=DSNAME)
     orun  = next(ds.runs())
@@ -152,6 +143,14 @@ def proc_data(**kwargs):
 
     tb_sec = time()
     nev = 0
+
+    # Counts no. of channels with different no. peaks from CFD(raw) and CFD(win)
+    cn_unmatch = 0 
+
+    # Summing the difference between each peak from CFD(raw) and CFD(win)
+    sum_err = 0
+    sum_pks = 0
+
     for nev,evt in enumerate(orun.events()):
 
         if nev<EVSKIP: continue
@@ -164,62 +163,65 @@ def proc_data(**kwargs):
         wts = det.raw.times(evt)
         wfs = det.raw.waveforms(evt)
 
-        #nhits, pkinds, pkvals, pktsec = peaks(wfs,wts) # ACCESS TO PEAK INFO
-        
-
         # Function peaks returns `pktsec` for each channel. We need to locate
         # index of these peaks in wts. The indices will be used to identify
         # windows of waveform wfs and startpos in wts.
-        n_chans = 5
-        window_size = 100 
+        n_chans = wfs.shape[0]
+        window_size = 16
+        nhits = np.zeros(n_chans, dtype=np.int)
         print(f'nev={nev}')
-        pktsec = np.zeros([5, 16], dtype=wts.dtype)
 
         for i_chan in range(n_chans):
-            # Inits and passes CFD for peaks verfication after got the windows 
+            # Find peaks using CFD
             CFD_params = PARAMSCFD[i_chan]
             CFD = PyCFD(CFD_params)
 
-            _pktsec = CFD.CFD(wfs[i_chan,:], wts[i_chan,:])
-            pktsec[i_chan,:len(_pktsec)] = _pktsec
+            pktsec = CFD.CFD(wfs[i_chan,:], wts[i_chan,:])
+            nhits[i_chan] = len(pktsec)
 
-            print(f'  i_chan={i_chan}/{n_chans} dtype: pktsec={pktsec.dtype} wts={wts.dtype}')
-            print(f'  pktsec={pktsec[i_chan]}')
+            print(f'  i_chan={i_chan}/{n_chans}')
+            print(f'  pktsec(CFD-raw)={pktsec}')
             
             # Calculate sample interval
             sample_intervals = wts[i_chan,1:] - wts[i_chan,:-1]
             #print(f'  sample_intervals={sample_intervals}')
             
             # Find peak indices
-            peak_ind = np.searchsorted(wts[i_chan,:], pktsec[i_chan][:len(_pktsec)])
+            peak_ind = np.searchsorted(wts[i_chan,:], pktsec)
             print(f'  pktsec(ind)={wts[i_chan, peak_ind]}')
 
             if False:
                 plt.plot(wts[i_chan, :], wfs[i_chan,:], label='waveform')
                 # Get peak values from found indices
                 pktval = wfs[i_chan, peak_ind]
-                plt.scatter(pktsec[i_chan, :len(_pktsec)], pktval, marker='o', c='r', label=f'CFD peaks #{len(_pktsec)}')
+                plt.scatter(pktsec, pktval, marker='o', c='r', label=f'CFD peaks #{len(_pktsec)}')
                 plt.scatter(wts[i_chan, peak_ind], pktval, marker='x', c='g', label=f'ts from found indices #{len(wts[i_chan, peak_ind])}')
                 plt.legend()
                 plt.show()
             
             
             # Find peak windows
-            pkwin_list, startpos_list = get_window_from_peaks(
+            pkwin_list, startpos_list, result_peaks = get_window_from_peaks(
                     wfs[i_chan,:], wts[i_chan,:], peak_ind, window_size, plot=PLOT,
                     CFD=CFD, sample_period=CFD_params['sample_interval'],
-                    threshold=CFD_params['threshold'], peaks=peaks)
+                    threshold=CFD_params['threshold'])
             
+            # Calculate the differences betwen CFD(raw) and CFD(windows)
+            if len(result_peaks) == nhits[i_chan]:
+                sum_err += np.sum(np.absolute(np.asarray(pktsec) - np.asarray(result_peaks)))
+                sum_pks += nhits[i_chan]
+            else:
+                cn_unmatch += 1
             
         if VERBOSE:
             print("  ev:%4d waveforms processing time = %.6f sec" % (nev, time()-t0_sec))
             print_ndarr(wfs,    '    waveforms      : ', last=4)
             print_ndarr(wts,    '    times          : ', last=4)
-            #print_ndarr(nhits,  '    number_of_hits : ')
-            print_ndarr(pktsec, '    peak_times_sec : ', last=4)
+            print_ndarr(nhits,  '    number_of_hits : ')
 
 
     print("  ev:%4d processing time = %.6f sec" % (nev, time()-tb_sec))
+    print(f"Average err: {sum_err/sum_pks} no. of unmatch channels: {cn_unmatch} ({(cn_unmatch/(5*nev))*100:.2f} %)")
 
 
 if __name__ == "__main__":
@@ -234,19 +236,19 @@ if __name__ == "__main__":
               'numchs'   : 5,
               'numhits'  : 16,
               'evskip'   : 0,
-              'events'   : 0,
+              'events'   : 1000,
               'ofprefix' : './',
               'run'      : 85,
               'exp'      : 'amox27716',
               'version'  : 4,
               'DLD'      : True,
               'paramsCFD': {0: {'channel': 'mcp',
-                              'delay': 3.068e-09,
+                              'delay': 1e-8,
                               'fraction': 0.35,
-                              'offset': 0.054470544805354439,
+                              'offset': 0.042,
                               'polarity': 'Negative',
                               'sample_interval': 2.5e-10,
-                              'threshold': 0.056374120466532174,
+                              'threshold':  0.028,
                               'timerange_high': 1e-05,
                               'timerange_low': 1e-06,
                               'walk': 0},
