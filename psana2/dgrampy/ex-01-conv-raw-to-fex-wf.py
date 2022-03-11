@@ -167,7 +167,7 @@ def proc_data(**kwargs):
         # index of these peaks in wts. The indices will be used to identify
         # windows of waveform wfs and startpos in wts.
         n_chans = wfs.shape[0]
-        window_size = 16
+        window_size = 8
         nhits = np.zeros(n_chans, dtype=np.int)
         print(f'nev={nev}')
 
