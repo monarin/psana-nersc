@@ -28,6 +28,8 @@ import numpy as np
 from psana.hexanode.PyCFD import PyCFD
 import matplotlib.pyplot as plt
 
+from psana.hexanode.DLDProcessor  import DLDProcessor
+
 USAGE = 'Usage: python %s' % sys.argv[0]
 
 def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False, 
@@ -37,11 +39,9 @@ def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False,
     Note that no. of windows may not necessary match with no. of peaks. This is
     because adjacent peaks can appear in the same window.
 
-    From given locations of peaks (`peak_ind`), calculate threshold of something
-    like min(peak values). Anything more than this threshold (upside down peaks)
-    are considered as gaps. Starting with each peak_ind - window_size, we keep
-    extending the window until it hit the threshold. This is considered as one
-    window and as we move to the next peak_ind, we check if it has been merged
+    From given locations of peaks (`peak_ind`), extend the window (both left 
+    and right) until it hit the threshold (+/- `window_size`). This is considered 
+    as one window and as we move to the next peak_ind, we check if it has been merged
     into the previous window. 
     """
     n_peaks = len(peak_ind)
@@ -135,6 +135,7 @@ def proc_data(**kwargs):
     PLOT         = kwargs.get('plot', False)
     OFPREFIX     = kwargs.get('ofprefix','./')
     PARAMSCFD    = kwargs.get('paramsCFD')
+    NUMCHS       = kwargs.get('numchs', 5)
 
 
     ds    = DataSource(files=DSNAME)
@@ -151,6 +152,15 @@ def proc_data(**kwargs):
     sum_err = 0
     sum_pks = 0
 
+    # Initialize PyCFD per channel
+    cfds = {}
+    for i_chan in range(NUMCHS):
+        CFD_params = PARAMSCFD[i_chan]
+        cfds[i_chan] = PyCFD(CFD_params)
+
+    # This is used for calculate Roentdek algorithm
+    #proc  = DLDProcessor(**kwargs)
+
     for nev,evt in enumerate(orun.events()):
 
         if nev<EVSKIP: continue
@@ -166,20 +176,20 @@ def proc_data(**kwargs):
         # Function peaks returns `pktsec` for each channel. We need to locate
         # index of these peaks in wts. The indices will be used to identify
         # windows of waveform wfs and startpos in wts.
-        n_chans = wfs.shape[0]
+        NUMCHS = wfs.shape[0]
         window_size = 8
-        nhits = np.zeros(n_chans, dtype=np.int)
+        nhits = np.zeros(NUMCHS, dtype=np.int)
         print(f'nev={nev}')
 
-        for i_chan in range(n_chans):
+        for i_chan in range(NUMCHS):
             # Find peaks using CFD
             CFD_params = PARAMSCFD[i_chan]
-            CFD = PyCFD(CFD_params)
+            CFD = cfds[i_chan]
 
             pktsec = CFD.CFD(wfs[i_chan,:], wts[i_chan,:])
             nhits[i_chan] = len(pktsec)
 
-            print(f'  i_chan={i_chan}/{n_chans}')
+            print(f'  i_chan={i_chan}/{NUMCHS}')
             print(f'  pktsec(CFD-raw)={pktsec}')
             
             # Calculate sample interval
@@ -303,8 +313,14 @@ if __name__ == "__main__":
               'cfd_wfbinbeg'   :  6000,
               'cfd_wfbinend'   : 22000,
              }
+    
+    # DLD parameters
+    dldpars = {'calibcfg' : '/reg/neh/home4/dubrovin/LCLS/con-lcls2/lcls2/psana/psana/hexanode/examples/configuration_quad.txt',
+               'calibtab' : '/reg/neh/home4/dubrovin/LCLS/con-lcls2/lcls2/psana/psana/hexanode/examples/calibration_table_data.txt',
+              }
 
     kwargs.update(cfdpars)
+    kwargs.update(dldpars)
 
     proc_data(**kwargs)
 
