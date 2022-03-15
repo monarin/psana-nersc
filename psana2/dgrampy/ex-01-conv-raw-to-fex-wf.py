@@ -51,8 +51,6 @@ def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False,
     plt.plot(wt, wf, label=f'waveform window_size={window_size}')
     st, en = (0, 0)
     for i_peak, pkind in enumerate(peak_ind):
-        #print(f'    i_window={i_peak} start peak: {wt[pkind]} pkind={pkind}')
-        
         # Check if this peak index is included in the previous windows
         if pkind in range(st, en): continue
 
@@ -73,7 +71,6 @@ def get_window_from_peaks(wf, wt, peak_ind, window_size, plot=False,
             en += window_size 
         pkwin_list.append(wf[st: en])
         startpos_list.append(wt[st])
-        #print(f'    st: {st} en:{en} threshold={threshold} ')
         #plt.plot(wt[st:en], wf[st:en], label=f'window #{i_peak}')
 
     result_peaks = test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period)
@@ -118,7 +115,6 @@ def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period):
             peak_ind = np.searchsorted(stimes, pks)
             plt.scatter(pks, swf[peak_ind], marker='o', c='m', label=f'CFD peaks') 
     
-    print(f'  pktsec(CFD-win): {pks}')
     return pks
 
 def proc_data(**kwargs):
@@ -136,6 +132,7 @@ def proc_data(**kwargs):
     OFPREFIX     = kwargs.get('ofprefix','./')
     PARAMSCFD    = kwargs.get('paramsCFD')
     NUMCHS       = kwargs.get('numchs', 5)
+    NUMHITS      = kwargs.get('numhits', 16)
 
 
     ds    = DataSource(files=DSNAME)
@@ -146,11 +143,17 @@ def proc_data(**kwargs):
     nev = 0
 
     # Counts no. of channels with different no. peaks from CFD(raw) and CFD(win)
+    cn_match = 0
     cn_unmatch = 0 
+    cn_match_dld = 0
+    cn_unmatch_dld = 0
 
-    # Summing the difference between each peak from CFD(raw) and CFD(win)
+    # Summing differences between each peak from CFD(raw) and CFD(win)
     sum_err = 0
     sum_pks = 0
+    
+    # Summing differences between x,y,r,t (output from Roentdek)
+    sum_err_dld = np.zeros([EVENTS, 4], dtype=np.float64) 
 
     # Initialize PyCFD per channel
     cfds = {}
@@ -158,13 +161,15 @@ def proc_data(**kwargs):
         CFD_params = PARAMSCFD[i_chan]
         cfds[i_chan] = PyCFD(CFD_params)
 
-    # This is used for calculate Roentdek algorithm
-    #proc  = DLDProcessor(**kwargs)
+    # This is used for calculate Roentdek algorithm (_c is for checking
+    # peaks from simulated fex data).
+    proc  = DLDProcessor(**kwargs)
+    proc_c= DLDProcessor(**kwargs)
 
     for nev,evt in enumerate(orun.events()):
 
         if nev<EVSKIP: continue
-        if nev>EVENTS: break
+        if nev>=EVENTS: break
 
 
         if do_print(nev): logger.info('Event %4d'%nev)
@@ -178,33 +183,34 @@ def proc_data(**kwargs):
         # windows of waveform wfs and startpos in wts.
         NUMCHS = wfs.shape[0]
         window_size = 8
-        nhits = np.zeros(NUMCHS, dtype=np.int)
-        print(f'nev={nev}')
+        nhits = np.zeros(NUMCHS, dtype=np.int64)
+        pktsec = np.zeros([NUMCHS, NUMHITS], dtype=wts.dtype)
+
+        nhits_fex = np.zeros(NUMCHS, dtype=np.int64)
+        pktsec_fex = np.zeros([NUMCHS, NUMHITS], dtype=wts.dtype)
 
         for i_chan in range(NUMCHS):
             # Find peaks using CFD
             CFD_params = PARAMSCFD[i_chan]
             CFD = cfds[i_chan]
 
-            pktsec = CFD.CFD(wfs[i_chan,:], wts[i_chan,:])
-            nhits[i_chan] = len(pktsec)
+            pktsec_chan = CFD.CFD(wfs[i_chan,:], wts[i_chan,:])
+            nhits_chan = min(len(pktsec_chan), NUMHITS)
+            nhits[i_chan] = nhits_chan
 
-            print(f'  i_chan={i_chan}/{NUMCHS}')
-            print(f'  pktsec(CFD-raw)={pktsec}')
-            
+            pktsec[i_chan,:nhits_chan] = pktsec_chan[:nhits_chan]
+
             # Calculate sample interval
             sample_intervals = wts[i_chan,1:] - wts[i_chan,:-1]
-            #print(f'  sample_intervals={sample_intervals}')
             
             # Find peak indices
-            peak_ind = np.searchsorted(wts[i_chan,:], pktsec)
-            print(f'  pktsec(ind)={wts[i_chan, peak_ind]}')
+            peak_ind = np.searchsorted(wts[i_chan,:], pktsec_chan)
 
             if False:
                 plt.plot(wts[i_chan, :], wfs[i_chan,:], label='waveform')
                 # Get peak values from found indices
                 pktval = wfs[i_chan, peak_ind]
-                plt.scatter(pktsec, pktval, marker='o', c='r', label=f'CFD peaks #{len(_pktsec)}')
+                plt.scatter(pktsec_chan, pktval, marker='o', c='r', label=f'CFD peaks #{nhits[i_chan]}')
                 plt.scatter(wts[i_chan, peak_ind], pktval, marker='x', c='g', label=f'ts from found indices #{len(wts[i_chan, peak_ind])}')
                 plt.legend()
                 plt.show()
@@ -216,22 +222,50 @@ def proc_data(**kwargs):
                     CFD=CFD, sample_period=CFD_params['sample_interval'],
                     threshold=CFD_params['threshold'])
             
+            # Save hits and peaks from fex data
+            nhits_chan_fex = min(len(result_peaks), NUMHITS)
+            nhits_fex[i_chan] = nhits_chan_fex
+            pktsec_fex[i_chan,:nhits_chan_fex] = result_peaks[:nhits_chan_fex]
+            
             # Calculate the differences betwen CFD(raw) and CFD(windows)
             if len(result_peaks) == nhits[i_chan]:
-                sum_err += np.sum(np.absolute(np.asarray(pktsec) - np.asarray(result_peaks)))
+                sum_err += np.sum(np.absolute(np.asarray(pktsec_chan) - np.asarray(result_peaks)))
                 sum_pks += nhits[i_chan]
+                cn_match += 1
             else:
                 cn_unmatch += 1
-            
+
+        # end for i_chan
+        
+        # Test RoenDek algorithm
+        proc.event_proc(nev, nhits, pktsec)
+        proc_c.event_proc(nev, nhits_fex, pktsec_fex)
+        xyrt = proc.xyrt_list(nev, nhits, pktsec)
+        xyrt_c = proc_c.xyrt_list(nev, nhits_fex, pktsec_fex)
+        if len(xyrt) == len(xyrt_c):
+            for i, ((x,y,r,t), (x_c,y_c,r_c,t_c)) in enumerate(zip(xyrt, xyrt_c)):
+                dx = abs(x-x_c)
+                dy = abs(y-y_c)
+                dr = abs(r-r_c)
+                dt = abs(t-t_c)
+                sum_err_dld[nev,:] = [dx, dy, dr, dt]
+                print('    ev:%4d hit:%2d dx:%7.3f dy:%7.3f dt:%10.5g dr:%7.3f' % (nev,i,dx,dy,dt,dr))
+            cn_match_dld += 1
+        else:
+            cn_unmatch_dld += 1
+        
         if VERBOSE:
             print("  ev:%4d waveforms processing time = %.6f sec" % (nev, time()-t0_sec))
             print_ndarr(wfs,    '    waveforms      : ', last=4)
             print_ndarr(wts,    '    times          : ', last=4)
             print_ndarr(nhits,  '    number_of_hits : ')
+        
 
+        
 
-    print("  ev:%4d processing time = %.6f sec" % (nev, time()-tb_sec))
-    print(f"Average err: {sum_err/sum_pks} no. of unmatch channels: {cn_unmatch} ({(cn_unmatch/(5*nev))*100:.2f} %)")
+    print("Summary ev:%4d processing time = %.6f sec" % (nev, time()-tb_sec))
+    print(f"average err per channel: {sum_err/sum_pks} #unmatch: {cn_unmatch} ({(cn_unmatch/(5*nev))*100:.2f} %)")
+    print(f"average err(x,y,r,t) per evt:  {np.sum(sum_err_dld, axis=0)/nev} #unmatch: {cn_unmatch_dld} ({(cn_unmatch_dld/nev)*100:.2f} %)")
 
 
 if __name__ == "__main__":
@@ -320,7 +354,7 @@ if __name__ == "__main__":
               }
 
     kwargs.update(cfdpars)
-    kwargs.update(dldpars)
+    #kwargs.update(dldpars)
 
     proc_data(**kwargs)
 
