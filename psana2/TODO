@@ -1,68 +1,15 @@
-Dgrampy (for 2023 epixhr)
-1. Unifying PyDgram and psana.dgram.Dgram
-2. Autogenerate nodeId and namesId when not given
-see ~/psana-nersc/psana2/dgrampy/ex-02-zmq-drp-pull.py for more TODO note
+Integrating Detectors
+https://confluence.slac.stanford.edu/pages/viewpage.action?pageId=314543421
 
 
 TMO Preparation for MHz run
 Scale Roentdek algorithm for hexanode data
-  - Converts amox27716 run 85 from lcls1 to lcls2. 
-    Only write out peaks output from Mikhail algorithm to xtc2
-    Data: 
-    /reg/d/psdm/amo/amox27716 (QUAD-anode)
-    amod3814 run 85 (hexanode)
-    Scripts: 
-    Psana1:
-    https://github.com/lcls-psana/hexanode/tree/master/examples
-    Psana2:
-    lcls2/psana/psana/hexanode/examples e.g. conv-01-acqiris-xtc-to-h5.py
   - Duplicate data for MHz test
-    Original quadana 5 set of peaks x 2 = 10 streams (2 detectors)
-    Original hexanode 7 set of peaks x 2 = 14 streams (Mikhail to send out scripts)
+    Original quadana (amox27716 run 85( 5 set of peaks x 2 = 10 streams (2 detectors)
+    Original hexanode (amod3814 run 85) 7 set of peaks x 2 = 14 streams (Mikhail to send out scripts)
+  - Run scaling test
 
-Start with amox27716 (QUAD-anode) because there's working example already in psana2
-  - In psana2 env, run analysis pipeline:
-    1. Read raw waveforms
-    2. Calculate peaks for each channel  (5 per 1 quadanode detector/ 7 per 1 hexanode)
-    3. Use peaks to find x,y,r,t (Roentdek algorithm)
-       Some data can be hard to resolved. We might need to look at different cases (few/large no. of peaks)
-    4. Save results write out xyot 
-
-Preparing xtc2 MHz Data
-  - Read xtc2 data and run peak finding 
-  - Use the peaks and their positions and expand them into a window of peaks:
-    time 1 2 3 4 5 6 7 8 9....
-    wf = 2 3 4 5 4 3 2 1 1 1 2 3 4 6 3 2 1 1 1
-    threshold 3:
-    peaks:
-        [3,4,5,4,3] starttime 2
-        [3,4,6,3] starttime 12
-    window: waveform has extra 8    samples before/after threshold is crossed
-    run CFD on fex-mini-waveforms and give to roentdek
-
-    two possible techniques: 
-    (1) pick a threshold with a window, or 
-    (2) use peakfinder-time with a window
-    -0.03 Threshold
-  - Store them in this format for xtc2
-
-Note:
-    https://confluence.slac.stanford.edu/display/PSDMInternal/Quad-anode+test+on+real+data#Quadanodetestonrealdata-Statuson2022-01-12
-  - Can use .h5 data (60k events) generated from ex-22. Required: nhits (5,) and pktsec (5, 16) to generate lcls2 MHz data
-  - When generate xtc2 files with pktsec -> don't pad 
-  - Max limit of Roentdek is 16. Don't process nhits = 16 for testing
-  - Get amod3814 run 85 (hexanode) waveforms and port them to xtc2.
     
-TMO spectrum analysis
-Covariance calculation w Taran's code
-
-
-Control dynamically allocated hosts idea
-1. through SBATCH
-2. see detail of slurm host file for special config.
-3. ask Elliott 
-
-
 Spinifel-psana2
 - Finished integration with psana2
 - Seen issues
@@ -83,7 +30,9 @@ Psana2-legion
 - CI with both Jenkins and GH Action
 
 
-Integrating Detectors
-https://confluence.slac.stanford.edu/pages/viewpage.action?pageId=314543421
+Dgrampy (for 2023 epixhr)
+1. Unifying PyDgram and psana.dgram.Dgram
+2. Autogenerate nodeId and namesId when not given
+see ~/psana-nersc/psana2/dgrampy/ex-02-zmq-drp-pull.py for more TODO note
 
-T-Card (see email (flag))
+
