@@ -3,14 +3,21 @@
     Note: 
         modified from lcls2/psana/psana/hexanode/examples/
         ex-22-data-acqiris-peaks-save-h5-xiangli.py
+    
     Input raw waveforms:
         time 1 2 3 4 5 6 7 8 9....
         wf = 2 3 4 5 4 3 2 1 1 1 2 3 4 6 3 2 1 1 1
     threshold:
         3
-    Output fex peaks:
+    Output simulated fex data:
         [3,4,5,4,3] starttime 2
         [3,4,6,3] starttime 12
+        Output to xtc2 (one stream per one channel)
+    
+    Tests:
+        Output from Roentdek algorithm (xyrt) using raw waveforms is
+        compared with what comes out from the simulated fex data.
+
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -29,6 +36,9 @@ from psana.hexanode.PyCFD import PyCFD
 import matplotlib.pyplot as plt
 
 from psana.hexanode.DLDProcessor  import DLDProcessor
+
+import dgrampy as dp
+from psana.psexp import TransitionId
 
 USAGE = 'Usage: python %s' % sys.argv[0]
 
@@ -117,6 +127,113 @@ def test_findpeaks_with_CFD(pkwin_list, startpos_list, CFD, sample_period):
     
     return pks
 
+def dgrampy_start(expt, runnum, out_xtcfname, segment_id, ts):
+    """Setup required parameters to create xtc2 from scratch.
+    
+    Note: ts is the original config timestamp. Only config (
+    and L1Accept - see dgrampy_adddata) will have a matching 
+    timestamp with the original file. Other transitions are
+    just +1 from this config timestamp.
+    """
+    # NameId setup
+    nodeId = 1 
+    namesId = {
+        "tmo_quadanode": 0,
+        "runinfo": 1,
+    }
+
+    # Tells dgrampy to write new dgrams to this given output filename
+    dp.creatextc2(out_xtcfname)
+
+    # Create config, algorithm, and detector
+    config = dp.config(ts=ts)
+    alg = dp.alg("fex", 4, 5, 6)
+    det = dp.det("tmo_quadanode", "quadanode", "detnum1234")
+    ts += 1
+
+    runinfo_alg = dp.alg("runinfo", 0, 0, 1)
+    runinfo_det = dp.det("runinfo", "runinfo", "")
+
+    # Define data formats
+    datadef_dict = {
+        "startpos": (dp.DataType.DOUBLE, 1),
+        "waveforms": (dp.DataType.DOUBLE, 1),
+        "lengths": (dp.DataType.INT64, 1),
+    }
+    datadef = dp.datadef(datadef_dict)
+
+    runinfodef_dict = {
+        "expt": (dp.DataType.CHARSTR, 1),
+        "runnum": (dp.DataType.UINT32, 0),
+    }
+    runinfodef = dp.datadef(runinfodef_dict)
+
+    # Create Names
+    data_names = dp.names(
+        config, det, alg, datadef, nodeId=nodeId, namesId=namesId["tmo_quadanode"], segment=segment_id
+    )
+    runinfo_names = dp.names(
+        config,
+        runinfo_det,
+        runinfo_alg,
+        runinfodef,
+        nodeId=nodeId,
+        namesId=namesId["runinfo"],
+        segment=segment_id,
+    )
+    
+    dp.save(config)
+
+    beginrun = dp.dgram(transid=TransitionId.BeginRun, ts=ts)
+    beginrun_data = {"expt": expt, "runnum": runnum}
+    dp.adddata(beginrun, runinfo_names, runinfodef, beginrun_data)
+    dp.save(beginrun)
+    ts += 1
+    
+    beginstep = dp.dgram(transid=TransitionId.BeginStep, ts=ts)
+    dp.save(beginstep)
+    ts += 1
+    
+    enable = dp.dgram(transid=TransitionId.Enable, ts=ts)
+    dp.save(enable)
+
+    return data_names, datadef
+
+def dgrampy_adddata(data_names, datadef, startpos_list, pkwin_list, ts):
+    d0 = dp.dgram(ts=ts)
+
+    # Converts pkwin_list to 1D array and store len of each
+    # item in lengths array.
+    lengths = np.array([len(pkwin) for pkwin in pkwin_list], dtype=np.int64)
+    waveforms = np.zeros(np.sum(lengths), dtype=np.float64)
+    for i, pkwin in enumerate(pkwin_list):
+        st = np.sum(lengths[:i])
+        en = st + lengths[i]
+        waveforms[st:en] = pkwin
+    print(f'adddata lengths={lengths}')
+    print(f'        waveforms={waveforms}')
+    print(f'        startpos={np.asarray(startpos_list, dtype=np.float64)}')
+    
+    data = {
+        "startpos": np.asarray(startpos_list, dtype=np.float64),
+        "waveforms": waveforms,
+        "lengths": lengths,
+    }
+    dp.adddata(d0, data_names, datadef, data)
+    dp.save(d0)
+
+def dgrampy_done(ts):
+    """Post-pend all ending transitions."""
+    disable = dp.dgram(transid=TransitionId.Disable, ts=ts)
+    dp.save(disable)
+    ts += 1
+    endstep = dp.dgram(transid=TransitionId.EndStep, ts=ts)
+    dp.save(endstep)
+    ts += 1
+    endrun = dp.dgram(transid=TransitionId.EndRun, ts=ts)
+    dp.save(endrun)
+    dp.closextc2()
+
 def proc_data(**kwargs):
 
     logger.info(str_kwargs(kwargs, title='Input parameters:'))
@@ -138,6 +255,10 @@ def proc_data(**kwargs):
     ds    = DataSource(files=DSNAME)
     orun  = next(ds.runs())
     det   = orun.Detector(DETNAME)
+    dldpars = {'consts':det.calibconst}
+
+    # Update calibcfg and calibtab
+    kwargs.update(dldpars)
 
     tb_sec = time()
     nev = 0
@@ -166,6 +287,14 @@ def proc_data(**kwargs):
     proc  = DLDProcessor(**kwargs)
     proc_c= DLDProcessor(**kwargs)
 
+    # Initialize dgrampy and generate starting transitions for xtc2
+    out_i_chan = 4 
+    out_xtcfname = f"data-r0085-s{str(out_i_chan).zfill(3)}-c000.xtc2"
+    segment_id = 4
+    ts = 0 
+    data_names, datadef = dgrampy_start(EXP, RUN, out_xtcfname, segment_id, ts)
+    
+    ts += 4 # Configure, BeginRun, BeginStep, Enable
     for nev,evt in enumerate(orun.events()):
 
         if nev<EVSKIP: continue
@@ -226,6 +355,11 @@ def proc_data(**kwargs):
             nhits_chan_fex = min(len(result_peaks), NUMHITS)
             nhits_fex[i_chan] = nhits_chan_fex
             pktsec_fex[i_chan,:nhits_chan_fex] = result_peaks[:nhits_chan_fex]
+
+            # Write out one channel at a time (change out_i_chan to switch file)
+            if i_chan == out_i_chan:
+                dgrampy_adddata(data_names, datadef, startpos_list, pkwin_list, ts)
+                ts += 1
             
             # Calculate the differences betwen CFD(raw) and CFD(windows)
             if len(result_peaks) == nhits[i_chan]:
@@ -235,7 +369,8 @@ def proc_data(**kwargs):
             else:
                 cn_unmatch += 1
 
-        # end for i_chan
+
+        # end for i_chan...
         
         # Test RoenDek algorithm
         proc.event_proc(nev, nhits, pktsec)
@@ -249,7 +384,7 @@ def proc_data(**kwargs):
                 dr = abs(r-r_c)
                 dt = abs(t-t_c)
                 sum_err_dld[nev,:] = [dx, dy, dr, dt]
-                print('    ev:%4d hit:%2d dx:%7.3f dy:%7.3f dt:%10.5g dr:%7.3f' % (nev,i,dx,dy,dt,dr))
+                print('  ev:%4d hit:%2d dx:%7.3f dy:%7.3f dt:%10.5g dr:%7.3f' % (nev,i,dx,dy,dt,dr))
             cn_match_dld += 1
         else:
             cn_unmatch_dld += 1
@@ -261,7 +396,8 @@ def proc_data(**kwargs):
             print_ndarr(nhits,  '    number_of_hits : ')
         
 
-        
+    # end for nev, evt in...
+    dgrampy_done(ts)
 
     print("Summary ev:%4d processing time = %.6f sec" % (nev, time()-tb_sec))
     print(f"average err per channel: {sum_err/sum_pks} #unmatch: {cn_unmatch} ({(cn_unmatch/(5*nev))*100:.2f} %)")
@@ -348,13 +484,7 @@ if __name__ == "__main__":
               'cfd_wfbinend'   : 22000,
              }
     
-    # DLD parameters
-    dldpars = {'calibcfg' : '/reg/neh/home4/dubrovin/LCLS/con-lcls2/lcls2/psana/psana/hexanode/examples/configuration_quad.txt',
-               'calibtab' : '/reg/neh/home4/dubrovin/LCLS/con-lcls2/lcls2/psana/psana/hexanode/examples/calibration_table_data.txt',
-              }
-
     kwargs.update(cfdpars)
-    #kwargs.update(dldpars)
 
     proc_data(**kwargs)
 
