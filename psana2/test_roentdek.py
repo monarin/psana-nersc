@@ -2,6 +2,21 @@ from psana import DataSource
 from psana.hexanode.PyCFD import PyCFD
 from psana.hexanode.DLDProcessor  import DLDProcessor
 import numpy as np
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+import sys, os
+import time
+
+from psana.hexanode.DLDStatistics import DLDStatistics
+from psana.hexanode.DLDGraphics   import draw_plots
+
+import matplotlib.pyplot as plt
+
+def get_time():
+    comm.Barrier()
+    return MPI.Wtime()
 
 def find_peaks(pkwin_list, startpos_list, CFD, sample_period):
     """Finds peaks by concatenating all peak windows and
@@ -39,14 +54,21 @@ def proc_data(**kwargs):
     EXP          = kwargs.get('exp', 'amox27716')
     RUN          = kwargs.get('run', 85)
     VERBOSE      = kwargs.get('verbose', True)
-    PLOT         = kwargs.get('plot', False)
+    PLOT         = kwargs.get('plot', True)
     OFPREFIX     = kwargs.get('ofprefix','./')
     PARAMSCFD    = kwargs.get('paramsCFD')
     NUMCHS       = kwargs.get('numchs', 5)
     NUMHITS      = kwargs.get('numhits', 16)
+    TESTMODE     = kwargs.get('testmode', 1)
+    MONITOR      = kwargs.get('monitor', False)
 
     # Open datasource
-    ds = DataSource(exp=EXP, run=RUN, dir=XTCDIR)
+    ds = DataSource(exp=EXP, 
+                    run=RUN, 
+                    dir=XTCDIR, 
+                    max_events=EVENTS,
+                    monitor=MONITOR,
+                   )
     run = next(ds.runs())
     det = run.Detector("tmo_quadanode")
     
@@ -61,45 +83,116 @@ def proc_data(**kwargs):
     
     # Intitialize Roentdek wrapper
     proc  = DLDProcessor(**kwargs)
+    if PLOT: stats = DLDStatistics(proc,**kwargs)
+
+    # Collect batch rate with t0 and t1
+    t0 = time.monotonic()
 
     # Find peaks for each channel and saves them in a fixed
     # size array for running Roentdek algorithms
+    cn_no_peaks_events = 0
+    cn_peaks = np.zeros(EVENTS, dtype=np.int64)
+    dt_pks = np.zeros(EVENTS, dtype=np.float64)
+    dt_rtks = np.zeros(EVENTS, dtype=np.float64)
     for i_ev, evt in enumerate(run.events()):
+        print(f'EVENT: {i_ev}')
         nhits_fex = np.zeros(NUMCHS, dtype=np.int64)
         pktsec_fex = np.zeros([NUMCHS, NUMHITS], dtype=np.float64)
 
+        # Empty-op for testing READ mode
+        if TESTMODE == 1:
+            for i_chan in range(NUMCHS):
+                wfs_chan = det.fex.waveforms(evt, i_chan)
+                ts_chan = det.fex.times(evt, i_chan)
+
         # Run peakfinder
-        for i_chan in range(NUMCHS):
-            result_peaks = find_peaks(det.fex.waveforms(evt, i_chan), 
-                                      det.fex.times(evt, i_chan), 
-                                      cfds[i_chan], 
-                                      PARAMSCFD[i_chan]['sample_interval']
-                                     )
+        t0_pk = time.monotonic()
+        if TESTMODE in (2, 3):
+            n_result_peaks = np.zeros(NUMCHS, dtype=np.int64)
+            for i_chan in range(NUMCHS):
+                result_peaks = find_peaks(det.fex.waveforms(evt, i_chan), 
+                                          det.fex.times(evt, i_chan), 
+                                          cfds[i_chan], 
+                                          PARAMSCFD[i_chan]['sample_interval']
+                                         )
+                
+                n_result_peaks[i_chan] = len(result_peaks)
+                if VERBOSE: print(f'  chan:{i_chan} #peaks:{len(result_peaks)}')
+                
+                # Save hits and peaks from fex data
+                nhits_chan_fex = min(len(result_peaks), NUMHITS)
+                nhits_fex[i_chan] = nhits_chan_fex
+                pktsec_fex[i_chan,:nhits_chan_fex] = result_peaks[:nhits_chan_fex]
             
-            #print(i_ev, i_chan, result_peaks)
-            
-            # Save hits and peaks from fex data
-            nhits_chan_fex = min(len(result_peaks), NUMHITS)
-            nhits_fex[i_chan] = nhits_chan_fex
-            pktsec_fex[i_chan,:nhits_chan_fex] = result_peaks[:nhits_chan_fex]
+            if np.all(n_result_peaks==0): cn_no_peaks_events += 1
+            cn_peaks[i_ev] = np.sum(n_result_peaks)
+        t1_pk = time.monotonic()
+        dt_pks[i_ev] = t1_pk - t0_pk
 
         # Run Roentdek
-        proc.event_proc(i_ev, nhits_fex, pktsec_fex)
-        for i,(x,y,r,t) in enumerate(proc.xyrt_list(i_ev, nhits_fex, pktsec_fex)):
-            print('ev:%4d hit:%2d x:%7.3f y:%7.3f t:%10.5g r:%7.3f' % (i_ev, i,x,y,t,r))
+        t0_rtk = time.monotonic()
+        if TESTMODE == 3:
+            proc.event_proc(i_ev, nhits_fex, pktsec_fex)
+            if PLOT: stats.fill_data(nhits_fex, pktsec_fex)
+            for i,(x,y,r,t) in enumerate(proc.xyrt_list(i_ev, nhits_fex, pktsec_fex)):
+                if VERBOSE: print('    hit:%2d x:%7.3f y:%7.3f t:%10.5g r:%7.3f' % (i,x,y,t,r))
+                pass
+        t1_rtk = time.monotonic()
+        dt_rtks[i_ev] = t1_rtk - t0_rtk
+
+        # Calculate batch rate
+        if i_ev % 1000 == 0 and i_ev > 0:
+            t1 = time.monotonic()
+            print(f'RANK: {rank} RATE: {(1000/(t1-t0))*1e-3:.2f} kHz')
+            t0 = time.monotonic()
+
+    # end for i_ev in...
+    if PLOT:
+        #draw_plots(stats, prefix=OFPREFIX+EXP+f'-r{str(RUN).zfill(4)}', do_save=True, hwin_x0y0=(0,10))
+
+        # Plot correlation between calc. time and #peaks and histogram of calc.time
+        plt.subplot(2,2,1)
+        plt.hist(dt_pks*1e3)
+        plt.title('Histogram of peak finding time (ms)')
+        plt.subplot(2,2,2)
+        plt.scatter(cn_peaks, dt_pks*1e3)
+        plt.title('CC of #peaks and peakfinding time (ms)')
+        plt.subplot(2,2,3)
+        plt.hist(dt_rtks*1e3)
+        plt.title('Histogram of Roentdek calc. time (ms)')
+        plt.subplot(2,2,4)
+        plt.scatter(cn_peaks, dt_rtks*1e3)
+        plt.title('CC of #peaks and Roentdek calc. time (ms)')
+        plt.show()
+    print(f'EVENTS={EVENTS} NO PEAK EVENTS={cn_no_peaks_events}')
+
 
 if __name__ == "__main__":
-    kwargs = {'xtcdir'   : '/cds/home/m/monarin/psana-nersc/psana2/dgrampy/amox27716',
+    # Show rank 0 pid for Prometheus query
+    if rank == 0:
+        print(f'RANK 0 PID: {os.getpid()}', flush=True)
+
+    # Input for scaling test (from run_slac.sh)
+    testmode = 1
+    if len(sys.argv) > 1:
+        testmode = int(sys.argv[1])
+    max_events = 0
+    if len(sys.argv) > 2:
+        max_events = int(sys.argv[2])
+
+    kwargs = {'xtcdir'   : '/cds/data/drpsrcf/users/monarin/amox27716/xtc',
               'detname'  : 'tmo_quadanode',
               'numchs'   : 5,
               'numhits'  : 16,
               'evskip'   : 0,
-              'events'   : 1000,
+              'events'   : max_events,
               'ofprefix' : './',
               'run'      : 85,
               'exp'      : 'amox27716',
               'version'  : 4,
               'DLD'      : True,
+              'testmode' : testmode,
+              'monitor'  : True,
               'paramsCFD': {0: {'channel': 'mcp',
                               'delay': 1e-8,
                               'fraction': 0.35,
@@ -164,4 +257,14 @@ if __name__ == "__main__":
     
     kwargs.update(cfdpars)
 
+    t0 = get_time()
     proc_data(**kwargs)
+    t1 = get_time()
+
+    if rank == 0:
+        nev = kwargs['events']
+        
+        # Use total no. of events
+        if nev == 0: nev = 29790007
+
+        print(f"EVENTS: {nev} MODE: {kwargs['testmode']} ELAPSED TIME: {t1-t0:.2f}s TOTALRATE: {(nev/(t1-t0))*1e-6:.4f}MHz")
