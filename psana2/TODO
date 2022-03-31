@@ -6,8 +6,13 @@ TMO Preparation for MHz run
 Scale Roentdek algorithm for hexanode data
   - Duplicate data for MHz test
     Original quadana (amox27716 run 85( 5 set of peaks x 2 = 10 streams (2 detectors)
+    Related publication:
+    https://www.nature.com/articles/s41598-020-79818-6
     Original hexanode (amod3814 run 85) 7 set of peaks x 2 = 14 streams (Mikhail to send out scripts)
   - Run scaling test
+Notes:
+1. Need to comment out logging line:
+https://github.com/slac-lcls/lcls2/blob/master/psana/psana/hexanode/DLDProcessor.py#L202
 
     
 Spinifel-psana2
@@ -16,6 +21,11 @@ Spinifel-psana2
   1. Hidden ranks
   2. Callback in get_data
   3. Reduce can hang 
+Options:
+4. Buffer interface
+Use srv callback as spinifel's computation work
+Make a simple Reduce example with psana2 loop interface
+and CONVERGENCE (global) idea.
 
 
 Live mode test
@@ -31,8 +41,15 @@ Psana2-legion
 
 
 Dgrampy (for 2023 epixhr)
-1. Unifying PyDgram and psana.dgram.Dgram
-2. Autogenerate nodeId and namesId when not given
+0. Check mem leak for ex-03-duplicate-data.py
+1. Dgrampy for multiple streams
+2. Unifying PyDgram and psana.dgram.Dgram
+3. Autogenerate nodeId and namesId when not given
 see ~/psana-nersc/psana2/dgrampy/ex-02-zmq-drp-pull.py for more TODO note
 
+
+Eliminate smalldata-only run?
+
+Support mixed .inprogress and .xtc2 files
+- Probably can use /cds/data/drpsrcf/rix/rixtst099/xtc/ run 12 to test this.
 
