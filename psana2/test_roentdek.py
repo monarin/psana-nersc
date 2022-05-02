@@ -12,15 +12,29 @@ import time
 from psana.hexanode.DLDStatistics import DLDStatistics
 from psana.hexanode.DLDGraphics   import draw_plots
 
+from psana.hexanode.HitFinder import HitFinder
+
 import matplotlib.pyplot as plt
 
 def get_time():
     comm.Barrier()
     return MPI.Wtime()
 
-def find_peaks(pkwin_list, startpos_list, CFD, sample_period):
+def find_peaks(pkwin_list, startpos_list, CFD):
     """Finds peaks by concatenating all peak windows and
     populating time series with correct start positions.
+    
+    Concatenate peak windows into one long array (vs)
+    with startpos padding along as another array (ts)
+    Example:
+    pkwin_list [[1 1 3 1], [1 3 1 1]]
+    startpos [0, 7]
+    Results:
+    vs = [1 1 3 1 1 3 1 1]
+    ts = [0 1 2 3 7 8 9 10]
+
+    CFD.CFD is called on vs and ts and the function returns
+    a list of peaks.
     """
     peaks_sizes = [peak.shape[0] for peak in pkwin_list]
     arr_size = np.sum(peaks_sizes)
@@ -36,10 +50,11 @@ def find_peaks(pkwin_list, startpos_list, CFD, sample_period):
                 st = np.sum(peaks_sizes[:ipeak])
             en = st + peaks_sizes[ipeak]
             _stimes = np.arange(startpos_list[ipeak], 
-                    startpos_list[ipeak]+(peaks_sizes[ipeak]*sample_period), sample_period)
+                                startpos_list[ipeak]+(peaks_sizes[ipeak]*CFD.sample_interval), 
+                                CFD.sample_interval
+                               )
             stimes[st:en] = _stimes[:peaks_sizes[ipeak]]
             swf[st:en]  = peak 
-        
         ts = stimes
         vs = swf
         pks = CFD.CFD(vs, ts) 
@@ -54,13 +69,15 @@ def proc_data(**kwargs):
     EXP          = kwargs.get('exp', 'amox27716')
     RUN          = kwargs.get('run', 85)
     VERBOSE      = kwargs.get('verbose', True)
-    PLOT         = kwargs.get('plot', True)
+    PLOT         = kwargs.get('plot', False)
     OFPREFIX     = kwargs.get('ofprefix','./')
     PARAMSCFD    = kwargs.get('paramsCFD')
     NUMCHS       = kwargs.get('numchs', 5)
     NUMHITS      = kwargs.get('numhits', 16)
     TESTMODE     = kwargs.get('testmode', 1)
+    ROENTDEK     = kwargs.get('roentdek', 'dldproc')
     MONITOR      = kwargs.get('monitor', False)
+    DETECTORS    = kwargs.get('detectors', 1)
 
     # Open datasource
     ds = DataSource(exp=EXP, 
@@ -72,71 +89,108 @@ def proc_data(**kwargs):
     run = next(ds.runs())
     det = run.Detector("tmo_quadanode")
     
-    # Update calibration constants
-    dldpars = {'consts':det.calibconst}
-    kwargs.update(dldpars)
-    
-    # Initialize PyCFD per channel
-    cfds = {}
-    for i_chan in range(NUMCHS):
-        cfds[i_chan] = PyCFD(PARAMSCFD[i_chan])
-    
-    # Intitialize Roentdek wrapper
-    proc  = DLDProcessor(**kwargs)
-    if PLOT: stats = DLDStatistics(proc,**kwargs)
+    # Hidden-rank problem
+    if det:
+        # Update calibration constants
+        dldpars = {'consts':det.calibconst}
+        kwargs.update(dldpars)
+        
+        # Initialize PyCFD per channel
+        cfds = {}
+        for i_chan in range(NUMCHS):
+            cfds[i_chan] = PyCFD(PARAMSCFD[i_chan])
+        
+        # Intitialize Roentdek wrapper and Xiang's hitfinder
+        proc  = DLDProcessor(**kwargs)
+        HF = HitFinder(kwargs)
+        if PLOT: stats = DLDStatistics(proc,**kwargs)
 
-    # Collect batch rate with t0 and t1
-    t0 = time.monotonic()
+        # Collect batch rate with t0 and t1
+        t0 = time.monotonic()
 
-    # Find peaks for each channel and saves them in a fixed
-    # size array for running Roentdek algorithms
-    cn_no_peaks_events = 0
-    cn_peaks = np.zeros(EVENTS, dtype=np.int64)
-    dt_pks = np.zeros(EVENTS, dtype=np.float64)
-    dt_rtks = np.zeros(EVENTS, dtype=np.float64)
+        # Find peaks for each channel and saves them in a fixed
+        # size array for running Roentdek algorithms
+        cn_no_peaks_events = 0
+        cn_peaks = np.zeros(EVENTS, dtype=np.int64)
+        dt_pks = np.zeros(EVENTS, dtype=np.float64)
+        dt_rtks = np.zeros(EVENTS, dtype=np.float64)
+        
+        # Aux arrays for passing N-channels data to Roentdek
+        nhits_fex = np.zeros(NUMCHS * DETECTORS, dtype=np.int64)
+        pktsec_fex = np.zeros([NUMCHS * DETECTORS, NUMHITS], dtype=np.float64)
+
+    # Setup srv nodes if writing is requested
+    if TESTMODE == 4:
+        smd_batch_size = 1000
+        smd = ds.smalldata(filename='/cds/data/drpsrcf/users/monarin/amox27716/out/mysmallh5.h5', 
+                           batch_size=smd_batch_size, 
+                          )
+    
     for i_ev, evt in enumerate(run.events()):
-        print(f'EVENT: {i_ev}')
-        nhits_fex = np.zeros(NUMCHS, dtype=np.int64)
-        pktsec_fex = np.zeros([NUMCHS, NUMHITS], dtype=np.float64)
-
-        # Empty-op for testing READ mode
-        if TESTMODE == 1:
-            for i_chan in range(NUMCHS):
-                wfs_chan = det.fex.waveforms(evt, i_chan)
-                ts_chan = det.fex.times(evt, i_chan)
+        if VERBOSE: print(f'EVENT: {i_ev}')
+        
+        # Get list of waveforms and startpos by segment id
+        waveforms = det.fex.waveforms(evt, n_dets=DETECTORS)
+        times = det.fex.times(evt, n_dets=DETECTORS)
 
         # Run peakfinder
+        # For > 1 detector, we get new detector at every NUMCHS streams.
+        # Note that we reuse PyCFD for all detectors (for testing).
         t0_pk = time.monotonic()
-        if TESTMODE in (2, 3):
-            n_result_peaks = np.zeros(NUMCHS, dtype=np.int64)
-            for i_chan in range(NUMCHS):
-                result_peaks = find_peaks(det.fex.waveforms(evt, i_chan), 
-                                          det.fex.times(evt, i_chan), 
-                                          cfds[i_chan], 
-                                          PARAMSCFD[i_chan]['sample_interval']
-                                         )
+        if TESTMODE in (2, 3, 4):
+            n_result_peaks = np.zeros(NUMCHS * DETECTORS, dtype=np.int64)
+            for i_det in range(DETECTORS):
+                for i_chan in range(NUMCHS):
+                    seg_id = int(i_det * NUMCHS + i_chan)
+                    # TODO: Eliminate sample_interval
+                    result_peaks = find_peaks(waveforms[seg_id], 
+                                              times[seg_id], 
+                                              cfds[i_chan], 
+                                             )
+                    
+                    n_result_peaks[seg_id] = len(result_peaks)
+                    if VERBOSE: print(f'  det: {i_det} chan:{i_chan} #peaks:{len(result_peaks)}')
+                    
+                    # Save hits and peaks from fex data
+                    nhits_chan_fex = min(len(result_peaks), NUMHITS)
+                    nhits_fex[seg_id] = nhits_chan_fex
+                    pktsec_fex[seg_id,:nhits_chan_fex] = result_peaks[:nhits_chan_fex]
+                    pktsec_fex[seg_id,nhits_chan_fex:] = 0
                 
-                n_result_peaks[i_chan] = len(result_peaks)
-                if VERBOSE: print(f'  chan:{i_chan} #peaks:{len(result_peaks)}')
-                
-                # Save hits and peaks from fex data
-                nhits_chan_fex = min(len(result_peaks), NUMHITS)
-                nhits_fex[i_chan] = nhits_chan_fex
-                pktsec_fex[i_chan,:nhits_chan_fex] = result_peaks[:nhits_chan_fex]
-            
             if np.all(n_result_peaks==0): cn_no_peaks_events += 1
-            cn_peaks[i_ev] = np.sum(n_result_peaks)
+            cn_peaks[i_ev] = np.prod(n_result_peaks + 1)
         t1_pk = time.monotonic()
         dt_pks[i_ev] = t1_pk - t0_pk
 
         # Run Roentdek
         t0_rtk = time.monotonic()
-        if TESTMODE == 3:
-            proc.event_proc(i_ev, nhits_fex, pktsec_fex)
-            if PLOT: stats.fill_data(nhits_fex, pktsec_fex)
-            for i,(x,y,r,t) in enumerate(proc.xyrt_list(i_ev, nhits_fex, pktsec_fex)):
-                if VERBOSE: print('    hit:%2d x:%7.3f y:%7.3f t:%10.5g r:%7.3f' % (i,x,y,t,r))
-                pass
+        rt_hits = np.zeros([DETECTORS, NUMHITS, 4], dtype=np.float64)
+        if TESTMODE in (3, 4) and np.sum(n_result_peaks) > 0:
+            for i_det in range(DETECTORS):
+                st = int(i_det * NUMCHS)
+                en = st + NUMCHS
+
+                if ROENTDEK == 'dldproc':
+                    # Roentdek wrapper
+                    # TODO: With Mikhail - eliminate i_ev
+                    proc.event_proc(i_ev, nhits_fex[st:en], pktsec_fex[st:en, :])
+                    for i,(x,y,r,t) in enumerate(proc.xyrt_list(i_ev, nhits_fex[st:en], pktsec_fex[st:en,:])):
+                        # Allow saving upto NUMHITS
+                        if i == NUMHITS: break
+                        rt_hits[i_det, i, :] = [x,y,r,t]
+                        if VERBOSE: print('    hit:%2d x:%7.3f y:%7.3f t:%10.5g r:%7.3f' % (i,x,y,t,r))
+                else: 
+                    # Xiang's peakfinding
+                    HF.FindHits(pktsec_fex[4,:nhits_fex[4]],
+                            pktsec_fex[0,:nhits_fex[0]],
+                            pktsec_fex[1,:nhits_fex[1]],
+                            pktsec_fex[2,:nhits_fex[2]],
+                            pktsec_fex[3,:nhits_fex[3]])
+                    xs1,ys1,ts1 = HF.GetXYT()
+                    if VERBOSE: print(f'xs1={xs1} ys1={ys1} ts1={ts1}')
+
+                if PLOT: stats.fill_data(nhits_fex[st:en], pktsec_fex[st:en, :])
+
         t1_rtk = time.monotonic()
         dt_rtks[i_ev] = t1_rtk - t0_rtk
 
@@ -146,25 +200,40 @@ def proc_data(**kwargs):
             print(f'RANK: {rank} RATE: {(1000/(t1-t0))*1e-3:.2f} kHz')
             t0 = time.monotonic()
 
-    # end for i_ev in...
-    if PLOT:
-        #draw_plots(stats, prefix=OFPREFIX+EXP+f'-r{str(RUN).zfill(4)}', do_save=True, hwin_x0y0=(0,10))
+        if TESTMODE == 4:
+            smd.event(evt, peaks=pktsec_fex, hits=rt_hits)
 
-        # Plot correlation between calc. time and #peaks and histogram of calc.time
-        plt.subplot(2,2,1)
-        plt.hist(dt_pks*1e3)
-        plt.title('Histogram of peak finding time (ms)')
-        plt.subplot(2,2,2)
-        plt.scatter(cn_peaks, dt_pks*1e3)
-        plt.title('CC of #peaks and peakfinding time (ms)')
-        plt.subplot(2,2,3)
-        plt.hist(dt_rtks*1e3)
-        plt.title('Histogram of Roentdek calc. time (ms)')
-        plt.subplot(2,2,4)
-        plt.scatter(cn_peaks, dt_rtks*1e3)
-        plt.title('CC of #peaks and Roentdek calc. time (ms)')
-        plt.show()
-    print(f'EVENTS={EVENTS} NO PEAK EVENTS={cn_no_peaks_events}')
+    # end for i_ev in...
+    if TESTMODE == 4:
+        smd.done()
+
+    if PLOT:
+        draw_plots(stats, prefix=OFPREFIX+EXP+f'-r{str(RUN).zfill(4)}', do_save=True, hwin_x0y0=(0,10))
+
+    # Plot correlation between calc. time and #peaks and histogram of calc.time
+    #plt.subplot(2,2,1)
+    #plt.hist(dt_pks*1e3)
+    #plt.title('Histogram of peak finding time (ms)')
+    #plt.subplot(2,2,2)
+    #plt.scatter(cn_peaks, dt_pks*1e3)
+    #plt.title('CC of #peaks and peakfinding time (ms)')
+    #plt.subplot(2,2,3)
+    #plt.hist(dt_rtks*1e3)
+    #plt.title('Histogram of Roentdek calc. time (ms)')
+    #plt.subplot(2,2,4)
+    #plt.scatter(cn_peaks, dt_rtks*1e3)
+    #plt.title('CC of #np.prod(peaks+1) and Roentdek calc. time (ms)')
+    #plt.show()
+
+    #ind = cn_peaks == 0
+    #plt.subplot(2,1,1)
+    #plt.plot(dt_rtks[ind])
+    #plt.title('Roentdek Calc. Time (s.) for Zero-peak events')
+    #plt.subplot(2,1,2)
+    #plt.plot(cn_peaks[ind])
+    #plt.show()
+    
+    if VERBOSE: print(f'EVENTS={EVENTS} NO PEAK EVENTS={cn_no_peaks_events}')
 
 
 if __name__ == "__main__":
@@ -179,8 +248,21 @@ if __name__ == "__main__":
     max_events = 0
     if len(sys.argv) > 2:
         max_events = int(sys.argv[2])
+    detectors = 1
+    if len(sys.argv) > 3:
+        detectors = int(sys.argv[3])
+    roentdek_alg = "dldproc"
+    if len(sys.argv) > 4:
+        roentdek_alg = sys.argv[4]
 
-    kwargs = {'xtcdir'   : '/cds/data/drpsrcf/users/monarin/amox27716/xtc',
+    # To test correct reading performance, we need to use the folder with 
+    # correct no. of stream files. This is because PSANA2 reads everything.
+    if detectors == 1:
+        xtc_dir = '/cds/data/drpsrcf/users/monarin/amox27716/big' # 5 streams
+    else:
+        xtc_dir = '/cds/data/drpsrcf/users/monarin/amox27716/xtc' # 10 streams
+
+    kwargs = {'xtcdir'   : xtc_dir,
               'detname'  : 'tmo_quadanode',
               'numchs'   : 5,
               'numhits'  : 16,
@@ -192,7 +274,9 @@ if __name__ == "__main__":
               'version'  : 4,
               'DLD'      : True,
               'testmode' : testmode,
-              'monitor'  : True,
+              'roentdek' : roentdek_alg,
+              'monitor'  : False,
+              'detectors': detectors,
               'paramsCFD': {0: {'channel': 'mcp',
                               'delay': 1e-8,
                               'fraction': 0.35,
@@ -254,8 +338,22 @@ if __name__ == "__main__":
               'cfd_wfbinbeg'   :  6000,
               'cfd_wfbinend'   : 22000,
              }
-    
     kwargs.update(cfdpars)
+
+    # Parameters of the HitFinder (Xiang's algorithm)
+    hfpars = {
+              'runtime_u' : 90,
+              'runtime_v' : 100,
+              'tsum_avg_u' : 130,
+              'tsum_avg_v' : 141,
+              'tsum_hw_u' : 6,
+              'tsum_hw_v' : 6,
+              'f_u' : 1,
+              'f_v' : 1,
+              'Rmax': 45,
+             }
+    kwargs.update(hfpars)
+    
 
     t0 = get_time()
     proc_data(**kwargs)
@@ -267,4 +365,7 @@ if __name__ == "__main__":
         # Use total no. of events
         if nev == 0: nev = 29790007
 
-        print(f"EVENTS: {nev} MODE: {kwargs['testmode']} ELAPSED TIME: {t1-t0:.2f}s TOTALRATE: {(nev/(t1-t0))*1e-6:.4f}MHz")
+        n_ebs = os.environ.get('PS_EB_NODES', '1')
+        n_srvs = os.environ.get('PS_SRV_NODES', '0')
+
+        print(f"EVENTS: {nev} MODE: {kwargs['testmode']} #EB: {n_ebs} #SRV: {n_srvs} ELAPSED TIME: {t1-t0:.2f}s TOTALRATE: {(nev/(t1-t0))*1e-3:.4f}kHz")
