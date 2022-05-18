@@ -3,29 +3,25 @@
 # $/reg/common/package/openmpi/4.0.0-rhel7/bin/mpirun -np 3 --hostfile openmpi_hosts --mca btl_openib_allow_ib 1 run_slac.sh
 #source $HOME/lcls2/setup_env.sh
 #conda activate ps-1.0.3 # since ps-2.0.0 openmpi is the default mpi sw
+#export PATH=/reg/neh/home/monarin/tmp/4.0.0-rhel7/bin:$PATH
+#export LD_LIBRARY_PATH=/reg/neh/home/monarin/tmp/4.0.0-rhel7/lib
 
 
-# For mpich (run in normal lcls2 env)
+# Usage for mpich (run in normal lcls2 env)
 # mpirun -n 3 -f host_file ./run_slac.sh
 
 
-# TAU profile
+# Usage for TAU profile
 #export TAU_MAKEFILE=/reg/neh/home/monarin/tau-2.28/x86_64/lib/Makefile.tau-ompt-mpi-pdt-openmp
 #export PATH=/reg/neh/home/monarin/tau-2.28/x86_64/bin:$PATH
 #tau_exec python $HOME/lcls2/psana/psana/tests/dev_eventbuilder.py
 
-#python test_mpi.py
-#python dev_bd.py
-#python test_send_recv.py
 
-#export PS_SMD_NODES=12
-#. "/reg/neh/home/monarin/miniconda3/etc/profile.d/conda.sh"
-#conda activate test
-#python $HOME/psana-nersc/psana2/test_mpi.py
+# Usage for submit as psana2-style (SMD0 on single node) on srcf
+# Update --nodes and --ntasks in submit_slac.sh
+# Run sbatch submit_slac.sh
+# See ref. no in https://docs.google.com/spreadsheets/d/111exVHQH_zOTYJYSl6XrYtj22Z-jqC0YZg847kaVt_8/edit?usp=sharing
 
-
-#export PATH=/reg/neh/home/monarin/tmp/4.0.0-rhel7/bin:$PATH
-#export LD_LIBRARY_PATH=/reg/neh/home/monarin/tmp/4.0.0-rhel7/lib
 
 run_psana2_perf() {
     t_start=`date +%s`
@@ -33,11 +29,10 @@ run_psana2_perf() {
 
 
     # for psana2
+    export PS_R_MAX_RETRIES=0
     export PS_SMD_N_EVENTS=10000
+    export PS_SMD_CHUNKSIZE=16777216
     export PS_SMD0_NUM_THREADS=32
-    export PS_EB_NODES=32
-    export PS_R_MAX_RETRIES=30
-    #export PS_SRV_NODES=128
     source $HOME/lcls2/setup_env.sh
     
     # preventing blas from openning too many threads?
@@ -48,10 +43,23 @@ run_psana2_perf() {
     export OMPI_MCA_btl_tcp_if_include=172.21.164.90/1072
     #ompi_info --param btl all --level 9
     
-    #python -u ./test_psana2_perf.py
+    export PS_EB_NODES=1
+    python -u ./test_psana2_perf.py
     #python -u ./test_fex_cfd1.py
     #python -u ./test_mpi.py
-    python -u ./test_live.py
+    #python -u ./test_live.py
+    #python -u ./test_prometheus_monitor.py
+
+    # test Roentdek algorithm 
+    # input args: 
+    #   1 MODE (1=READ, 2=PEAKFINDING, 3=ROENTDEK, 4=WRITE)
+    #   2 max_events
+    #   3 n_dets 
+    #   4 ROENTDEK algorithm ('dldproc', 'hitfinder')
+    #export PS_EB_NODES=1
+    #export PS_SRV_NODES=$PS_EB_NODES
+    #python -u ./test_roentdek.py 1 25600000 2 hitfinder
+    
     t_end=`date +%s`
     echo "PSANA2 JOB COMPLETE AT" $t_end "TOTAL ELAPSED" $((t_end-t_start)) "N_TASKS" $SLURM_NTASKS
 }

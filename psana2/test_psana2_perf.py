@@ -33,12 +33,11 @@ def filter_fn(evt):
 
 st = MPI.Wtime()
 
-#xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M4n"
-xtc_dir = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc32n'
+xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata"
 batch_size = 1000
 monitor = False
-#ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
-ds = DataSource(exp='tmolv9418', run=175, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
+ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
+#ds = DataSource(exp='tmolv9418', run=175, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
 sendbuf = np.zeros(1, dtype='i')
 recvbuf = None
 if rank == 0:
