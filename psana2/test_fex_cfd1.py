@@ -27,8 +27,8 @@ ds = DataSource(exp='tmolv9418', run=175, dir=xtc_dir, batch_size=batch_size, ma
 
 # Create Srv nodes for data writing
 smd_batch_size = 1000
-smd = ds.smalldata(filename='/cds/data/drpsrcf/users/monarin/tmolv9418/out/mysmallh5.h5', batch_size=smd_batch_size, )
-max_peaks = 100 # maximum no. of peaks saved per event
+#smd = ds.smalldata(filename='/cds/data/drpsrcf/users/monarin/tmolv9418/out/mysmallh5.h5', batch_size=smd_batch_size, )
+#max_peaks = 100 # maximum no. of peaks saved per event
 
 myrun = next(ds.runs())
 sample_period = 1000e-9/6400*14./13.
@@ -100,6 +100,8 @@ for nevt,evt in enumerate(myrun.events()):
     
     #wfs   = hsd.waveforms(evt)
     fex = hsd.peaks    (evt)
+    
+    continue
     
     t_det = time.monotonic()
     ts    = evt.timestamp
@@ -194,7 +196,7 @@ for nevt,evt in enumerate(myrun.events()):
 
 
 # Stop Srv nodes
-smd.done()
+#smd.done()
 
 comm.Barrier()
 t1 = MPI.Wtime()

@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --partition=anaq
-#SBATCH --job-name=psana2-test
-#SBATCH --nodes=2
-#SBATCH --ntasks=4
+#SBATCH --job-name=psana2
+#SBATCH --nodes=12
+#SBATCH --ntasks=594
 ##SBATCH --ntasks-per-node=50
-#SBATCH --output=%j.log
+#SBATCH --output=/cds/data/drpsrcf/users/monarin/log/%j.log
 #SBATCH --exclusive
  
 

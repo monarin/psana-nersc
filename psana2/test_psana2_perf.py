@@ -12,32 +12,42 @@ comm=MPI.COMM_WORLD
 rank=comm.Get_rank()
 size=comm.Get_size()
 
+
 comm.Barrier()
-print(f'DONE IMPORT AT: {time.time()} RANK {rank} PID={os.getpid()} on HOST  {MPI.Get_processor_name()}', flush=True)
+st = MPI.Wtime()
+if rank == 0:
+    print(f'DONE IMPORT AT: {time.time()} RANK {rank} PID={os.getpid()} on HOST  {MPI.Get_processor_name()}', flush=True)
 
 
-#import logging
-#logging.basicConfig(filename='test_psana2_perf.log', filemode='w')
-#logger = logging.getLogger('psana.psexp.event_manager')
-#logger.setLevel(logging.DEBUG)
-#ch = logging.StreamHandler()
-#ch.setLevel(logging.DEBUG)
-#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#ch.setFormatter(formatter)
-#logger.addHandler(ch)
+import logging
+logging.basicConfig(filename='test_psana2_perf.log', filemode='w')
+logger = logging.getLogger('psana.psexp.event_manager')
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
-max_events = 0
 
 def filter_fn(evt):
     return True
 
-st = MPI.Wtime()
 
-xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata"
-batch_size = 1000
-monitor = False
-ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
-#ds = DataSource(exp='tmolv9418', run=175, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=False)
+max_events = 256000
+batch_size = 200
+monitor = False 
+
+
+# Test dta
+#xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata"  # test data
+#ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
+
+# SPI data (duplicate 120 events to 300k)
+xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"        
+ds = DataSource(exp='amo06516', run=90, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
+
+
 sendbuf = np.zeros(1, dtype='i')
 recvbuf = None
 if rank == 0:
@@ -54,11 +64,24 @@ def bd_task(det, evt):
 
 st_batch = time.time()
 for run in ds.runs():
-    #det = run.Detector('hsd')
+    #det = run.Detector('xpphsd')
+    det = run.Detector("amopnccd")
+    pixel_position = run.beginruns[0].scan[0].raw.pixel_position
+    pixel_index_map = run.beginruns[0].scan[0].raw.pixel_index_map
+    #pp_det = run.Detector("pixel_position")
+    #pim_det = run.Detector("pixel_index_map")
     mysum = 0.0
-    for i, evt in enumerate(run.events()):
-        if i == 0:
+    #for i_step, step in enumerate(run.steps()):
+    for i_evt, evt in enumerate(run.events()):
+        if sendbuf[0] == 0:
             print(f'RANK:{rank} GOT FIRST EVT AT {time.time()} ON HOST {MPI.Get_processor_name()} n_dgrams:{len(evt._dgrams)}', flush=True)
+    
+        calib = det.raw.calib(evt)
+
+        # Per run variables
+        photon_energy = det.raw.photon_energy(evt)
+        #pixel_position = pp_det(evt)
+        #pixel_index_map = pim_det(evt)
         
         # analysis code
         #mysum += bd_task(det, evt)
@@ -68,12 +91,11 @@ for run in ds.runs():
         #print(i, len(peaks[0][0][0]), len(peaks[0][0][1]))
         
         sendbuf += 1
-        if i % batch_size == 0:
+        if sendbuf[0] % batch_size == 0:
             en_batch = time.time()
-            #print(f'RANK:{rank} processed {i} events rate:{(batch_size/(en_batch-st_batch))*1e-3:.2f}kHz mysum={mysum:.2f}', flush=True)
-            print((batch_size/(en_batch-st_batch))*1e-3, flush=True)
+            print(f'RANK:{rank} #events:{sendbuf[0]} rate:{(batch_size/(en_batch-st_batch))*1e-3:.2f}kHz', flush=True)
+            #print((batch_size/(en_batch-st_batch))*1e-3, flush=True)
             st_batch = time.time()
-
 
 comm.Gather(sendbuf, recvbuf, root=0)
 
@@ -82,4 +104,6 @@ if rank == 0:
     processed_events = np.sum(recvbuf)
     #processed_events = max_events # bypass run.events() loop 
     n_eb_nodes = int(os.environ.get('PS_EB_NODES', '1'))
-    print(f'#events={processed_events} #eb:{n_eb_nodes} time: {en-st}s rate: {processed_events/((en-st)*1e6):.5f}MHz')
+    ps_smd_chunksize = int(os.environ.get('PS_SMD_CHUNKSIZE', '16777216'))
+    ps_bd_chunksize = int(os.environ.get('PS_BD_CHUNKSIZE', '16777216'))
+    print(f'#events={processed_events} #eb:{n_eb_nodes} PS_SMD_CHUNKSIZE={ps_smd_chunksize*1e-6:.2f}MB PS_BD_CHUNKSIZE:{ps_bd_chunksize*1e-6:.2f}MB time:{en-st:.2f}s rate: {processed_events/((en-st)*1e6):.5f}MHz')

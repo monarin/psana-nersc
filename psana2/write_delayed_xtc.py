@@ -35,14 +35,14 @@ if __name__ == "__main__":
         max_events = int(sys.argv[1])
         start_cp_at = int(sys.argv[2]) # start copying to .xtc2 file at event#
 
-    smd_fname_in = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/smalldata/data-r0001-s00.smd.xtc2"
-    xtc_fname_in = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/data-r0001-s00.xtc2"
+    smd_fname_in = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc/smalldata/tmolv9418-r0175-s000-c000.smd.xtc2'
+    xtc_fname_in = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc/tmolv9418-r0175-s000-c000.xtc2'
 
     smd_fd, smd_f_size = open_file(smd_fname_in)
     xtc_fd, xtc_f_size = open_file(xtc_fname_in)
 
-    smd_f_out = open("./tmp/smalldata/data-r0001-s00.smd.xtc2.inprogress", "wb", buffering=buffering)
-    xtc_f_out = open("./tmp/data-r0001-s00.xtc2.inprogress" ,"wb", buffering=buffering)
+    smd_f_out = open("./tmp/smalldata/tmolv9418-r0175-s000-c000.smd.xtc2.inprogress", "wb", buffering=buffering)
+    xtc_f_out = open("./tmp/tmolv9418-r0175-s000-c000.xtc2.inprogress" ,"wb", buffering=buffering)
 
 
     # write config for both smd and xtc files
@@ -59,8 +59,8 @@ if __name__ == "__main__":
         print(f'Finished write evt#{cn_events} - sleep 1 second...')
         
         if cn_events == start_cp_at:
-            shutil.copyfile("./tmp/smalldata/data-r0001-s00.smd.xtc2.inprogress", "./tmp/smalldata/data-r0001-s00.smd.xtc2")
-            shutil.copyfile("./tmp/data-r0001-s00.xtc2.inprogress", "./tmp/data-r0001-s00.xtc2")
+            shutil.copyfile("./tmp/smalldata/tmolv9418-r0175-s000-c000.smd.xtc2.inprogress", "./tmp/smalldata/tmolv9418-r0175-s000-c000.smd.xtc2")
+            shutil.copyfile("./tmp/tmolv9418-r0175-s000-c000.xtc2.inprogress", "./tmp/tmolv9418-r0175-s000-c000.xtc2")
             print(f'copy .inprogress files to .xtc2 files')
             
         time.sleep(1)

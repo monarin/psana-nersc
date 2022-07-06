@@ -20,6 +20,8 @@ run = next(ds.runs())
 det = run.Detector("tmo_quadanode")
 
 
+comm.Barrier()
+t0 = MPI.Wtime()
 # Starts reading data
 st = time.monotonic()
 for i_evt, evt in enumerate(run.events()):
@@ -31,3 +33,12 @@ for i_evt, evt in enumerate(run.events()):
         print(f'RANK:{rank:4d} RATE:{(1000/(en-st))*1e-3:.2f}kHz')
         st = time.monotonic()
 
+comm.Barrier()
+t1 = MPI.Wtime()
+
+if rank == 0:
+    n_evts = max_events
+    if n_evts == 0: n_evts = 148950007 
+
+    PS_EB_NODES = int(os.environ.get('PS_EB_NODES', '1'))
+    print(f'EVENTS: {n_evts} EBS: {PS_EB_NODES} ELAPSEDTIME: {t1-t0:.2f}s. TOTALRATE:{(n_evts/(t1-t0))*1e-6:.2f}MHz')

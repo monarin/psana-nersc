@@ -28,22 +28,25 @@ run_psana2_perf() {
     echo "RUN PSANA2 SCRIPT SUBMITTED AT" $t_start 
 
 
-    # for psana2
+    # For psana2
     export PS_R_MAX_RETRIES=0
-    export PS_SMD_N_EVENTS=10000
-    export PS_SMD_CHUNKSIZE=16777216
+    export PS_SMD_N_EVENTS=8000
+    export PS_FAKESTEP_FLAG=0
     export PS_SMD0_NUM_THREADS=32
+    # For amo06516 (Exafel SPI data)
+    export PS_SMD_CHUNKSIZE=32000000
     source $HOME/lcls2/setup_env.sh
     
-    # preventing blas from openning too many threads?
+    # Preventing blas from openning too many threads?
     export OPENBLAS_NUM_THREADS=1 
     
-    # for openmpi
+    # For openmpi
     #export OMPI_MCA_btl=self,tcp,vader
     export OMPI_MCA_btl_tcp_if_include=172.21.164.90/1072
     #ompi_info --param btl all --level 9
     
-    export PS_EB_NODES=1
+    export PS_EB_NODES=32
+    #python -u ./dummy.py
     python -u ./test_psana2_perf.py
     #python -u ./test_fex_cfd1.py
     #python -u ./test_mpi.py

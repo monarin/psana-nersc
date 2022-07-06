@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     xtc_fname_in = "data.xtc2"
     xtc_fd, xtc_f_size = open_file(xtc_fname_in)
-    xtc_f_out = open(f"data-r0001-s01-c01.xtc2" ,"wb", buffering=buffering)
+    xtc_f_out = open(f"data-r0001-s000-c001.xtc2" ,"wb", buffering=buffering)
 
     xtc_offset, xtc_config = get_config(xtc_fd)
     #xtc_f_out.write(xtc_config) #first chunk only

@@ -68,7 +68,7 @@ def proc_data(**kwargs):
     EVENTS       = kwargs.get('events', 10) + EVSKIP
     EXP          = kwargs.get('exp', 'amox27716')
     RUN          = kwargs.get('run', 85)
-    VERBOSE      = kwargs.get('verbose', True)
+    VERBOSE      = kwargs.get('verbose', False)
     PLOT         = kwargs.get('plot', False)
     OFPREFIX     = kwargs.get('ofprefix','./')
     PARAMSCFD    = kwargs.get('paramsCFD')
@@ -187,7 +187,14 @@ def proc_data(**kwargs):
                             pktsec_fex[2,:nhits_fex[2]],
                             pktsec_fex[3,:nhits_fex[3]])
                     xs1,ys1,ts1 = HF.GetXYT()
-                    if VERBOSE: print(f'xs1={xs1} ys1={ys1} ts1={ts1}')
+                    for i,(x,y,t) in enumerate(zip(xs1, ys1, ts1)):
+                        # Allow saving upto NUMHITS
+                        if i == NUMHITS: break
+                        rt_hits[i_det, i, :] = [x,y,0,t]
+                        # Converts HF results to nm
+                        x *= 1e9
+                        y *= 1e9
+                        if VERBOSE: print('    hit:%2d x:%7.3f y:%7.3f t:%10.5g r:%7.3f' % (i,x,y,t,0))
 
                 if PLOT: stats.fill_data(nhits_fex[st:en], pktsec_fex[st:en, :])
 
@@ -216,13 +223,13 @@ def proc_data(**kwargs):
     #plt.title('Histogram of peak finding time (ms)')
     #plt.subplot(2,2,2)
     #plt.scatter(cn_peaks, dt_pks*1e3)
-    #plt.title('CC of #peaks and peakfinding time (ms)')
+    #plt.title('CC of np.prod(peaks+1) and peakfinding time (ms)')
     #plt.subplot(2,2,3)
     #plt.hist(dt_rtks*1e3)
-    #plt.title('Histogram of Roentdek calc. time (ms)')
+    #plt.title('Histogram of HitFinder calc. time (ms)')
     #plt.subplot(2,2,4)
     #plt.scatter(cn_peaks, dt_rtks*1e3)
-    #plt.title('CC of #np.prod(peaks+1) and Roentdek calc. time (ms)')
+    #plt.title('CC of np.prod(peaks+1) and HitFinder calc. time (ms)')
     #plt.show()
 
     #ind = cn_peaks == 0
@@ -342,15 +349,15 @@ if __name__ == "__main__":
 
     # Parameters of the HitFinder (Xiang's algorithm)
     hfpars = {
-              'runtime_u' : 90,
-              'runtime_v' : 100,
+              'runtime_u' : 140.1,
+              'runtime_v' : 141,
               'tsum_avg_u' : 130,
               'tsum_avg_v' : 141,
-              'tsum_hw_u' : 6,
-              'tsum_hw_v' : 6,
+              'tsum_hw_u' : 130,#130,
+              'tsum_hw_v' : 141,#142,
               'f_u' : 1,
               'f_v' : 1,
-              'Rmax': 45,
+              'Rmax': 120,
              }
     kwargs.update(hfpars)
     

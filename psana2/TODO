@@ -8,6 +8,13 @@ MTIP
 2. Segfault when reading data generated from dgram with large no. of events 120 * 10667 = 1280040 events
 /cds/home/m/monarin/Save/parallelreader.pyx_2022-05-28+142758
 for print out
+3. Spinifel needs support for per-evt pixel position reciprocal
+   Use mean wavelength
+4. Early termination by bd/eb cores
+   Smd0 is waiting (IRecv) on special bd/eb signal
+- 1600 N_images_per_rank error
+- Output not shown in /spinifel_output/testxtc2
+- Regenerate data with BeginRun exp=xpptut15 run=1 and rename files to data-r0001-s000-c000.xtc2
 
 
 TODO:
@@ -25,7 +32,6 @@ Dgrampy (for 2023 epixhr)
 - Rule for generating NamesId is the lowest from the range available 
 e.g. 0,1,2,...,255 
 next NamesId is 3
-see ~/psana-nersc/psana2/dgrampy/ex-02-zmq-drp-pull.py for more TODO note
 
 
 To solve EnvStore prolem on Eb
