@@ -1,3 +1,22 @@
+1. Multirun with optional renewed configs
+- SingleFileDataSource and ShmemDataSource loops overun multiple runs and replaces the old config with new one (if any).
+  - Remove while(1) in AMI main
+  - Tests show that new detector (new config) can be seen on the GUI.
+- psana.dgram.Dgram can create Config by checking service field in the dgram header
+- DgramManager (most changes happen here)
+  - In shmem mode, it tries to create new connection when EndRun is found. 
+  - It will run forever unless Ctrl-C. For the unit test, we adapted it to asking for only one run.
+  - Details: 
+    - Before the change, DataSource setups detclass table and configs after receiving configs from DgramManager.
+      With the change, only DgramManager owns configs. It will setup (create attributes) to any object given
+      through config_consumer=[]. Right now, this is ds.DsParms. 
+
+2. MPI Communication problem (Taran)
+   psanagpu116 (ifconfig different from 113 and 114) is the only machine that has the hanging problem.
+   Use of export OMPI_MCA_btl_tcp_if_include=172.21.50.24/1072 mitigate the problem. 
+
+
+
 MTIP 
 0. Streaming only performance
    - Looks like there's too much of data going between smd0 and eb cores.
