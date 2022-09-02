@@ -1,7 +1,7 @@
 """
 Create new xtc2 from data from hdf5 file.
 """
-from psana.dgrampy import DgramPy, AlgDef, DetectorDef
+from psana.dgramedit import DgramEdit, AlgDef, DetectorDef
 from psana.psexp import TransitionId
 import numpy as np
 import h5py
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     
     # Create config, algorithm, and detector
-    config = DgramPy(transition_id=TransitionId.Configure, ts=get_next_ts())
+    config = DgramEdit(transition_id=TransitionId.Configure, ts=get_next_ts())
     alg = AlgDef("raw", 1, 2, 3)
     det = DetectorDef("amopnccd", "pnccd", "detnum1234")
 
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     # Save xtc header transitions
     config.save(xtc2file)
 
-    beginrun = DgramPy(transition_id=TransitionId.BeginRun, config=config, ts=get_next_ts())
+    beginrun = DgramEdit(transition_id=TransitionId.BeginRun, config=config, ts=get_next_ts())
     runinfo.runinfo.expt = "xpptut15"
     runinfo.runinfo.runnum = 1
     beginrun.adddata(runinfo.runinfo)
@@ -121,16 +121,16 @@ if __name__ == "__main__":
     beginrun.adddata(scan.raw)
     beginrun.save(xtc2file)
     
-    beginstep = DgramPy(transition_id=TransitionId.BeginStep, config=config, ts=get_next_ts())
+    beginstep = DgramEdit(transition_id=TransitionId.BeginStep, config=config, ts=get_next_ts())
     beginstep.save(xtc2file)
     
-    enable = DgramPy(transition_id=TransitionId.Enable, config=config, ts=get_next_ts())
+    enable = DgramEdit(transition_id=TransitionId.Enable, config=config, ts=get_next_ts())
     enable.save(xtc2file)
 
     
     # Save L1 events
     for i_evt in range(n_events):
-        d0 = DgramPy(transition_id=TransitionId.L1Accept, config=config, ts=get_next_ts())
+        d0 = DgramEdit(transition_id=TransitionId.L1Accept, config=config, ts=get_next_ts())
         pnccd.raw.calib = intensities[i_evt][:]
         d0.adddata(pnccd.raw)
         d0.save(xtc2file)
@@ -139,11 +139,11 @@ if __name__ == "__main__":
 
     
     # Save footer transitions
-    disable = DgramPy(transition_id=TransitionId.Disable, config=config, ts=get_next_ts())
+    disable = DgramEdit(transition_id=TransitionId.Disable, config=config, ts=get_next_ts())
     disable.save(xtc2file)
-    endstep = DgramPy(transition_id=TransitionId.EndStep, config=config, ts=get_next_ts())
+    endstep = DgramEdit(transition_id=TransitionId.EndStep, config=config, ts=get_next_ts())
     endstep.save(xtc2file)
-    endrun = DgramPy(transition_id=TransitionId.EndRun, config=config, ts=get_next_ts())
+    endrun = DgramEdit(transition_id=TransitionId.EndRun, config=config, ts=get_next_ts())
     endrun.save(xtc2file)
 
     xtc2file.close()
