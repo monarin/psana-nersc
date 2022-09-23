@@ -1,4 +1,4 @@
-from dgrampy import DgramPy, AlgDef, DetectorDef
+from psana.dgrampy import DgramPy, AlgDef, DetectorDef
 from psana.psexp import TransitionId
 import numpy as np
 

@@ -1,81 +1,46 @@
-1. Multirun with optional renewed configs
-- SingleFileDataSource and ShmemDataSource loops overun multiple runs and replaces the old config with new one (if any).
-  - Remove while(1) in AMI main
-  - Tests show that new detector (new config) can be seen on the GUI.
-- psana.dgram.Dgram can create Config by checking service field in the dgram header
-- DgramManager (most changes happen here)
-  - In shmem mode, it tries to create new connection when EndRun is found. 
-  - It will run forever unless Ctrl-C. For the unit test, we adapted it to asking for only one run.
-  - Details: 
-    - Before the change, DataSource setups detclass table and configs after receiving configs from DgramManager.
-      With the change, only DgramManager owns configs. It will setup (create attributes) to any object given
-      through config_consumer=[]. Right now, this is ds.DsParms. 
-
-2. MPI Communication problem (Taran)
-   psanagpu116 (ifconfig different from 113 and 114) is the only machine that has the hanging problem.
-   Use of export OMPI_MCA_btl_tcp_if_include=172.21.50.24/1072 mitigate the problem. 
+SmallData callback
+- Check usage of generator/iterator in RunSmallData
 
 
 
-MTIP 
-0. Streaming only performance
-   - Looks like there's too much of data going between smd0 and eb cores.
-     Move pixel_index_map and pixel_position to BeginRun for MPI.Bcast
-   - Generates bigger dataset to max out bandwidth
-     4TB
-1. If camera runs at 5 (or 25) kHz, how many core and how often do we need to call reduce?
-2. Segfault when reading data generated from dgram with large no. of events 120 * 10667 = 1280040 events
-/cds/home/m/monarin/Save/parallelreader.pyx_2022-05-28+142758
-for print out
-3. Spinifel needs support for per-evt pixel position reciprocal
-   Use mean wavelength
-4. Early termination by bd/eb cores
-   Smd0 is waiting (IRecv) on special bd/eb signal
-- 1600 N_images_per_rank error
-- Output not shown in /spinifel_output/testxtc2
-- Regenerate data with BeginRun exp=xpptut15 run=1 and rename files to data-r0001-s000-c000.xtc2
+TMO:
+Xtc vs HDF5 analysis
 
 
-TODO:
-1. Try to wrap xtc TransitionId value enum class and apply it in SmdReader and DgramPy
-https://stackoverflow.com/questions/31001918/wrap-enum-class-with-cython
+
+RIX 33k - 1MHz:
+Detectors: APD point detector, 2x Andors + 2x KBO ++ (~ 12 streams)
+APD - Integrated over a range -> returns scalar
+VLS - Entire spectrum
+Shot filtering, data binning. 
+
+Data: (Experiment: /Run: )
+0. Andor set at 33kHz (real case is 1Hz)
+1. Test data should cover the normal cases (% hits etc). 
+2. We should have results that can be validated at the end of the test.
+Algorithms:
+1. How to setup? Libraries needed. 
+2. + writing to hdf5. 
+3. Smalldata processing script (interface such as filtering, roi/ available in lcls2) --> hdf5
+4. Analysis script works on hdf5
+
+Timing
 
 
+
+Clean Up
+- dir in DataSource should be strip()
+- DgramPy createTransition causes memory leak for PyXtcUpdateIer
+
+
+
+Aug/Sept 2022
+- Integrate psana2 streaming function to spinifel
+- Support DgramEdit for DrpPython and data conversion for ExaFEL
+
+
+
+ARCHIVED
 Live mode test
 - Keep up with 1MHz rate data from daq here 
   /cds/data/drpsrcf/tst/tstx00417/xtc/ 
-
-
-Dgrampy (for 2023 epixhr)
-- Check mem leak for ex-03-duplicate-data.py
-- Rule for generating NamesId is the lowest from the range available 
-e.g. 0,1,2,...,255 
-next NamesId is 3
-
-
-To solve EnvStore prolem on Eb
-[Add EnvStore to EvenBuilder nodes]
-Filter callback can take loops
-[ds.run_this_filer(filter_fn)]
-
-def filter_fn(ds): # EventBuilder cores
-    # Any avai. types of loop as on BD cores
-
-Option #1
-def filter2(): # This works on smalldata
-  ds = DataSource() # New datasource 
-  for run ...
-    for evt ... (smd events)
-
-Option #2
-def filter2(ds):
-    for run in ds.runs():
-       for evt >>>
-
-
-# main on bd
-ds = DataSource() # This works on bigdata
-for run ...
-  for evt ..  (bd events)
-
-

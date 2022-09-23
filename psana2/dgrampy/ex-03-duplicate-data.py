@@ -4,9 +4,14 @@ from psana.psexp import TransitionId
 
 # Input file, no. of events (needed to determine #L1),
 # and duplication factor (n_dups).
-ifname = '/cds/home/m/monarin/xtc1to2/examples/data/amo06516-r0090-s000-c000.xtc2'
-n_events = 127
-n_dups = 8534 
+#ifname = '/cds/home/m/monarin/xtc1to2/examples/data/amo06516-r0090-s000-c000.xtc2'
+#n_events = 127
+#n_req_L1 = 120
+#n_dups = 8534 
+ifname = '/cds/data/drpsrcf/users/monarin/tmolv9418/tmolv9418-r0175-s000-c000.xtc2'
+n_events = 35684        # all events in the xtc2 file
+n_req_L1 = 10
+n_dups = 1
 cn_ts= 0
 
 def next_ts():
@@ -16,7 +21,8 @@ def next_ts():
     return current_ts
     
 # Output file
-ofname = '/cds/data/drpsrcf/users/monarin/amo06516/amo06516-r0090-s000-c000.xtc2'
+#ofname = '/cds/data/drpsrcf/users/monarin/amo06516/amo06516-r0090-s000-c000.xtc2'
+ofname = './dgrampy-test.xtc2'
 out_f = open(ofname, 'wb')
 print(f'write to {ofname}', flush=True)
 
@@ -29,6 +35,7 @@ pyiter = PyXtcFileIterator(fd, 0x10000000)
 t0 = time.time()
 for i_dup in range(n_dups):
     i = 0
+    cn_L1 = 0
     # For the next duplication after the first, skip the first 4 events
     # (Configure, BeginRun, BeginStep, Enable).
     if i_dup > 0: i = 4
@@ -46,8 +53,10 @@ for i_dup in range(n_dups):
                 if i_dup == 0:
                     flag_write = True
             elif i < n_events - 3:
-                # All L1
-                flag_write = True
+                # All L1 up to requested amount
+                if cn_L1 < n_req_L1:
+                    flag_write = True
+                    cn_L1 += 1
             else:
                 # Disable, EndStep, EndRun
                 if i_dup == n_dups - 1:

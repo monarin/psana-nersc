@@ -19,33 +19,37 @@ if rank == 0:
     print(f'DONE IMPORT AT: {time.time()} RANK {rank} PID={os.getpid()} on HOST  {MPI.Get_processor_name()}', flush=True)
 
 
-import logging
-logging.basicConfig(filename='test_psana2_perf.log', filemode='w')
-logger = logging.getLogger('psana.psexp.event_manager')
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+#import logging
+#logging.basicConfig(filename='test_psana2_perf.log', filemode='w')
+#logger = logging.getLogger('psana.psexp.event_manager')
+#logger.setLevel(logging.DEBUG)
+#ch = logging.StreamHandler()
+#ch.setLevel(logging.DEBUG)
+#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#ch.setFormatter(formatter)
+#logger.addHandler(ch)
 
 
 def filter_fn(evt):
     return True
 
 
-max_events = 256000
-batch_size = 200
+max_events = 0
+batch_size = 1000
 monitor = False 
 
 
 # Test dta
-#xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata"  # test data
-#ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
+xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M4n"  # test data
+ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
+
+# Test tmo-like data
+#xtc_dir = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc4n'
+#ds = DataSource(exp='tmolv9418', run=175)
 
 # SPI data (duplicate 120 events to 300k)
-xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"        
-ds = DataSource(exp='amo06516', run=90, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
+#xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"        
+#ds = DataSource(exp='amo06516', run=90, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
 
 
 sendbuf = np.zeros(1, dtype='i')
@@ -64,22 +68,23 @@ def bd_task(det, evt):
 
 st_batch = time.time()
 for run in ds.runs():
-    #det = run.Detector('xpphsd')
-    det = run.Detector("amopnccd")
-    pixel_position = run.beginruns[0].scan[0].raw.pixel_position
-    pixel_index_map = run.beginruns[0].scan[0].raw.pixel_index_map
-    #pp_det = run.Detector("pixel_position")
-    #pim_det = run.Detector("pixel_index_map")
+    det = run.Detector('xpphsd')
+    #det = run.Detector('hsd')
+    
+    #det = run.Detector("amopnccd")
+    #pixel_position = run.beginruns[0].scan[0].raw.pixel_position
+    #pixel_index_map = run.beginruns[0].scan[0].raw.pixel_index_map
+    
     mysum = 0.0
     #for i_step, step in enumerate(run.steps()):
     for i_evt, evt in enumerate(run.events()):
         if sendbuf[0] == 0:
             print(f'RANK:{rank} GOT FIRST EVT AT {time.time()} ON HOST {MPI.Get_processor_name()} n_dgrams:{len(evt._dgrams)}', flush=True)
     
-        calib = det.raw.calib(evt)
+        #calib = det.raw.calib(evt)
 
-        # Per run variables
-        photon_energy = det.raw.photon_energy(evt)
+        # Per run variables (amo)
+        #photon_energy = det.raw.photon_energy(evt)
         #pixel_position = pp_det(evt)
         #pixel_index_map = pim_det(evt)
         

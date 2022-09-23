@@ -30,26 +30,27 @@ run_psana2_perf() {
 
     # For psana2
     export PS_R_MAX_RETRIES=0
-    export PS_SMD_N_EVENTS=8000
+    export PS_SMD_N_EVENTS=1000
     export PS_FAKESTEP_FLAG=0
     export PS_SMD0_NUM_THREADS=32
     # For amo06516 (Exafel SPI data)
-    export PS_SMD_CHUNKSIZE=32000000
-    source $HOME/lcls2/setup_env.sh
+    #export PS_SMD_CHUNKSIZE=32000000
+    #source $HOME/lcls2/setup_env.sh
     
     # Preventing blas from openning too many threads?
-    export OPENBLAS_NUM_THREADS=1 
+    #export OPENBLAS_NUM_THREADS=1 
     
     # For openmpi
     #export OMPI_MCA_btl=self,tcp,vader
     export OMPI_MCA_btl_tcp_if_include=172.21.164.90/1072
     #ompi_info --param btl all --level 9
     
-    export PS_EB_NODES=32
+    export PS_EB_NODES=1
     #python -u ./dummy.py
-    python -u ./test_psana2_perf.py
+    python -u ${HOME}/psana-nersc/psana2/test_psana2_perf.py
+    #python -u ${HOME}/problems/tdd14/preproc.py 406
     #python -u ./test_fex_cfd1.py
-    #python -u ./test_mpi.py
+    python -u ./test_mpi.py
     #python -u ./test_live.py
     #python -u ./test_prometheus_monitor.py
 
