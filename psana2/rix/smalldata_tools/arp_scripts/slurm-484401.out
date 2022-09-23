@@ -1,0 +1,49 @@
+This is a LCLS-II experiment
+/var/spool/slurmd/job484401/slurm_script: line 94: export: `1': not a valid identifier
+/cds/home/m/monarin/psana-nersc/psana2/rix/smalldata_tools
+usage: smd2_producer.py [-h] [--run RUN] [--experiment EXPERIMENT] [--stn STN]
+                        [--nevents NEVENTS] [--directory DIRECTORY]
+                        [--gather_interval GATHER_INTERVAL] [--norecorder]
+                        [--url URL] [--epicsAll] [--full] [--default]
+                        [--image] [--tiff] [--postRuntable] [--wait]
+                        [--rawFim] [--nohsd] [--nosum]
+usage: smd2_producer.py [-h] [--run RUN] [--experiment EXPERIMENT] [--stn STN]
+                        [--nevents NEVENTS] [--directory DIRECTORY]
+                        [--gather_interval GATHER_INTERVAL] [--norecorder]
+                        [--url URL] [--epicsAll] [--full] [--default]
+                        [--image] [--tiff] [--postRuntable] [--wait]
+                        [--rawFim] [--nohsd] [--nosum]
+usage: smd2_producer.py [-h] [--run RUN] [--experiment EXPERIMENT] [--stn STN]
+                        [--nevents NEVENTS] [--directory DIRECTORY]
+                        [--gather_interval GATHER_INTERVAL] [--norecorder]
+                        [--url URL] [--epicsAll] [--full] [--default]
+                        [--image] [--tiff] [--postRuntable] [--wait]
+                        [--rawFim] [--nohsd] [--nosum]
+usage: smd2_producer.py [-h] [--run RUN] [--experiment EXPERIMENT] [--stn STN]
+                        [--nevents NEVENTS] [--directory DIRECTORY]
+                        [--gather_interval GATHER_INTERVAL] [--norecorder]
+                        [--url URL] [--epicsAll] [--full] [--default]
+                        [--image] [--tiff] [--postRuntable] [--wait]
+                        [--rawFim] [--nohsd] [--nosum]
+usage: smd2_producer.py [-h] [--run RUN] [--experiment EXPERIMENT] [--stn STN]
+                        [--nevents NEVENTS] [--directory DIRECTORY]
+                        [--gather_interval GATHER_INTERVAL] [--norecorder]
+                        [--url URL] [--epicsAll] [--full] [--default]
+                        [--image] [--tiff] [--postRuntable] [--wait]
+                        [--rawFim] [--nohsd] [--nosum]
+smd2_producer.py: error: unrecognized arguments: —nohsd
+smd2_producer.py: error: unrecognized arguments: —nohsd
+smd2_producer.py: error: unrecognized arguments: —nohsd
+smd2_producer.py: error: unrecognized arguments: —nohsd
+[0m[0m[0m[0m[0msmd2_producer.py: error: unrecognized arguments: —nohsd
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[19278,1],0]
+  Exit code:    2
+--------------------------------------------------------------------------
