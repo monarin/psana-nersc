@@ -224,7 +224,7 @@ class MetricDisplay(object):
                     vals.append(val/ result[(rank, 'batches', endpoint)][1])
                 else:
                     vals.append(val)
-
+        
         if not vals:
             print(f'NO DATA')
             return
@@ -300,7 +300,7 @@ class MetricDisplay(object):
                     print(f"{rank_str.ljust(20)} {avg_val:.5f} {unit}")
 
 
-def main(srvurl, jobid, start=None, step_seconds=15):
+def main(srvurl, jobid, start=None, step_seconds=15, n_ebs=1):
     
     if not start:
         # Default is the last step_seconds
@@ -332,21 +332,25 @@ def main(srvurl, jobid, start=None, step_seconds=15):
     md.show_counter('psana_smd0_sent_total', query_type="rate")
     
     print("MPI WAITING TIME")
-    md.show_ranking_counter('psana_smd0_sent_total', rank_unit='seconds', q=q)
-    
+    all_except_smd0 = list(range(1, n_ranks))
+    md.show_ranking_summary('psana_smd0_wait_eb', excluded_ranks=all_except_smd0, q=q)
     
     print("\nEVENTBUILDER(S)")
+    
+    # Exclude all ranks except Eb ranks
+    all_except_eb_ranks = [0] + list(range(n_ebs+1, n_ranks))
+    
     print("SEND RATE")
     md.show_counter('psana_eb_sent_total', query_type="rate")
     
     print("USER FILTER CALLBACK WAITING TIME")
-    md.show_ranking_counter('psana_eb_filter_total', rank_unit='seconds', q=q)
+    md.show_ranking_summary('psana_eb_wait_filter', excluded_ranks=all_except_eb_ranks, q=q)
     
     print("TIME (s) WAITING FOR SMD0")
-    md.show_ranking_summary('psana_eb_wait_smd0', excluded_ranks=[0], q=q)
+    md.show_ranking_summary('psana_eb_wait_smd0', excluded_ranks=all_except_eb_ranks, q=q)
 
     print("TIME (s) WAITING FOR BIGDATA CORES")
-    md.show_ranking_counter('psana_eb_sent_total', rank_unit='seconds', q=q)
+    md.show_ranking_summary('psana_eb_wait_bd', excluded_ranks=all_except_eb_ranks, q=q)
 
     
     print("\nBIGDATA")
@@ -358,9 +362,8 @@ def main(srvurl, jobid, start=None, step_seconds=15):
     md.show_summary('psana_bd_gen_smd_batch', show_all=False)
     md.show_summary('psana_bd_gen_evt', show_all=False)
 
-    
     print("TIME (s) BD WAITING FOR EVENTBUILDER")
-    md.show_ranking_counter('psana_bd_wait_eb_total', rank_unit='seconds', q=q)
+    md.show_ranking_summary('psana_bd_wait_eb', excluded_ranks=list(range(n_ebs+1)), q=q)
 
     print("AVERAGE ANALYSIS WAITING TIME")
     md.show_ranking_counter('psana_bd_ana_total', rank_unit='seconds', q=q)
@@ -371,7 +374,13 @@ if __name__ == "__main__":
     start = None
     if len(sys.argv) > 2:
         start = datetime.fromtimestamp(int(sys.argv[2]))
+    n_ebs = 1
+    n_ranks = 3
+    if len(sys.argv) > 3:
+        n_ebs = int(sys.argv[3])
+        n_ranks = int(sys.argv[4])
+
     srvurl = os.environ.get("DM_PROM_SERVER", "http://psmetric03:9090") 
 
     print("Using server", srvurl, " jobid:", jobid)
-    main(srvurl, jobid, start=start)
+    main(srvurl, jobid, start=start, n_ebs=n_ebs)

@@ -72,4 +72,5 @@ with open(filename, 'r') as f:
             bd_ana_sec = float(next_line.split()[2])
             #print(bd_ana_sec)
 
-print(query_start, smd0_read_mbs, smd0_send_mbs, smd0_send_khz, smd0_wait_sec, eb_send_mbs, eb_send_khz, eb_wait_smd0_sec, eb_wait_bd_sec, bd_read_mbs, bd_process_khz, bd_read_avg_s, bd_gen_smd_batch, batch_size*bd_gen_evt, bd_mpi_sec, bd_ana_sec*batch_size)
+print("   ts      MB/s    MB/s   kHz    sec     MB/s   kHz    sec     sec     MB/s    kHz    sec     sec     sec     sec     sec")
+print("%d %.2f %.2f %.2f %.5f %.2f %.2f %.5f %.5f %.2f %.2f %.5f %.5f %.5f %.5f %.5f"%(query_start, smd0_read_mbs, smd0_send_mbs, smd0_send_khz, smd0_wait_sec, eb_send_mbs, eb_send_khz, eb_wait_smd0_sec, eb_wait_bd_sec, bd_read_mbs, bd_process_khz, bd_read_avg_s, bd_gen_smd_batch, batch_size*bd_gen_evt, bd_mpi_sec, bd_ana_sec*batch_size))
