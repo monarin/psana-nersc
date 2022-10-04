@@ -12,16 +12,27 @@ comm=MPI.COMM_WORLD
 rank=comm.Get_rank()
 size=comm.Get_size()
 
-
 comm.Barrier()
 st = MPI.Wtime()
+
+max_events = 0
+if len(sys.argv) > 1:
+    max_events = int(sys.argv[1])
+batch_size = 1000
+monitor = False
+
 if rank == 0:
-    print(f'DONE IMPORT AT: {time.time()} RANK {rank} PID={os.getpid()} on HOST  {MPI.Get_processor_name()}', flush=True)
+    # Set to view from 25 seconds after start
+    ts = int(time.time()) + 25 
+    n_eb_nodes = int(os.environ.get('PS_N_EB_NODES', '1'))
+    n_queries = 20
+    print(f'To view performance, run:')
+    print(f'./qm.sh {batch_size} {MPI.Get_processor_name()} {os.getpid()} {n_eb_nodes} {size} $(({ts})) {n_queries}', flush=True)
 
 
 #import logging
 #logging.basicConfig(filename='test_psana2_perf.log', filemode='w')
-#logger = logging.getLogger('psana.psexp.event_manager')
+#logger = logging.getLogger('psana.psexp.node')
 #logger.setLevel(logging.DEBUG)
 #ch = logging.StreamHandler()
 #ch.setLevel(logging.DEBUG)
@@ -34,22 +45,21 @@ def filter_fn(evt):
     return True
 
 
-max_events = 0
-batch_size = 1000
-monitor = False 
-
-
 # Test dta
-xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M4n"  # test data
-ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
+#xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M32n"  # test data
+#ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
 
 # Test tmo-like data
-#xtc_dir = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc4n'
-#ds = DataSource(exp='tmolv9418', run=175)
+#xtc_dir = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc8n'
+#ds = DataSource(exp='xpptut15', run=175, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
 
 # SPI data (duplicate 120 events to 300k)
 #xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"        
 #ds = DataSource(exp='amo06516', run=90, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
+
+# RIX data (duplicate 25k events to 20M)
+xtc_dir = '/cds/data/drpsrcf/users/monarin/rixl1013320/small320x'
+ds = DataSource(exp='rixl1013320', run=93, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=monitor)
 
 
 sendbuf = np.zeros(1, dtype='i')
@@ -68,7 +78,7 @@ def bd_task(det, evt):
 
 st_batch = time.time()
 for run in ds.runs():
-    det = run.Detector('xpphsd')
+    #det = run.Detector('xpphsd')
     #det = run.Detector('hsd')
     
     #det = run.Detector("amopnccd")
