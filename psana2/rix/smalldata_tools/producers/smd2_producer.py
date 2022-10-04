@@ -355,16 +355,20 @@ print(h5_f_name)
 #        h5_f_name = h5_f_name.replace('hdf5','scratch')
 
 # Define data source name and generate data source object, don't understand all conditions yet
-os.environ['PS_SRV_NODES']='1'
 
+# Changes applied as of 10/1/22
+# 1. Remove force set PS_SRV_NODES here
+# 2. xtcdir looks for PS_XTC_DIR first and default back to path shown below
 if rank==0: print('Opening the data source:')
 try:
     if useFFB:
-        xtcdir = '/cds/data/drpsrcf/%s/%s/xtc'%(exp[0:3],exp)
+        default_xtcdir = '/cds/data/drpsrcf/%s/%s/xtc'%(exp[0:3],exp)
+        xtcdir = os.environ.get('PS_XTC_DIR', default_xtcdir)
         if args.nevents<1e9:
-            ds = psana.DataSource(exp=exp, run=int(run), dir=xtcdir, max_events=args.nevents, live=True)
+            ds = psana.DataSource(exp=exp, run=int(run), dir=xtcdir, max_events=args.nevents, live=False)
         else:
-            ds = psana.DataSource(exp=exp, run=int(run), dir=xtcdir, live=True)
+            ds = psana.DataSource(exp=exp, run=int(run), dir=xtcdir, live=False)
+        print(f'*****DataSource xtcdir={xtcdir} PS_EB_NODES={os.environ.get("PS_EB_NODES","1")} PS_SRV_NODES={os.environ.get("PS_SRV_NODES","1")}*****', flush=True)
     else:
         if args.nevents<1e9:
             ds = psana.DataSource(exp=exp, run=int(run), max_events=args.nevents)
@@ -527,9 +531,10 @@ if small_data.summary:
 
 end_prod_time = datetime.now().strftime('%m/%d/%Y %H:%M:%S')
 end_job = time.time()
-prod_time = (end_job-start_job)/60
+prod_time_sec = end_job-start_job
+prod_time = prod_time_sec/60
 if rank==0:
-    print('########## JOB TIME: {:03f} minutes ###########'.format(prod_time))
+    print('########## JOB TIME: {:02f} seconds ###########'.format(prod_time_sec))
 logger.info('rank {0} on {1} is finished'.format(rank, hostname))
 
 #finishing up here....

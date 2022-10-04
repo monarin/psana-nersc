@@ -25,7 +25,7 @@ exp = 'rixl1013320'
 def load_data(run):
     #fname = '/reg/data/ana01/rix/{0}/hdf5/smalldata/{0}_Run{1:03d}.h5'.format(exp, run)
     #fname = '/cds/data/drpsrcf/rix/{0}/scratch/hdf5/smalldata/{0}_Run{1:04d}.h5'.format(exp, run)
-    fname = '/cds/home/m/monarin/psana-nersc/psana2/rix/output/{0}_Run{1:04d}.h5'.format(exp, run)
+    fname = '/cds/data/drpsrcf/users/monarin/rixl1013320/output/{0}_Run{1:04d}.h5'.format(exp, run)
     keys = [('lightStatus', 'laser', 'laser_status'),
             ('lightStatus', 'xray', 'xray_status'),
             ('tt', 'ttCorr', 'tt_corr'),
@@ -35,7 +35,7 @@ def load_data(run):
             ('tt', 'fltposfwhm', 'fltposfwhm'),
             ('tt', 'proj_sig', 'proj_sig'),
             ('tt', 'proj_ref', 'proj_ref'),
-            ('atmopal', 'ROI0_pj_ax_0_data', 'proj_opal'),
+            #('atmopal', 'ROI0_pj_ax_0_data', 'proj_opal'),
             ('xgmd', 'avgIntensity', 'xgmd'),
             ('xgmd', 'energy', 'xgmd_energy'),
             ('epicsAll', 'lxt_ttc', 'lxt_ttc'),
@@ -145,11 +145,11 @@ def pitch2energy(pitchG, pitchM2):
 exp = 'rixl1013320' #'rixlx9720'
 run = 93 #27
 #fname = '/cds/data/drpsrcf/rix/{0}/scratch/hdf5/smalldata/{0}_Run{1:04d}.h5'.format(exp, run)
-fname = '/cds/home/m/monarin/psana-nersc/psana2/rix/output/{0}_Run{1:04d}.h5'.format(exp, run)
+fname = '/cds/data/drpsrcf/users/monarin/rixl1013320/output/{0}_Run{1:04d}.h5'.format(exp, run)
 with h5py.File(fname, 'r') as fh:
     print(fh.keys())
     print(fh['det_rix_fim1'].keys())
-    print(fh['atmopal'].keys())
+    #print(fh['atmopal'].keys())
     #print(fh['epicsAll'].keys())
     #print(fh['xgmd'].keys())
     print(fh['tt'].keys())
