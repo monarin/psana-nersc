@@ -1,6 +1,11 @@
-from psana.dgrampy import DgramPy, AlgDef, DetectorDef
+from psana.dgramedit import DgramEdit, AlgDef, DetectorDef
 from psana.psexp import TransitionId
 import numpy as np
+
+def save_dgramedit(dg_edit, outbuf, outfile):
+    """ Save dgram edit to output buffer and write to file"""
+    dg_edit.save(outbuf)
+    outfile.write(outbuf[:dg_edit.size])
 
 if __name__ == "__main__":
     # NameId setup
@@ -16,8 +21,10 @@ if __name__ == "__main__":
     det_type = "andor"
     det_id = 'detnum1234'
     segment = 1
-    selected_timestamps = [40, 70, 130, 160]
+    selected_timestamps = []
 
+    # Creates buffer for writing
+    obuf = bytearray(64000000)
 
     # Open output file for writing
     ofname = 'out.xtc2'
@@ -27,12 +34,13 @@ if __name__ == "__main__":
     # Create config, algorithm, and detector
     current_timestamp = 0
     ts_step = 10            # incrementing by this value  
-    config = DgramPy(transition_id=TransitionId.Configure, ts=current_timestamp)
+    config = DgramEdit(transition_id=TransitionId.Configure, ts=current_timestamp)
     current_timestamp += ts_step
     
     alg = AlgDef("raw", 0, 0, 2)
     det = DetectorDef(det_name, det_type, det_id)
 
+    # Required to be in this format exactly
     runinfo_alg = AlgDef("runinfo", 0, 0, 1)
     runinfo_det = DetectorDef("runinfo", "runinfo", "")
     
@@ -45,6 +53,7 @@ if __name__ == "__main__":
         "calib": (np.float32, 2),
     }
 
+    # Required to be in this format exactly
     runinfodef = {
         "expt": (str, 1),
         "runnum": (np.uint32, 0),
@@ -54,6 +63,7 @@ if __name__ == "__main__":
         "motor1": (np.float64, 0),
         "motor2": (np.float64, 0),
     }
+
 
 
     # Create detetors
@@ -66,50 +76,51 @@ if __name__ == "__main__":
                               segment=segment,
                              )
     scan = config.Detector(scan_det, scan_alg, scandef, nodeId=nodeId, namesId=namesId["scan"], segment=segment)
-    config.save(xtc2file)
+    save_dgramedit(config, obuf, xtc2file)
 
-    beginrun = DgramPy(transition_id=TransitionId.BeginRun, config=config, ts=current_timestamp)
+    # Start writing out required transitions
+    beginrun = DgramEdit(transition_id=TransitionId.BeginRun, config=config, ts=current_timestamp)
     if segment == 0:
         runinfo.runinfo.expt = "xpptut15"
         runinfo.runinfo.runnum = 1
         beginrun.adddata(runinfo.runinfo)
-    beginrun.save(xtc2file)
+    save_dgramedit(beginrun, obuf, xtc2file)
     current_timestamp += ts_step
 
     n_steps = 2
-    n_evt_per_step = 5
+    n_evt_per_step = 1000000
     for i in range(n_steps):
-        beginstep = DgramPy(transition_id=TransitionId.BeginStep, config=config, ts=current_timestamp)
+        beginstep = DgramEdit(transition_id=TransitionId.BeginStep, config=config, ts=current_timestamp)
         if segment == 0:
             scan.raw.motor1 = 42.0
             scan.raw.motor2 = 4200.0
             beginstep.adddata(scan.raw)
-        beginstep.save(xtc2file)
+        save_dgramedit(beginstep, obuf, xtc2file)
         current_timestamp += ts_step
         
-        enable = DgramPy(transition_id=TransitionId.Enable, config=config, ts=current_timestamp)
-        enable.save(xtc2file)
+        enable = DgramEdit(transition_id=TransitionId.Enable, config=config, ts=current_timestamp)
+        save_dgramedit(enable, obuf, xtc2file)
         current_timestamp += ts_step
 
 
         # Start saving L1Accept
         for j in range(n_evt_per_step):
             if current_timestamp in selected_timestamps or not selected_timestamps:
-                d0 = DgramPy(transition_id=TransitionId.L1Accept, config=config, ts=current_timestamp)
-                det.raw.calib = np.ones([2,2], dtype=np.float32) * (i*n_evt_per_step + j)
+                d0 = DgramEdit(transition_id=TransitionId.L1Accept, config=config, ts=current_timestamp)
+                det.raw.calib = np.ones([2,2], dtype=np.float32)
                 d0.adddata(det.raw)
-                d0.save(xtc2file)
+                save_dgramedit(d0, obuf, xtc2file)
             current_timestamp += ts_step
 
-        disable = DgramPy(transition_id=TransitionId.Disable, config=config, ts=current_timestamp)
-        disable.save(xtc2file)
+        disable = DgramEdit(transition_id=TransitionId.Disable, config=config, ts=current_timestamp)
+        save_dgramedit(disable, obuf, xtc2file)
         current_timestamp += ts_step
-        endstep = DgramPy(transition_id=TransitionId.EndStep, config=config, ts=current_timestamp)
-        endstep.save(xtc2file)
+        endstep = DgramEdit(transition_id=TransitionId.EndStep, config=config, ts=current_timestamp)
+        save_dgramedit(endstep, obuf, xtc2file)
         current_timestamp += ts_step
     
-    endrun = DgramPy(transition_id=TransitionId.EndRun, config=config, ts=current_timestamp)
-    endrun.save(xtc2file)
+    endrun = DgramEdit(transition_id=TransitionId.EndRun, config=config, ts=current_timestamp)
+    save_dgramedit(endrun, obuf, xtc2file)
     current_timestamp += ts_step
 
     xtc2file.close()
