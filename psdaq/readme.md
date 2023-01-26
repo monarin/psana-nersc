@@ -32,7 +32,7 @@ tstopr   10082     1  0  2022 ?        00:04:59 /cds/sw/package/procServ/2.6.0-S
 These procmgrs are talking to each other to identify tasks that need to be performed.
 
 ## Daq Control
-Running a Daq control on each platform requires the use of a .cnf file. Procmgr reads configuration in the file to identify several things including:
+Running a Daq control on each platform requires the use of a .cnf file. Examples of the cnf file are in lcls2/psdaq/psdaq/cnf. Procmgr reads configuration in the file to identify several things including:
 - User details for accessing the database
 - GUI selections (i.e. turnning on by adding a line)
 ```
@@ -91,3 +91,7 @@ StandardError=inherit
 WantedBy=multi-user.target
 ```
 **Note:** The module insmod inserts the given driver with parameters to the system. In this case, the driver is datadev.ko with 2044 buffers (each buffer is 262144 bytes). 
+## Running Daq
+After all the GUIs are present, use Daq Control `Partition > Select` to select detectors that you want to obtain data from. Choose `Recording` to write data to disk. Choose `Target State: Configure` and select DAQ:NEH (separate GUI) Fixed Rate LOSelect mkHz to change the rate from the previous run. You can also choose `Target State: Running` to start running with the saved rate. When done, choose `Unallocated` to finish the run.
+
+The log files are written to your $HOME/yyyy/mm/d-{a combination of date, detector name, etc}. 
