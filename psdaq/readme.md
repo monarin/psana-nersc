@@ -50,3 +50,44 @@ procmgr_config = [
  {host: 'drp-srcf-cmp029', id:'tstcam1_0',   flags:'spu',                cmd:f'{drp_cmd0} -l 0x1 -D fakecam -k sim_length=145'},
 ```
 **Note:** You need to where where the required hardware are located. For the example above, cmp029 can be used for the timing system and the fake camera. Each cluster has a different setup.
+
+Depending on which cluster and whether you're running a real system or a teststand, the startup node, the user that you use to login to that node, and the values in the cnf file will be different. On a particular (correct) startup node, run
+```
+procmgr start mona.cnf
+````
+to start the process.
+
+## Driver Control
+Each node has different hardware installed. To check how the driver is being setup, i.e. on cmp015 with a fake detector
+```
+monarin@drp-neh-cmp015 ~ 👁)$ locate tdetsim.service
+/etc/systemd/system/multi-user.target.wants/tdetsim.service
+/usr/lib/systemd/system/tdetsim.service
+/usr/lib/systemd/system/tdetsim.service~
+monarin@drp-neh-cmp015 ~ 👁)$ less /usr/lib/systemd/system/tdetsim.service
+monarin@drp-neh-cmp015 ~ 👁)$ cat /usr/lib/systemd/system/tdetsim.service
+[Unit]
+Description=SimCam Device Manager
+Requires=multi-user.target
+After=multi-user.target
+
+[Service]
+Type=forking
+ExecStartPre=-/sbin/rmmod datadev.ko
+#2023/01/05 commented out by RMelchiorri dma map memory error, switch to second line
+#ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=4 cfgRxCount=1048572 cfgSize=4096 cfgMode=0x2
+ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=4 cfgRxCount=2044 cfgSize=262144 cfgMode=0x2
+ExecStartPost=/usr/local/sbin/kcuSim -s -d /dev/datadev_1
+#ExecStartPost=/usr/bin/sh -c "/usr/bin/echo 4 > /proc/irq/368/smp_affinity_list"
+#modified 2023/01/05 by RMelchiorri in neh-cmp015 is causing an error, cannot write in directory
+#ExecStartPost=/usr/bin/sh -c "/usr/bin/echo 4 > /proc/irq/369/smp_affinity_list"
+#ExecStartPost=/usr/bin/sh -c "/usr/bin/echo 5 > /proc/irq/370/smp_affinity_list"
+KillMode=none
+IgnoreSIGPIPE=no
+StandardOutput=syslog
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
+```
+**Note:** The module insmod inserts the given driver with parameters to the system. In this case, the driver is datadev.ko with 2044 buffers (each buffer is 262144 bytes). 
