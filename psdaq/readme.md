@@ -29,3 +29,24 @@ tstopr   10070     1  0  2022 ?        00:05:07 /cds/sw/package/procServ/2.6.0-S
 tstopr   10076     1  0  2022 ?        00:05:05 /cds/sw/package/procServ/2.6.0-SLAC/x86_64-rhel7-gcc48-opt/bin/procmgrd6 --allow --ignore ^D -l 29601 --coresize 0 -c /tmp 29600 /bin/tcsh -f
 tstopr   10082     1  0  2022 ?        00:04:59 /cds/sw/package/procServ/2.6.0-SLAC/x86_64-rhel7-gcc48-opt/bin/procmgrd7 --allow --ignore ^D -l 29701 --coresize 0 -c /tmp 29700 /bin/tcsh -f
 ```
+These procmgrs are talking to each other to identify tasks that need to be performed.
+
+## Daq Control
+Running a Daq control on each platform requires the use of a .cnf file. Procmgr reads configuration in the file to identify several things including:
+- User details for accessing the database
+- GUI selections (i.e. turnning on by adding a line)
+```
+procmgr_config = [
+ {                         id:'groupca',     flags:'s',   env:epics_env, cmd:f'groupca DAQ:NEH 3 {groups}'},
+ {                         id:'procstat',    flags:'p',                  cmd:f'procstat {CONFIGDIR}/p{platform}.cnf.last'},
+
+```
+- Detector selections (indicate host and detector detail to read the data from)
+```
+ {host: 'drp-srcf-cmp019', id:'teb0',        flags:'spu',                cmd:f'{teb_cmd}'},
+
+ {host: 'drp-srcf-cmp029', id:'timing_0',    flags:'spu', env:epics_env, cmd:f'{drp_cmd1} -l 0x1 -D ts'},
+
+ {host: 'drp-srcf-cmp029', id:'tstcam1_0',   flags:'spu',                cmd:f'{drp_cmd0} -l 0x1 -D fakecam -k sim_length=145'},
+```
+**Note:** You need to where where the required hardware are located. For the example above, cmp029 can be used for the timing system and the fake camera. Each cluster has a different setup.
