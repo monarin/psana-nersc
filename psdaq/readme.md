@@ -1,3 +1,14 @@
+## Online Data System Overview
+![Online Data System Overview](/psdaq/Online_Data_Systems_Overview.png)
+
+There are three layers within the Online Data Sytems.
+### Data Acquisition (DAQ) 
+The Performance Monitoring (PM) takes Timing input and distributes that over DRP nodes via R?. Only DRP nodes with PGP (KCU1500) are wired to receive the timing signals. There can be nodes with PGP that do not receive the timining signals. 
+### Data Reduction Pipeline (DRP
+All DRP nodes, which receive timing signals and etc. are connected to the Infiniband switch. A group of Software Trigger nodes are also connected to the switch. 
+### Fast-feedback (FFB) 
+Recorded data are written to the FFB. From this side of the diagram, Online Monitoring is performed on Online Monitoring Nodes. 
+
 There are several platforms that we can run Daq control on. This is indicated at the top of the .cnf file i.e. platform=6.
 
 ## Overview
