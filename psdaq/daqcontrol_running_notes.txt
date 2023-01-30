@@ -1,0 +1,59 @@
+## Old notes how to run Daq on different systems
+### for rix
+ssh -YC rix-daq -l rixopr
+cd scripts
+
+### for tmo
+- ssh -YC tmo-daq -l tmoopr (kinit if asked for password)
+- cd daq (softlinked to scripts) see restart_daq.sh for proof
+- source setup_env.sh
+- tmo.cnf (python style settings - select/deselect list of hw)
+- restart_daq.sh (run this manually so log files get delivered to default location)
+    procmgr start tmo.cnf
+    procmgr stop tmo.cnf
+- select instruments (simple settings: timing and ami)
+- select recording for writing data to disk
+- working with daq control:
+    cheat sequence: CONFIGURED,
+    https://confluence.slac.stanford.edu/display/PSDMInternal/Finite+State+Machine
+- checking where the xtc2 files are saved to:
+    grep "smd.xtc2" 2022/11/21_15\:56\:42_*
+    /cds/data/drpsrcf/tmo/tmox1004221/xtc
+- monitoring performance grafana
+    select instrument: tmo
+
+### Running with test cameras:
+- Running at rix: be on drp-srcf-mon001
+- Make sure ami is installed
+  source ~/lcls2/setup_env.sh
+  cd
+  git clone git@github.com:slac-lcls/ami.git
+  cd ami
+  ./build_all.sh
+- cd /cds/data/drpsrcf/users/monarin/daq-live
+- procmgr start mona.cnf (LINE 9: hutch, user, password = ('tst', 'tstopr', 'pcds'))
+  Note: mona.cnf is a soft link to /cds/home/m/monarin/lcls2/psdaq/psdaq/cnf/mona.cnf
+- [Optional] - Check BEAM configures using Edit button on DAQ Control
+- DAQ Control
+    - Partition Select -> Select all partitions -> Apply
+    - Recording
+    - Target State: Configure
+- DAQ:NEH
+    - Group 6 -> Fixed Rate --> Choose Rate
+- DAQ Control
+    - Target State: Running
+    - [Change Rate] Target state: Paused (Use DAQ:NEH to change rate)
+
+### Running at FEE (Note from Riccardo)
+The front end you should connect to is: drp-neh-ctl002
+The available timing nodes are: drp-neh-cmp001 cmp002 and cmp010
+We were saying that teb is on cmp016
+If you need to see where things are the fee_teststand.cnf has been committed in git in lcls2/psdaq/psdaq/cnf/
+Note: timing is on cmp015 and the writing user is tmoopr (starts pyxmp), this is different from tstopr used
+in the fee_teststand.cnf
+
+### CNF file
+task_set  = 'taskset -c 4-63'
+std_opts  = '-P tst -C drp-srcf-cmp004 -M /cds/group/psdm/psdatmgr/etc/config/prom/tst'
+std_opts0 = std_opts + '-d /dev/datadev_0 -o /cds/data/drpsrcf -k batching=yes,directIO=yes'
+drp_cmd0  = task_set + ' drp ' + std_opts0
