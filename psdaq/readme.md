@@ -121,3 +121,30 @@ cat /proc/datadev_1
 After all the GUIs are present, use Daq Control `Partition > Select` to select detectors that you want to obtain data from. Choose `Recording` to write data to disk. Choose `Target State: Configure` and select DAQ:NEH (separate GUI) Fixed Rate LOSelect mkHz to change the rate from the previous run. You can also choose `Target State: Running` to start running with the saved rate. When done, choose `Unallocated` to finish the run.
 
 The log files are written to your $HOME/yyyy/mm/d-{a combination of date, detector name, etc}. 
+
+## Troubleshooting
+### Rebooting a node
+For srcf nodes, hop on psdev
+```ssh psdev```
+Use psipmi to query status, reboot, and power a node. 
+To check status:
+```
+monarin@psdev01 ~ 👁)$ /reg/common/tools/bin/psipmi drp-srcf-cmp010 power status
+
+PCDS IPMI Tool
+System power status
+Chassis Power is on
+```
+To reset cpu (not taking away the power):
+```
+bash-4.2$ /reg/common/tools/bin/psipmi drp-srcf-cmp010 power reset
+
+PCDS IPMI Tool
+System power reset
+Chassis Power Control: Reset
+```
+To power cycle a node (Warning!!! Only use this as the last resource)
+```
+bash-4.2$ /reg/common/tools/bin/psipmi drp-srcf-cmp010 power cycle
+```
+
