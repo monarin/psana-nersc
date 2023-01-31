@@ -102,6 +102,21 @@ StandardError=inherit
 WantedBy=multi-user.target
 ```
 **Note:** The module insmod inserts the given driver with parameters to the system. In this case, the driver is datadev.ko with 2044 buffers (each buffer is 262144 bytes). 
+### Updating Driver Parameters
+1. Update values in the driver file, i.e. for fake cam
+```
+vi /usr/lib/systemd/system/tdetsim.service
+```
+2. Reload daemon then restart the driver service (sudo is required).
+```
+systemctl daemon-reload
+systemctl restart tdetsim.service
+```
+3. Check if the values are correct:
+```
+cat /proc/datadev_1
+```
+
 ## Running Daq
 After all the GUIs are present, use Daq Control `Partition > Select` to select detectors that you want to obtain data from. Choose `Recording` to write data to disk. Choose `Target State: Configure` and select DAQ:NEH (separate GUI) Fixed Rate LOSelect mkHz to change the rate from the previous run. You can also choose `Target State: Running` to start running with the saved rate. When done, choose `Unallocated` to finish the run.
 
