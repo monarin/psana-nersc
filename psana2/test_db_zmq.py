@@ -1,3 +1,15 @@
+# Test sending calibration constant using zmq
+# Usage: python test_db_zmq.py server_flag
+# where server_flag=1 indicates that script is the server.
+# Usecase scenario:
+#   Pick a node for the server and check ip with ifconfig
+#   Update the script so server_ip matches with the value from ifconfig
+#   On that node run: 
+#       python test_db_zmq.py 1
+#   On other node run:
+#       srun -N12 -n600 python test_db_zmq.py 0
+#       This will ask 600 cores on 12 nodes to run as a client
+
 import sys
 import zmq
 import zlib, pickle
@@ -17,6 +29,18 @@ dbsuffix = ''
 max_clients = 600
 server_ip = "172.21.152.100"
 port_number = "5555"
+
+def send_zipped_pickle(zmq_socket, obj, flags=0, protocol=-1):
+    """pickle an object, and zip the pickle before sending it"""
+    p = pickle.dumps(obj, protocol)
+    z = zlib.compress(p)
+    return zmq_socket.send(z, flags=flags)
+
+def recv_zipped_pickle(zmq_socket, flags=0, protocol=-1):
+    """inverse of send_zipped_pickle"""
+    z = zmq_socket.recv(flags)
+    p = zlib.decompress(z)
+    return pickle.loads(p)
 
 if __name__ == "__main__":
     server_flag = int(sys.argv[1])
@@ -38,7 +62,8 @@ if __name__ == "__main__":
             #print("Received request: %s" % message)
 
             #  Send reply back to client
-            zmq_socket.send(b"World")
+            #zmq_socket.send(b"World")
+            send_zipped_pickle(zmq_socket, calib_const)
             #print(f'client {n_clients} sent')
             n_clients += 1
             if n_clients == max_clients:
@@ -52,6 +77,9 @@ if __name__ == "__main__":
         zmq_socket = context.socket(zmq.REQ)
         zmq_socket.connect(f"tcp://{server_ip}:{port_number}")
         zmq_socket.send(b"Hello")
-        message = zmq_socket.recv()
+        #message = zmq_socket.recv()
+        calib_const = recv_zipped_pickle(zmq_socket)
+        # pedestals array[0,1] is 12
+        assert calib_const['pedestals'][0][0,1] == 12
         #print(f"I received {message}")
 
