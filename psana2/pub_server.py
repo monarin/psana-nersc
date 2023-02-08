@@ -2,6 +2,7 @@ import zmq
 import random
 import sys
 import time
+import zlib, pickle
 
 # Request util for contacting the db
 import psana.pscalib.calib.MDBWebUtils as wu
@@ -19,14 +20,18 @@ def pub_bind(port):
     return socket
 
 def pub_send(socket):
-    wait_sec = 10
+    wait_sec = 5
     print(f'waiting for {wait_sec}s...')
     time.sleep(wait_sec)
+    calib_const = wu.calib_constants_all_types(det_uniqueid, exp=expt, run=runnum, dbsuffix=dbsuffix)
+    send_zipped_pickle(socket, calib_const)
+    print(f"sent {calib_const['pedestals'][0][0,1]=}")
 
-    topic = 10001
-    messagedata = random.randrange(1,215) - 80
-    print("%d %d" % (topic, messagedata))
-    socket.send_string("%d %d" % (topic, messagedata))
+def send_zipped_pickle(zmq_socket, obj, flags=0, protocol=-1):
+    """pickle an object, and zip the pickle before sending it"""
+    p = pickle.dumps(obj, protocol)
+    z = zlib.compress(p)
+    return zmq_socket.send(z, flags=flags)
 
 if __name__ == "__main__":
     port = "5556"

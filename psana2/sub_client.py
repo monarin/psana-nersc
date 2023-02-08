@@ -1,6 +1,7 @@
 import sys
 import zmq
 import time
+import zlib, pickle
 
 
 def sub_connect(ipaddr, port):
@@ -11,23 +12,28 @@ def sub_connect(ipaddr, port):
     print("Collecting updates from weather server...")
     socket.connect ("tcp://%s:%s" % (ipaddr, port))
 
-    # Subscribe to zipcode, default is NYC, 10001
-    topicfilter = "10001"
+    # Subscribe to all
+    topicfilter = ""
     socket.setsockopt_string(zmq.SUBSCRIBE, topicfilter)
     return socket
 
 def sub_recv(socket):
     # Wait
-    wait_sec = 20
+    wait_sec = 10
     print(f'waiting for {wait_sec}s...')
     time.sleep(wait_sec)
 
     st = time.time()
-    string = socket.recv_string()
+    calib_const = recv_zipped_pickle(socket)
     en = time.time()
-    topic, messagedata = string.split()
-    print(topic, messagedata, f'recv took:{en-st:.2f}s.')
+    assert calib_const['pedestals'][0][0,1] == 12
+    print(f"{calib_const['pedestals'][0][0,1]=} recv took:{en-st:.2f}s.")
 
+def recv_zipped_pickle(zmq_socket, flags=0, protocol=-1):
+    """inverse of send_zipped_pickle"""
+    z = zmq_socket.recv(flags)
+    p = zlib.decompress(z)
+    return pickle.loads(p)
       
 if __name__ == "__main__":
     ipaddr = "localhost"
