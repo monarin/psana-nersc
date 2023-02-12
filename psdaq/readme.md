@@ -1,10 +1,10 @@
 ## Online Data System Overview
-![Online Data System Overview](/psdaq/Online_Data_Systems_Overview.png)
+![Online Data System Overview](/psdaq/images/Online_Data_Systems_Overview.png)
 
 There are three layers within the Online Data Sytems.
 ### Data Acquisition (DAQ) 
 Overview of an example DAQ system from RIX to SRCF nodes. [DAQ Overview Slides](https://docs.google.com/presentation/d/1zXggROZ05NY4N3eIyy0ydyl0WuofBa2jR7cAse2rPz4/edit?usp=sharing). 
-![DAQ-overview](/psdaq/DAQ-overview.png)
+![DAQ-overview](/psdaq/images/DAQ-overview.png)
 ### Data Reduction Pipeline (DRP)
 All DRP nodes, which receive timing signals and etc. are connected to the Infiniband switch. A group of Software Trigger nodes are also connected to the switch. 
 ### Fast-feedback (FFB) 
