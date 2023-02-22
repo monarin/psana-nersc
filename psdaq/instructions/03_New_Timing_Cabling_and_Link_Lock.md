@@ -9,7 +9,7 @@
    ```
    python scripts/devGui --pgp4 0 --laneConfig 1=Piranha4 --pcieBoardType Kcu1500 --enLclsII 1 --enableConfig 1 --startupMode 1
    ```
-   
+   ![devgui check timing signal](/psdaq/images/03_devgui_timing_signal.png)
    For each XPM, you can use xpmpva tool to view the channel
    ```
    xpmpva DAQ:NEH:XPM:5 DAQ:NEH:XPM:6
