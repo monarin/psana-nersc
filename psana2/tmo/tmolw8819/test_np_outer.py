@@ -2,15 +2,15 @@ import numpy as np
 import time
 #import torch
 
-a = np.arange(60000, dtype=int)
-b = np.arange(60000, dtype=int)
+a = np.arange(59400, dtype=np.float64)
+#b = np.arange(60000, dtype=int)
 #a = torch.arange(2048)
 #b = torch.arange(59400)
 
 t = []
-for i in range(1):
+for i in range(10):
     st = time.monotonic()
-    c = np.outer(b,a)
+    c = np.outer(a,a)
     #c = torch.outer(b, a)
     en = time.monotonic()
     #print(i, en-st)

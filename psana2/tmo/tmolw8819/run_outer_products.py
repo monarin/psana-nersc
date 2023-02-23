@@ -29,22 +29,27 @@ if flag_reduce==1:
 elif flag_reduce==2:
     sigma_thres = float(sys.argv[3])
 
+dtype = np.float32
+
 t0 = time.monotonic()
 ########################################################
 # this script fetches data and calculates the A^{T}A and A^{T}b
 exp = 'tmolw8819' # specify experiment here
 run = 300 # 10 fs, 523 eV
 save_path = '/reg/d/psdm/tmo/tmolw8819/results/monarin/outer-prod-test-20221006' # '/reg/d/psdm/tmo/tmolw8819/results/taran/outer-prod-test-20221005'
-max_events=100  # total no. of events = 42109
+max_events=10  # total no. of events = 42109
 # parameters hard-coded in, including array sizes
 chan_inner = 9
 chan_outer = 11
-ata = np.zeros((max_vls_len, max_vls_len)) # A^{T}A
-atb_inner = np.zeros((max_vls_len, max_wf_len)) # A^{T}b for inner anode
-atb_outer = np.zeros((max_vls_len, max_wf_len)) # A^{T}b for outer anode
-a_sum = np.zeros(max_vls_len)
-b_sum_inner = np.zeros(max_wf_len)
-b_sum_outer = np.zeros(max_wf_len)
+#ata = np.zeros((max_vls_len, max_vls_len)) # A^{T}A
+#atb_inner = np.zeros((max_vls_len, max_wf_len)) # A^{T}b for inner anode
+atb_outer = np.zeros((max_vls_len, max_wf_len), dtype=dtype) # A^{T}b for outer anode
+#tmp_atb_outer = np.zeros((max_vls_len, max_wf_len)) # A^{T}b for outer anode
+btb = np.zeros((max_wf_len, max_wf_len), dtype=dtype)   
+#tmp_btb = np.zeros((max_wf_len, max_wf_len))   
+a_sum = np.zeros(max_vls_len, dtype=dtype)
+#b_sum_inner = np.zeros(max_wf_len)
+b_sum_outer = np.zeros(max_wf_len, dtype=dtype)
 # these shift-and-scale parameters are also hard-coded in to stop the outer products blowing up
 a_shift, a_scale = 300, 50
 b_shift, b_scale = 2050, 13
@@ -84,11 +89,13 @@ for nevent, event in enumerate(run.events()): # loop over events
         continue
     
     # x-ray spectrum is A
-    vls=(vls[0].astype('float') - a_shift)/a_scale
+    #vls=(vls[0].astype('float') - a_shift)/a_scale         # [Original] the vls int16 gets converted to float64
+    vls = ((vls[0] - a_shift) / a_scale).astype(dtype)
     
     # get MBES waveforms (b)
-    wf_MBES_inner = (hsd_data[chan_inner][0].astype('float') - b_shift) / b_scale
-    wf_MBES_outer = (hsd_data[chan_outer][0].astype('float') - b_shift) / b_scale
+    #wf_MBES_inner = (hsd_data[chan_inner][0].astype('float') - b_shift) / b_scale
+    #wf_MBES_outer = (hsd_data[chan_outer][0].astype('float') - b_shift) / b_scale    # [Original] the hsd_data int16 gets converted to float64
+    wf_MBES_outer = ((hsd_data[chan_outer][0] - b_shift) / b_scale).astype(dtype)
 
     ########################################################
     if flag_plot:
@@ -105,7 +112,7 @@ for nevent, event in enumerate(run.events()): # loop over events
     ########################################################
     if flag_reduce==1:
         vls = vls[:max_vls_len]
-        wf_MBES_inner = wf_MBES_inner[:max_wf_len]
+        #wf_MBES_inner = wf_MBES_inner[:max_wf_len]
         wf_MBES_outer = wf_MBES_outer[:max_wf_len]
     elif flag_reduce==2:
         vls = vls[:1000]
@@ -126,19 +133,20 @@ for nevent, event in enumerate(run.events()): # loop over events
             atb_inner = np.outer(vls, wf_MBES_inner)
             atb_outer = np.outer(vls, wf_MBES_outer)
         else:
-            ata += np.outer(vls, vls)
-            atb_inner += np.outer(vls, wf_MBES_inner)
+            #ata += np.outer(vls, vls)
+            #atb_inner += np.outer(vls, wf_MBES_inner)
             atb_outer += np.outer(vls, wf_MBES_outer)
+            btb += np.outer(wf_MBES_outer, wf_MBES_outer)
     ########################################################
     if flag_reduce != 2:
         a_sum += vls
-        b_sum_inner += wf_MBES_inner
+        #b_sum_inner += wf_MBES_inner
         b_sum_outer += wf_MBES_outer
     
     ########################################################
     en = time.monotonic()
     tt += en - st
-    print(f'nevent: {nevent+1} vls: {vls.shape} inner: {wf_MBES_inner.shape} outer: {wf_MBES_outer.shape} dt:{en-st:.3f}s. load:{t1-st:.3f}s./{((t1-st)/(en-st))*100:.2f}% calc:{en-t1:.3f}s./{((en-t1)/(en-st))*100:.2f}% tt:{tt:.3f}s. rate:{(nevent+1)/tt:.2f}Hz')
+    print(f'nevent: {nevent+1} vls: {vls.shape} outer: {wf_MBES_outer.shape} dt:{en-st:.2f}s. load:{t1-st:.2f}s calc:{en-t1:.2f}s tt:{tt:.2f}s. rate:{(nevent+1)/tt:.2f}Hz')
     st = time.monotonic()
     cn_events += 1
     ########################################################
@@ -147,4 +155,4 @@ for nevent, event in enumerate(run.events()): # loop over events
 
 tn = time.monotonic()
 if rank == 2:
-    print(f'nevent: {cn_events} tt:{tn-t0:.5f}s. rate:{((tn-t0)/cn_events)*1e-3}kHz')
+    print(f'nevent: {cn_events} tt:{tn-t0:.2f}s. rate:{((tn-t0)/cn_events)*1e-3:.5f}kHz')
