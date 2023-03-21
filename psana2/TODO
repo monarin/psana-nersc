@@ -1,19 +1,48 @@
+1. Live-mode test on 4-6GB write
+2. Drp-python (AMI) calibration constant read scaling 
+   - Add to shmem ds as well
+     - https://confluence.slac.stanford.edu/display/PSDMInternal/Calibration+Constants+Scaling#CalibrationConstantsScaling-shmem
+     - Tried out mpi spawn (see ls ~/Save/*_2023-03-21+14*) but not compatible with how we lanuch ami from cnf file.
+
+
+   - Move socket setup to https://github.com/slac-lcls/lcls2/blob/drp_python/psdaq/psdaq/drp/drp_python.py
+   - Latest work in ~/Save/*_2023-03-16+17*
+   - See some example work in ts_connect.py and ts_config.py in ~/Save/*2023-03-03+153*
+   - Check loads
+   - Use zmq (thread problems?)
+   - Use per-node distribution then share memory
+3. Destination
+4. DRP Learning 
+
+
+Archived
+Incomplete transition:
+- Skip the event
+- Create fake dgram(s) 
+
+
 SmallData callback
 - Check usage of generator/iterator in RunSmallData
 
 
-
 TMO:
+- Fex HSD (x8 gained est.)
+Piranha 2048 ~10% should be enough.
+Would I be getting the fex directly from xtc2?
+- only do half of the symmetric outer product (with hsd channel itself)
+- reduce the sample rate by ~4
+- reduce window to 2us (12000 samples) 1us @1MHz
+- use peaks (guess badness is 5+-3)
+- replace with tixel eventually (which does thresholding)
+ o may not use tixel because of the thresholding, depending on expt
+
 Xtc vs HDF5 analysis
-
-
 
 RIX 33k - 1MHz:
 Detectors: APD point detector, 2x Andors + 2x KBO ++ (~ 12 streams)
 APD - Integrated over a range -> returns scalar
 VLS - Entire spectrum
 Shot filtering, data binning. 
-
 Data: (Experiment: /Run: )
 0. Andor set at 33kHz (real case is 1Hz)
 1. Test data should cover the normal cases (% hits etc). 
@@ -24,23 +53,23 @@ Algorithms:
 3. Smalldata processing script (interface such as filtering, roi/ available in lcls2) --> hdf5
 4. Analysis script works on hdf5
 
-Timing
-
-
 
 Clean Up
 - dir in DataSource should be strip()
-- DgramPy createTransition causes memory leak for PyXtcUpdateIer
 
 
+Q1: Oct-Dec 2022
+* Preparation for running rix and tmo experiments at 33kHz
+Metric:
+- Scaling plots for smallldata and hdf5-jupyter analysis scripts.
+* Run ExaFEL Demo 2022 for psana2 streaming mode
+Metric:
+- Strong/weak scaling for spinifel with psana2-mpi
+- Merged psana2 branch to development 
+- Quickstart guide updated (psana2 in streaming mode as default)
+- Fall cleaning items completed
 
-Aug/Sept 2022
-- Integrate psana2 streaming function to spinifel
-- Support DgramEdit for DrpPython and data conversion for ExaFEL
+Access control node:
+1. Locate where the camera is. eg. Piranha 
+2. Look in cnf file.
 
-
-
-ARCHIVED
-Live mode test
-- Keep up with 1MHz rate data from daq here 
-  /cds/data/drpsrcf/tst/tstx00417/xtc/ 
