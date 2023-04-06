@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --partition=anaq
+#SBATCH --partition=milano
 #SBATCH --job-name=psana2
-#SBATCH --nodes=2
-#SBATCH --ntasks=100
+#SBATCH --nodes=20
+#SBATCH --ntasks=2500
 ##SBATCH --ntasks-per-node=50
 #SBATCH --output=%j.log
 #SBATCH --exclusive
@@ -11,7 +11,7 @@
 t_start=`date +%s`
 
 
-srun python test_fast_outer_filling.py
+mpirun -n 2500 python test_fast_outer_filling.py
 
 
 t_end=`date +%s`
