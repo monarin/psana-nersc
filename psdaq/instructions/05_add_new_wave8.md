@@ -30,6 +30,12 @@ For Optic, check the value of RxPower[1] of Qsfp[1] on Kcu1500
 For linklock, check Lane 5 (QSFP1_1 corresponds to lane 5 of the 8 lanes on KCU). 
 The LinkReady register should show True for both RxStatus and TxStauts. 
 ![ins05_devGui_kcu1500_Lane5_LinkReady](/psdaq/images/ins05_devGui_kcu1500_Lane5_LinkReady.png)
+### Wave8 devGui
+To start the devGui
+```
+python scripts/wave8DAQ.py --l 5 --enDataPath 0 --startupMode 1
+```
+Note that currenly my own clone isn't working so have to run this from `/cds/home/c/cpo/git/wave8_2.4.2/software`. The lane (-l) is 5 and the other parameters help sharing the detadev_N resource in case other processes are using the driver too.
 
 
 
