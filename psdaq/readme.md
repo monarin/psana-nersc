@@ -60,7 +60,13 @@ procmgr_config = [
 
  {host: 'drp-srcf-cmp029', id:'tstcam1_0',   flags:'spu',                cmd:f'{drp_cmd0} -l 0x1 -D fakecam -k sim_length=145'},
 ```
-**Note:** You need to where where the required hardware are located. For the example above, cmp029 can be used for the timing system and the fake camera. Each cluster has a different setup.
+**Note:** 
+- You need to where where the required hardware are located. For the example above, cmp029 can be used for the timing system and the fake camera. Each cluster has a different setup.
+- sim_length can be set to different size e.g. when we stress test the file system. However, you may see high DeadFrac and below error when switching from Running to Unallocated (sim_length=1160):
+```
+*** /cds/home/m/monarin/lcls2/install/include/xtcdata/xtc/Xtc.hh:94: Insufficient space for 4064 bytes^M
+```
+
 
 Depending on which cluster and whether you're running a real system or a teststand, the startup node, the user that you use to login to that node, and the values in the cnf file will be different. On a particular (correct) startup node, run
 ```
