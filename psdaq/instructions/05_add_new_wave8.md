@@ -1,4 +1,4 @@
-## Adding new wave8 to TXI and make it avaiable through already commissioning cmp004 node 
+## Adding new wave8 to TXI and make it available through already commissioning cmp004 node 
 ### Wave8 installation 
 Wave8 takes xpm input and together with its data produce one data output.  
 [ data (out) | unused | xpm (in) | unused ].  
@@ -37,6 +37,10 @@ python scripts/wave8DAQ.py --l 5 --enDataPath 0 --startupMode 1
 ```
 Note that currenly my own clone isn't working so have to run this from `/cds/home/c/cpo/git/wave8_2.4.2/software`. The lane (-l) is 5 and the other parameters help sharing the detadev_N resource in case other processes are using the driver too.
 
+Check PgpMon[1] (QSFP1) LinkReady register
+![ins05_wave8gui_LinkReady](/psdaq/images/ins05_wave8gui_LinkReady.png)
+Check TimingFrameRx RxLinkUp register
+![ins05_wave8gui_TimingFrameRx_RxLinkUp](/psdaq/images/ins05_wave8gui_TimingFrameRx_RxLinkUp.png)
 
 
 
