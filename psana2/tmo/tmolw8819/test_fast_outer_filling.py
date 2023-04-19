@@ -25,7 +25,7 @@ else:
     ehsd = np.random.rand(1000).reshape((n_blobs, n_samples)).astype(dtype)
     ihsd = np.random.rand(1000).reshape((n_blobs, n_samples)).astype(dtype)
     fzp = np.random.rand(n_fzp_samples).astype(dtype)
-n_events = 10000
+n_events = 5000
 tt = ctor.zeros((n_events,3))
 
 
