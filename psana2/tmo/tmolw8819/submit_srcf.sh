@@ -15,16 +15,16 @@ t_start=`date +%s`
 export PYTHONPATH=$PYTHONPATH:/cds/home/m/monarin/sw/pytorch
 
 srun -N 1 -n 1 python test_fast_outer_filling.py
-srun -N 1 -n 2 python test_fast_outer_filling.py
-srun -N 1 -n 4 python test_fast_outer_filling.py
-srun -N 1 -n 8 python test_fast_outer_filling.py
-srun -N 1 -n 16 python test_fast_outer_filling.py
-srun -N 1 -n 32 python test_fast_outer_filling.py
-srun -N 2 -n 64 python test_fast_outer_filling.py
-srun -N 3 -n 128 python test_fast_outer_filling.py
-srun -N 5 -n 256 python test_fast_outer_filling.py
-srun -N 9 -n 512 python test_fast_outer_filling.py
-srun -N 18 -n 1024 python test_fast_outer_filling.py
+srun -N 2 -n 2 python test_fast_outer_filling.py
+srun -N 4 -n 4 python test_fast_outer_filling.py
+srun -N 8 -n 8 python test_fast_outer_filling.py
+srun -N 16 -n 16 python test_fast_outer_filling.py
+srun -n 32 python test_fast_outer_filling.py
+srun -n 64 python test_fast_outer_filling.py
+srun -n 128 python test_fast_outer_filling.py
+srun -n 256 python test_fast_outer_filling.py
+srun -n 512 python test_fast_outer_filling.py
+srun -n 1024 python test_fast_outer_filling.py
 
 
 t_end=`date +%s`
