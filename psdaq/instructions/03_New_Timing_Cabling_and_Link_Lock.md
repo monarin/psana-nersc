@@ -14,7 +14,7 @@
    ![devgui debugtree check RxLinkUp](/psdaq/images/03_devgui_debugtree_RxLinkUp.png)
    if RxLinkUp is 0x0 (down),
    * Troubleshoot 1 Click Exec on ConfigureXpmMini then Exec on ConfigLclsTimingV2
-   * Troubleshoot 2 on xpmvpa below, click TxLinkReset on the matcing columns. These columns are ordered by channel no. (SFP) as appeared on the AMC starting from 0. There are eight SFP channgels but the last one is disabled so only seven are functionning.
+   * Troubleshoot 2 on xpmvpa below, click TxLinkReset on the matcing columns. These columns are ordered by channel no. (SFP) as appeared on the AMC starting from 0. There are eight SFP channels but the last one is disabled so only seven are functionning.
    For each XPM, you can use xpmpva tool to view the channel
    ```
    xpmpva DAQ:NEH:XPM:5 DAQ:NEH:XPM:6
