@@ -10,4 +10,7 @@ kinit    # if not already has the the ticket
 ssh rix-daq -l rixopr
 /cds/group/pcds/epics/ioc/common/pgpWave8/latest/children/build/iocBoot/ioc-rix-pgpw8-03/edm-ioc-rix-pgpw8-03.cmd
 ```
-
+IOC Manager for Wave8 at Rix Main
+![ins06_ioc_wave8_main](/psdaq/images/ins06_ioc_wave8_main.png)
+Click PyRogue Wave8 Diag to see all registers
+![ins06_ioc_wave8_registers](/psdaq/images/ins06_ioc_wave8_registers.png)
