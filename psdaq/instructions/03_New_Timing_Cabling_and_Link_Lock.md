@@ -14,10 +14,13 @@
    ![devgui debugtree check RxLinkUp](/psdaq/images/03_devgui_debugtree_RxLinkUp.png)
    if RxLinkUp is 0x0 (down),
    * Troubleshoot 1 Click Exec on ConfigureXpmMini then Exec on ConfigLclsTimingV2
-   * Troubleshoot 2 on xpmvpa below, click TxLinkReset on the matcing column (ordered by channel no. as appeared on the AMC)
+   * Troubleshoot 2 on xpmvpa below, click TxLinkReset on the matcing columns. These columns are ordered by channel no. (SFP) as appeared on the AMC starting from 0. There are eight SFP channgels but the last one is disabled so only seven are functionning.
    For each XPM, you can use xpmpva tool to view the channel
    ```
    xpmpva DAQ:NEH:XPM:5 DAQ:NEH:XPM:6
    ```
    For viewing XPM 5 and 6.
    ![example of xpmvpa tool](/psdaq/images/ex-xpmvpa_xpm5_amc0.png)
+## TimingTxReset on Wave8 Gui
+Another place that might help fixing link lock problem is from resetting TimingTxReset on Wave8 gui.
+![wave8_gui_TimingTxReset](/psdaq/images/wave8_gui_TimingTxReset.png)
