@@ -5,7 +5,7 @@ SLURM_HOSTFILE=slurm_hosts srun -o log.log --partition=anaq --exclusive python -
 
 """
 import time
-import os
+import os,sys
 from psana import DataSource
 import numpy as np
 import vals
@@ -25,22 +25,25 @@ rank = comm.Get_rank()
 
 def test_standard():
     batch_size = 1000
-    max_events = int(10e6)
+    max_events = 0
     
-    exp='tstx00417'
-    runno=224
-    xtc_dir='/cds/data/drpsrcf/tst/tstx00417/xtc'
+    hutch='tst'
+    exp=sys.argv[1]
+    runno=int(sys.argv[2])
 
+    #hutch='rix'
     #exp='rixtst099'
     #runno=12
-    #xtc_dir='/cds/data/drpsrcf/rix/rixtst099/xtc/'
+
+    xtc_dir=f'/cds/data/drpsrcf/{hutch}/{exp}/xtc/'
 
     ds = DataSource(exp=exp, 
                     run=runno, 
                     batch_size=batch_size, 
                     max_events=max_events, 
                     dir=xtc_dir, 
-                    live=True)
+                    live=True
+                    )
 
     sendbuf = np.zeros(1, dtype='i')
     recvbuf = None
