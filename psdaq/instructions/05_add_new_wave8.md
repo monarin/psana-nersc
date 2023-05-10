@@ -60,6 +60,7 @@ From the iocmanager main and Wave8 diag screens, we can obtain:
 * check Up Time to see if this corresponds to what we see on wave8 devGui (in case we're not sure about the correct lane)
 ![txi_ioc_wave8_main](/psdaq/images/txi_ioc_wave8_main.png)
 ![txi_ioc_wave8_diag](/psdaq/images/txi_ioc_wave8_diag.png)
-
+### Running Wave8 on daq control
+The full working cnf file is available here 
 
 
