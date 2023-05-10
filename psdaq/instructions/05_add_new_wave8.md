@@ -61,6 +61,55 @@ From the iocmanager main and Wave8 diag screens, we can obtain:
 ![txi_ioc_wave8_main](/psdaq/images/txi_ioc_wave8_main.png)
 ![txi_ioc_wave8_diag](/psdaq/images/txi_ioc_wave8_diag.png)
 ### Running Wave8 on daq control
-The full working cnf file is available here 
-
-
+The full working cnf file is available here [mona.cnf](https://github.com/slac-lcls/lcls2/blob/dd2850ab95602c3ce772197e74cc0d85cbf30c5a/psdaq/psdaq/cnf/mona.cnf). The line which adds wave8 is
+```
+{host: 'drp-srcf-cmp004', id:'txi_fim1_0',  flags:'spu', env:epics_env, cmd:drp_cmd0+' -l 0x20 -D wave8 -k epics_prefix=TXI:RP:W8:01'}
+```
+To access daq-contol,
+```
+ssh drp-srcf-mon001
+cd /path/to/cnf/mona.cnf
+procmgr start mona.cnf
+```
+### Troubleshoots
+#### Gateway issue from daq-control
+Error:
+```
+Rogue/pyrogue version v5.16.0. https://github.com/slaclab/rogue^M
+--- lanemask 20  lane 5  timebase 186M ---^M
+ctxt_put [['TXI:RP:W8:01:Top:TriggerEventManager:TriggerEventBuffer[0]:MasterEnable']] [[0]]^M
+ctxt_put [['TXI:RP:W8:01:Top:SystemRegs:timingUseMiniTpg', 'TXI:RP:W8:01:Top:TimingFrameRx:ModeSelEn', 'TXI:RP:W8:01:Top:TimingFrameRx:ModeSel', 'TXI:RP:W8:01:Top:TimingFrameRx:ClkSel', 'TXI:RP:W8:01:Top:TimingFrameRx:RxPllReset']] [[0, 1, 1, 1, 1]]^M
+ctxt_put [['TXI:RP:W8:01:Top:TimingFrameRx:RxPllReset']] [[0]]^M
+ctxt_put [['TXI:RP:W8:01:Top:TimingFrameRx:RxDown']] [[0]]^M
+ctxt_put [['TXI:RP:W8:01:Top:SystemRegs:timingUseMiniTpg', 'TXI:RP:W8:01:Top:TimingFrameRx:ModeSelEn', 'TXI:RP:W8:01:Top:TimingFrameRx:ModeSel', 'TXI:RP:W8:01:Top:TimingFrameRx:ClkSel', 'TXI:RP:W8:01:Top:TimingFrameRx:RxPllReset']] [[0, 1, 1, 1, 1]]^M
+ctxt_put [['TXI:RP:W8:01:Top:TimingFrameRx:RxPllReset']] [[0]]^M
+ctxt_put [['TXI:RP:W8:01:Top:TimingFrameRx:RxDown']] [[0]]^M
+ctxt_put [TXI:RP:W8:01:Top:TriggerEventManager:XpmMessageAligner:TxId] [4194342937]^M
+ctxt_put [TXI:RP:W8:01:Top:TriggerEventManager:TriggerEventBuffer[0]:MasterEnable] [0]^M
+Traceback (most recent call last):^M
+  File "/cds/home/m/monarin/lcls2/psdaq/psdaq/configdb/wave8_config.py", line 169, in wave8_connect^M
+    values = int(ctxt_get(epics_prefix+':Top:TriggerEventManager:XpmMessageAligner:RxId'))^M
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'^M
+tst-drp[986]: <C> **** python error^M
+```
+Some answers from chris:
+Yes, I can see that issue from the command line:
+```
+(ps-4.5.26) drp-srcf-cmp004:software$ pvget TXI:RP:W8:01:Top:TriggerEventManager:XpmMessageAligner:RxId
+Timeout
+```
+But it works for a rix fim:
+```
+(ps-4.5.26) drp-srcf-cmp004:software$ pvget RIX:FIM:W8:03:Top:TriggerEventManager:XpmMessageAligner:RxId
+RIX:FIM:W8:03:Top:TriggerEventManager:XpmMessageAligner:RxId 2023-05-09 16:20:04.966  4281493252 
+(ps-4.5.26) drp-srcf-cmp004:software$ 
+```
+I can make it work by setting this additional environment variable which tells epics to talk directly to the IOC node:
+```
+(ps-4.5.26) drp-srcf-cmp004:software$ export EPICS_PVA_ADDR_LIST=172.21.136.41
+(ps-4.5.26) drp-srcf-cmp004:software$ pvget TXI:RP:W8:01:Top:TriggerEventManager:XpmMessageAligner:RxId
+TXI:RP:W8:01:Top:TriggerEventManager:XpmMessageAligner:RxId 2023-05-09 16:24:33.896  4283525129 
+(ps-4.5.26) drp-srcf-cmp004:software$ 
+```
+I think that means we need to get the controls group to modify some epics gateway settings.  I’ll cc you on the slack thread. (edited) 
+Solution: gateway has an incorrect permission. Zach reset it and we can run wave8 from daq control.
