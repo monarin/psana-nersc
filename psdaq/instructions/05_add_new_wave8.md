@@ -5,15 +5,16 @@ Wave8 takes xpm input and together with its data produce data outputs (PGP 0 and
 ![wave8_with_cables](/psdaq/images/wave8_with_cables.png). 
 * For TXI wave8, timing is taken from xpm 5 in room 208 via fiber patch (mirror between txi and 208 top patch). 
 * Data ports (PGP 0 and 1) are wired back with the same fiber patch to 208 and IOC machine (handled by control). PGP 0 is connected with Long Range cable (to SRCF nodes) and PGP 1 is connected with Short Range cable (only to hutch ioc machine).   
-* For PGP 0 (daq data), we connect fiber patch data port in room 208 to the BOS port 1.7.4 and label it as TXI_FIM. This is then cross-linked using the BOS webgui to 5.2.4 DRP-SRCF-CMP004-QSFP1_1 (or lane 5 from 8 lanes counting from 0).
-* For PGP 1 (control data), this is done by control staff)
+* For PGP 0 (daq data), we connect fiber patch data port in room 208 to the BOS port 1.7.4 and label it as TXI_FIM. 
+![ins05_BOS_TXI_Wave8](/psdaq/images/ins05_BOS_TXI_Wave8.png)
+This is then cross-linked using the BOS webgui to 5.2.4 DRP-SRCF-CMP004-QSFP1_1 (or lane 5 from 8 lanes counting from 0).
 ```
      QSFP0_  | QSFP1_
      0 1 2 3   0 1 2 3
 LANE 0 1 2 3   4 5 6 7
 ```
- 
-![ins05_BOS_TXI_Wave8](/psdaq/images/ins05_BOS_TXI_Wave8.png)
+* For PGP 1 (control data), this is done by control staff)
+
 ## Checking the optic signal and linklock using Wave8 devGui
 Wave8 devGuis installation:
 ```
@@ -47,7 +48,13 @@ Check PgpMon[1] (QSFP1) LinkReady register
 ![ins05_wave8gui_LinkReady](/psdaq/images/ins05_wave8gui_LinkReady.png)
 Check TimingFrameRx RxLinkUp register
 ![ins05_wave8gui_TimingFrameRx_RxLinkUp](/psdaq/images/ins05_wave8gui_TimingFrameRx_RxLinkUp.png)
-
+### IOC Manager
+After PGP 1 connection with IOC machine is established by control staffs, we can view wave8 registers by runninng iocmanager gui from txi hutch.
+```
+kinit
+ssh txi-control -l txiopr
+/reg/g/pcds/epics/ioc/txi/pgpWave8/R1.0.0/build/iocBoot/ioc-txi-pgpw8-01/edm-ioc-txi-pgpw8-01.cmd
+```
 
 
 
