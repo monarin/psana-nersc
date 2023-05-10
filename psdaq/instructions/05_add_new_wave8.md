@@ -4,8 +4,12 @@ Wave8 takes xpm input and together with its data produce one data output.
 [ data (out) | unused | xpm (in) | unused ].  
 For TXI, xpm is taken from 208 via fiber patch (mirror between txi and 208 top patch). Data is wired back with the same fiber patch to 208. 
 We then connect fiber patch data port to the BOS port 1.7.4 and label it as TXI_FIM. This is then cross-linked using the BOS webgui so TXI
-wave 8 is connected to cmp004_QSFP1_1.
-
+wave 8 is connected to cmp004_QSFP1_1 (or lane 5 from 8 lanes counting from 0).
+```
+     QSFP0_  | QSFP1_
+     0 1 2 3   0 1 2 3
+LANE 0 1 2 3   4 5 6 7
+```
 We can check the optic signal on the BOS. 
 ![ins05_BOS_TXI_Wave8](/psdaq/images/ins05_BOS_TXI_Wave8.png)
 ## Checking the optic signal and linklock using Wave8 devGui
