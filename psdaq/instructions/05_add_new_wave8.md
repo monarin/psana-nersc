@@ -55,7 +55,11 @@ kinit
 ssh txi-control -l txiopr
 /reg/g/pcds/epics/ioc/txi/pgpWave8/R1.0.0/build/iocBoot/ioc-txi-pgpw8-01/edm-ioc-txi-pgpw8-01.cmd
 ```
-
+From the iocmanager main and Wave8 diag screens, we can obtain:
+* epics_prefix value (top left read TXI:RP:W8:01) that is needed for cnf parameter
+* check Up Time to see if this corresponds to what we see on wave8 devGui (in case we're not sure about the correct lane)
+![txi_ioc_wave8_main](/psdaq/images/txi_ioc_wave8_main.png)
+![txi_ioc_wave8_diag](/psdaq/images/txi_ioc_wave8_diag.png)
 
 
 
