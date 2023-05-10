@@ -113,3 +113,5 @@ TXI:RP:W8:01:Top:TriggerEventManager:XpmMessageAligner:RxId 2023-05-09 16:24:33.
 ```
 I think that means we need to get the controls group to modify some epics gateway settings.  I’ll cc you on the slack thread. (edited) 
 Solution: gateway has an incorrect permission. Zach reset it and we can run wave8 from daq control.
+#### IOC Connection Fail
+There was an issue when trying to open IOCManager after PGP 1 is connected to the IOC host. We could see optic signals from wave8 devGui. I think the issue was resolved with the firmware update (see thread between Jyoti and chis). 
