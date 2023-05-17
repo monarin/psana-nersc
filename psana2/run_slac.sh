@@ -27,10 +27,11 @@ t_start=`date +%s`
 echo "RUN PSANA2 SCRIPT SUBMITTED AT" $t_start 
 
 # For psana2
-export PS_R_MAX_RETRIES=60
-export PS_SMD_N_EVENTS=10000
-export PS_FAKESTEP_FLAG=0
-export PS_SMD0_NUM_THREADS=32
+#export PS_R_MAX_RETRIES=60
+#export PS_SMD_N_EVENTS=10000
+#export PS_FAKESTEP_FLAG=0
+#export PS_SMD0_NUM_THREADS=32
+export PS_ZEROEDBUG_WAIT_SEC=2
 # For amo06516 (Exafel SPI data)
 #export PS_SMD_CHUNKSIZE=32000000
 #source $HOME/lcls2/setup_env.sh
@@ -48,7 +49,7 @@ MAX_EVENTS=${1}
 EXP=${2}
 RUNNO=${3}
 #python -u ${HOME}/psana-nersc/psana2/test_psana2_perf.py $MAX_EVENTS
-python -u ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO
+python -Xfaulthandler -u ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO
 #python -u ${HOME}/problems/tdd14/preproc.py 406
 #python -u ./test_fex_cfd1.py
 #python -u ./test_mpi.py
