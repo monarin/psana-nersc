@@ -13,6 +13,24 @@
    - Use per-node distribution then share memory
 3. Destination
 4. DRP Learning 
+5. Run Live mode from s3df
+Latest change for fixing zeroed read-in bytes in ~/Save/*_2023-05-17+094*
+
+Installing Wave8
+- RxLinkUp is 0 from wave8 gui
+- No entry in iocmanager (tst or txt hutch?)
+- Running from my own wave8 dir doesn't work (currently running from chris')
+
+Spinifel Multiple Conf.
+- N conformations is set
+- Images are assigned to one of the N conformations
+- Determining which conformation is done by minimum Euc. distance
+
+rank 1 images 1 - 1000  | conf a images set 1a | model A
+                        | conf b images set 1b | model B
+rank 2 images 1001-2000 | conf a images set 2a | model A
+                        | conf b images set 2b | model B
+
 
 
 Archived
