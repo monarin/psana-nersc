@@ -48,8 +48,9 @@ export OMPI_MCA_btl_tcp_if_include=172.21.164.90/1072
 MAX_EVENTS=${1}
 EXP=${2}
 RUNNO=${3}
+XTCDIR=${4}
 #python -u ${HOME}/psana-nersc/psana2/test_psana2_perf.py $MAX_EVENTS
-python -Xfaulthandler -u ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO
+python -Xfaulthandler -u ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO ${XTCDIR}
 #python -u ${HOME}/problems/tdd14/preproc.py 406
 #python -u ./test_fex_cfd1.py
 #python -u ./test_mpi.py

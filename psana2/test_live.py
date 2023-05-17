@@ -36,6 +36,8 @@ def test_standard():
     #runno=12
 
     xtc_dir=f'/cds/data/drpsrcf/{hutch}/{exp}/xtc/'
+    if len(sys.argv) > 3:
+        xtc_dir=f'{sys.argv[3]}/{hutch}/{exp}/xtc/'
 
     ds = DataSource(exp=exp, 
                     run=runno, 
