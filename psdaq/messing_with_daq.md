@@ -24,4 +24,10 @@ tmo-teb[7266]: <W> Fixup SlowUpdate, 0072c1474e07bf, size 0, source 5^M
 Timed-out       SlowUpdate 0072c1474e07bf, size     0, for  remaining 0000000000000021, RoGs 0003, contract 00000000000007ff, age 12073 ms, tmo 12000 ms^M
 ```
 
-remaining shows drp_ids (bit mask) that are not coming in. In this case, bit 0 and bit 5 (in hex this is 0000000000000021). Note `contract` shows no. of expected contributors (00000000000007ff) = 11.
+remaining shows drp_ids (bit mask) that are not coming in. In this case, bit 0 and bit 5 (in hex this is 0000000000000021). Note `contract` shows no. of expected contributors (00000000000007ff) = 11. You can look up the detectors that correspond to drp id 0 and 0 in connect.json file.
+
+## Changing trigger rate for each group
+Use fixed rate and update trigger rate for the group in daq control. For event code, see confluence page. 
+
+## Notes
+SC (in daq control) in LCLS2 timeinig (Super Conductor)
