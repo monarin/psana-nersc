@@ -31,7 +31,8 @@ Use fixed rate (trigMode) and update trigger rate for the group in daq control.
 ![messing_with_daq_update_trigger_rate](/psdaq/images/messing_with_daq_update_trigger_rate.png).  
 ![messing_with_daq_identify_group](/psdaq/images/messing_with_daq_identify_group.png).  
 
-For event code, see confluence page. 
+For event code, see confluence page for [sequence example](https://confluence.slac.stanford.edu/display/LCLSIIData/LCLS2+Timing#LCLS2Timing-SequencingExample). 
 
 ## Notes
 SC (in daq control) in LCLS2 timeinig (Super Conductor)
+In log file, <C> means critical error. 
