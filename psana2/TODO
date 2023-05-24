@@ -1,6 +1,4 @@
 New TODO 5/18/2023
-- excluded detector list in confluence documentation
-- eliminate filter_fn text from confluence documentation (now smd_callback)
 - test live mode with full tmo.cnf
 - more timing fibers for ric epixhr emulation
 - dgramedit requires config_dgramedit argument. should it just be config_dgram?
