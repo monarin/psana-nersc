@@ -15,5 +15,24 @@ We use Deadtime (or Deadfrac) to identify bottlenecks at each stage in DAQ Pipel
 
 We can also use daqStats and daqPipes (percentages) to view bottlenecks. From the table, a row represents a detector while a column represents a stage in the pipeline. 
 
+To run daqStats or daqPipes live (getting current values),
+```
+daqStats -p 0 --inst tmo
+daqPipes -p 0 --inst tmo 
+```
+You can also specify start time to viewed prerecorded values,
+```
+daqStats -p 0 --inst tmo --start '2020-11-11 13:50:00'
+daqPipes -p 0 --inst tmo --start '2020-11-11 13:50:00'
+```
+
+daqStats window
+![daqStats](/psdaq/images/daqstats.png)
+daqPipes window
+![daqPipes](/psdaq/images/daqpipes.png)
+Navigation: Use > or < and ? for Help
+
+
+
 
                                                              
