@@ -11,5 +11,9 @@ KCU/HSD Cards   --> | --> Worker 2 [Worker Memory] --> | --> off node -->  DISK/
 ## Deadtime
 Deadtime: the fraction of time the the memory buffer is full.  
 Deadfrac: the fraction of L1Accepts that were lost (due to full buffer).  
-We use Deadtime (or Deadfrac) to identify bottlenecks at each stage in DAQ Pipeline. 
+We use Deadtime (or Deadfrac) to identify bottlenecks at each stage in DAQ Pipeline. From daq control gui, Deadtime tab on xpmpva window shows Deadtime on KCU/HSD cards (seems like burst values rather than accumulated over time). This is similar to what we can find on KCU devGui or hsdpva window.  
+
+We can also use daqStats and daqPipes (percentages) to view bottlenecks. From the table, a row represents a detector while a column represents a stage in the pipeline. 
+
+
                                                              
