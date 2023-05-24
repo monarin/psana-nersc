@@ -20,3 +20,14 @@ Type:
 (ps-4.5.26) monarin@drp-srcf-cmp012 ~ 👁)$ host 172.21.152.78
 78.152.21.172.in-addr.arpa domain name pointer drp-srcf-mon001.pcdsn.
 ```
+## xpmpva
+For each XPM, you can use xpmpva tool to view the channel
+```
+xpmpva DAQ:NEH:XPM:5 DAQ:NEH:XPM:6
+```
+For viewing XPM 5 and 6.
+![example of xpmvpa tool](/psdaq/images/ex-xpmvpa_xpm5_amc0.png)
+## hsdpva
+```
+hsdpva DAQ:TMO:HSD:1_1A:B DAQ:TMO:HSD:1_3D:B DAQ:TMO:HSD:1_3D:A DAQ:TMO:HSD:1_DA:A DAQ:TMO:HSD:1_DA:B
+```
