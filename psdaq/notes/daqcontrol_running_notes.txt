@@ -5,6 +5,7 @@ cd scripts
 
 ### for tmo
 - ssh -YC tmo-daq -l tmoopr (kinit if asked for password)
+- cd /cds/group/pcds/dist/pds/tmo/scripts/
 - cd daq (softlinked to scripts) see restart_daq.sh for proof
 - source setup_env.sh
 - tmo.cnf (python style settings - select/deselect list of hw)
