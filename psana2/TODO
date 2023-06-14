@@ -2,24 +2,28 @@ New TODO 5/18/2023
 - test live mode with full tmo.cnf
 - more timing fibers for ric epixhr emulation
 - dgramedit requires config_dgramedit argument. should it just be config_dgram?
+  add get_dgram() which returns normal dgram
+- ephemeral port for shmem_ds
 - ttool background (work with ric)
 - destination callback (conflicts with integrating detector?). work with silke,andy@txi
 - epixM
+- Spinifel djh/crusher ci failing
 
 
 
 Q1: Oct-Dec 2022
-* Preparation for running rix and tmo experiments at 33kHz
+Preparation for running rix and tmo experiments at 33kHz
 Metric:
 - Scaling plots for smallldata and hdf5-jupyter analysis scripts.
-* Run ExaFEL Demo 2022 for psana2 streaming mode
+Run ExaFEL Demo 2022 for psana2 streaming mode
 Metric:
 - Strong/weak scaling for spinifel with psana2-mpi
 - Merged psana2 branch to development 
 - Quickstart guide updated (psana2 in streaming mode as default)
 - Fall cleaning items completed
+Q2: Jan-Apr 2023
+Understanding DAQ system
+Q3: May-Aug 2023
+Q4: Sep
 
-Access control node:
-1. Locate where the camera is. eg. Piranha 
-2. Look in cnf file.
 
