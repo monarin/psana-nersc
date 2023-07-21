@@ -76,3 +76,13 @@ Note that for a permanent process, you can also use `procmgr stop rix-hsd.cnf Un
 ```
 (ps-4.6.0) rix-daq:scripts> procmgr start rix-hsd.cnf
 ```
+## Cutting PV communication
+Like mentioned earlier, detectors often depend on PV communications. For atmopal, this is bi-directional. The detector receives the PV values, acts accordingly, and push the values back. In rix.cnf, this is -k PV:NAME. Sometimes, expected PVs are not available but we can still test if this detector is working w/o the PV values. You can do this removing -k in the cnf file.  
+Original:   
+```
+{ host: 'drp-srcf-cmp027', id:'atmopal_0',   flags:'spu', env:epics_env,  cmd:drp_cmd0+' -l 0x1 -D opal -k ttpv=RIX:TIMETOOL:TTALL'}
+```
+Afer:       
+```
+{ host: 'drp-srcf-cmp027', id:'atmopal_0',   flags:'spu', env:epics_env,  cmd:drp_cmd0+' -l 0x1 -D opal'}
+```
