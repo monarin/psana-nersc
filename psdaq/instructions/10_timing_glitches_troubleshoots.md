@@ -46,4 +46,33 @@ This is observed on cmp002 and cmp025. Running kcuSim cmd shows that remoteid is
 ```
 On cmp002, we tried different things including hitting TxLinkReset on xmppva, swapping connections on the BOS with other known xpm, etc. What worked was we use a loopback fiber on the dead lane, see the linkUp (should be 1) and swap back to the correct fiber (possibly powe cycle the nodes in between). At the end, we saw that linkUp stayed at 1.
 Note that on cmp025, the node seems to fix itself.
-### 
+### Restart hsd base processes
+Some detectors rely on PV values received through base processes. Hsd for example, is one of them. With timing glitches, these base processes might need to be restarted. Follow the following instrutions:
+1. Login to rixdaq
+```
+ssh rix-daq -l rixopr
+rix-daq:~> cd /cds/group/pcds/dist/pds/rix/scripts/
+rix-daq:scripts> source setup_env.sh
+```
+2. Check rix-hsd statuses
+```
+(ps-4.6.0) rix-daq:scripts> procmgr status rix-hsd.cnf 
+/cds/home/opr/rixopr/git/lcls2_071823/install/bin/procmgr: using config file 'rix-hsd.cnf'
+Not running.
+Host           UniqueID     Status     PID     PORT   Command+Args
+daq-rix-hsd-01 hsdioc_rix_1a RUNNING    104530  28076  hsd134PVs -P DAQ:RIX:HSD:1_1A -d /dev/pcie_adc_1a
+daq-rix-hsd-01 hsdioc_rix_1b RUNNING    104529  28075  hsd134PVs -P DAQ:RIX:HSD:1_1B -d /dev/pcie_adc_1b
+drp-srcf-mon001 hsdpvs_rix_1a_a RUNNING    11476   28073  hsdpvs -P DAQ:RIX:HSD:1_1A:A
+drp-srcf-mon001 hsdpvs_rix_1a_b RUNNING    11477   28074  hsdpvs -P DAQ:RIX:HSD:1_1A:B
+drp-srcf-mon001 hsdpvs_rix_1b_a RUNNING    11473   28071  hsdpvs -P DAQ:RIX:HSD:1_1B:A
+drp-srcf-mon001 hsdpvs_rix_1b_b RUNNING    11474   28072  hsdpvs -P DAQ:RIX:HSD:1_1B:B
+```
+3. Stop all permanent processes (identified by PORT given in the rix.cnf or as shown in the status above).
+```
+(ps-4.6.0) rix-daq:scripts> procmgr stopall rix-hsd.cnf
+```
+Note that for a permanent process, you can also use `procmgr stop rix-hsd.cnf UniqueID` to stop just that persisting process.  
+4. Start all the processes again
+```
+(ps-4.6.0) rix-daq:scripts> procmgr start rix-hsd.cnf
+```
