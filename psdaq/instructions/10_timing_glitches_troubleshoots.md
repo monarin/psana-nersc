@@ -27,7 +27,7 @@ gmdstr2_0           cmp025
 xgmdstr0_0          cmp025
 xgmdstr1_0          cmp025
 xgmdstr2_0          cmp025
-atmopal_0     
+atmopal_0           cmp027
 ```
 ### Use loopback to wake up the KCU
 This is observed on cmp002 and cmp025. Running kcuSim cmd shows that remoteid is incorrect (all ones) and linkUp is 0. 
