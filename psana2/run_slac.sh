@@ -31,7 +31,7 @@ echo "RUN PSANA2 SCRIPT SUBMITTED AT" $t_start
 #export PS_SMD_N_EVENTS=10000
 #export PS_FAKESTEP_FLAG=0
 #export PS_SMD0_NUM_THREADS=32
-export PS_ZEROEDBUG_WAIT_SEC=2
+export PS_ZEROEDBUG_WAIT_SEC=3
 # For amo06516 (Exafel SPI data)
 #export PS_SMD_CHUNKSIZE=32000000
 #source $HOME/lcls2/setup_env.sh
@@ -41,7 +41,7 @@ export PS_ZEROEDBUG_WAIT_SEC=2
 
 # For openmpi
 #export OMPI_MCA_btl=self,tcp,vader
-export OMPI_MCA_btl_tcp_if_include=172.21.164.90/1072
+#export OMPI_MCA_btl_tcp_if_include=172.21.164.90/1072
 #ompi_info --param btl all --level 9
 
 #python -u ./dummy.py
@@ -50,7 +50,8 @@ EXP=${2}
 RUNNO=${3}
 XTCDIR=${4}
 #python -u ${HOME}/psana-nersc/psana2/test_psana2_perf.py $MAX_EVENTS
-python -Xfaulthandler -u ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO ${XTCDIR}
+#valgrind --track-origins=yes --keep-stacktraces=alloc-and-free python -u ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO ${XTCDIR}
+python -u -X faulthandler ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO ${XTCDIR}
 #python -u ${HOME}/problems/tdd14/preproc.py 406
 #python -u ./test_fex_cfd1.py
 #python -u ./test_mpi.py
