@@ -12,8 +12,8 @@ LANE#5 is 00100000 = 1<<5 = 2^5 = 32
 
 The option flag -l in cnf files takes a hexadecimal value wo we need to convert base 10 of the bitmask representation to hex.  
 1 --hex(1)-> 0x1  
-2 --hex(2)-> 0x2
-4 --hex(4)-> 0x4
+2 --hex(2)-> 0x2  
+4 --hex(4)-> 0x4  
 and  
 32 --hex(32)-> 0x20  
 

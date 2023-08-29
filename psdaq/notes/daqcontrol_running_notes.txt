@@ -1,7 +1,7 @@
 ## Old notes how to run Daq on different systems
 ### for rix
 ssh -YC rix-daq -l rixopr
-cd scripts
+cd /cds/group/pcds/dist/pds/rix/scripts/
 
 ### for tmo
 - ssh -YC tmo-daq -l tmoopr (kinit if asked for password)
