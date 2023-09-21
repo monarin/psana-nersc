@@ -4,8 +4,11 @@
   database and keep the info there.
 - the "psplot" command would switch automatically to the most recent
   run, or to an older run if requested by the userc
-- can keep psplot from different runs running at the same time.
+- can keep psplot from different runs (or multiple instances of the same run) running at the same time.
+- users can view all subprocesses (e.g. show()) with details and slurm jobid
 - users kill the plots by [x] or possibly by command line (e.g. kill id)
+- can start old runs
+
 
 See ~cpo/git/lcls2/andor.py.  Add code roughly like this:
 ```
