@@ -1,20 +1,12 @@
-New TODO 8/25/2023
-- mpi/mpi4py with pmi2 on s3df (currently pmix from conda)
-    - ompi_info > xx shows that openmpi uses pmix
-    - slurm on s3df doesn't support pmix
-        - running srun -N1 -n2 --mpi=list shows
-            MPI plugin types are...
-                cray_shasta
-                none
-                pmi2
-        - need to install openmpi with pmi2 (supported by s3df slurm)
-            ./configure --prefix=/sdf/home/m/monarin/sw --with-pmi=/opt/slurm/slurm-22.05.2/include/slurm --with-slurm --with-pmi-libdir=/opt/slurm/slurm-22.05.2/lib64/slurm
-          * found libpmi2.h but missing libpmi2.so - see this article (they need to install this)
-          https://bugs.schedmd.com/show_bug.cgi?id=7236
-            
-        - try: --mpi= (https://slurm.schedmd.com/mpi_guide.html)
-- constants broadcast in drp?
-- epixM (get the detector from dionisio)
+Updates 09/25/2023
+- Friday talk
+- psplot_latest (integrate kafka, and give demo to the scientists, and a new name)
+- rix piranha (onsite)
+- live mode sleep problem (don't know how to fix this, but we should try)
+- high rate integrating detector (rixx1003721 run 169)
+- high rate encoder (onsite: waiting for hardware)
+- epixM (onsite: get the detector from dionisio)
+- batchtest without pmi2
 - more timing fibers for ric epixhr emulation
 - destination callback (conflicts with integrating detector?). work with silke,andy@txi
 
@@ -25,24 +17,3 @@ Spinifel
 - mpi multiple conformation
 
 
-Q1: Oct-Dec 2022
-Preparation for running rix and tmo experiments at 33kHz
-Metric:
-- Scaling plots for smallldata and hdf5-jupyter analysis scripts.
-Run ExaFEL Demo 2022 for psana2 streaming mode
-Metric:
-- Strong/weak scaling for spinifel with psana2-mpi
-- Merged psana2 branch to development 
-- Quickstart guide updated (psana2 in streaming mode as default)
-- Fall cleaning items completed
-Q2: Jan-Mar 2023
-Understanding DAQ system
-Q3: Apr-Jun 2023
-Frontier
-Q4: July-Sep 2023
-DAQ
-
-Enabling experiment-based offline data analysis features at 1MHz. 
-- Event loop and Run access in SmallData callback
-- Performance measured at 1.5kHz/EventBuilder (6.5 KHz without the callback)
-- Broadcasting calibration constants for DRP and Shared Memory data access
