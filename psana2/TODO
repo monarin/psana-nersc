@@ -1,10 +1,28 @@
-New TODO 5/18/2023
-- test live mode with full tmo.cnf
+New TODO 8/25/2023
+- mpi/mpi4py with pmi2 on s3df (currently pmix from conda)
+    - ompi_info > xx shows that openmpi uses pmix
+    - slurm on s3df doesn't support pmix
+        - running srun -N1 -n2 --mpi=list shows
+            MPI plugin types are...
+                cray_shasta
+                none
+                pmi2
+        - need to install openmpi with pmi2 (supported by s3df slurm)
+            ./configure --prefix=/sdf/home/m/monarin/sw --with-pmi=/opt/slurm/slurm-22.05.2/include/slurm --with-slurm --with-pmi-libdir=/opt/slurm/slurm-22.05.2/lib64/slurm
+          * found libpmi2.h but missing libpmi2.so - see this article (they need to install this)
+          https://bugs.schedmd.com/show_bug.cgi?id=7236
+            
+        - try: --mpi= (https://slurm.schedmd.com/mpi_guide.html)
+- constants broadcast in drp?
+- epixM (get the detector from dionisio)
 - more timing fibers for ric epixhr emulation
-- ttool background (work with ric)
 - destination callback (conflicts with integrating detector?). work with silke,andy@txi
-- epixM
 
+Spinifel
+- fsc stand-alone script
+- chimera wiki
+- report
+- mpi multiple conformation
 
 
 Q1: Oct-Dec 2022
@@ -17,9 +35,14 @@ Metric:
 - Merged psana2 branch to development 
 - Quickstart guide updated (psana2 in streaming mode as default)
 - Fall cleaning items completed
-Q2: Jan-Apr 2023
+Q2: Jan-Mar 2023
 Understanding DAQ system
-Q3: May-Aug 2023
-Q4: Sep
+Q3: Apr-Jun 2023
+Frontier
+Q4: July-Sep 2023
+DAQ
 
-
+Enabling experiment-based offline data analysis features at 1MHz. 
+- Event loop and Run access in SmallData callback
+- Performance measured at 1.5kHz/EventBuilder (6.5 KHz without the callback)
+- Broadcasting calibration constants for DRP and Shared Memory data access
