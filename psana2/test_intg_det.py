@@ -1,3 +1,4 @@
+import numpy as np
 # This `batch_size` should be set to a small number (e.g. 1)
 # since all other events which are part of this intg. event will be sent
 # in the same batch.
