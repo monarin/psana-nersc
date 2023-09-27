@@ -15,15 +15,6 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-#import logging
-#logger = logging.getLogger('psana.psexp')
-#logger.setLevel(logging.DEBUG)
-#ch = logging.StreamHandler()
-#ch.setLevel(logging.DEBUG)
-#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#ch.setFormatter(formatter)
-#logger.addHandler(ch)
-
 
 def test_standard():
     batch_size = 1000
@@ -51,6 +42,7 @@ def test_standard():
                     max_events=max_events, 
                     dir=xtc_dir, 
                     live=False,
+		            monitor=True,
                     #detectors=detectors
                     )
 

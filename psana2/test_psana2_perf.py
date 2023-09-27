@@ -7,6 +7,7 @@ from psana import DataSource
 import os, time, sys
 import numpy as np
 import logging
+from datetime import datetime
 
 from mpi4py import MPI
 comm=MPI.COMM_WORLD
@@ -14,18 +15,6 @@ rank=comm.Get_rank()
 size=comm.Get_size()
 
 import cProfile
-
-# Allow logging (print out to file)
-flag_log = False
-if flag_log:
-    logging.basicConfig(filename='psana2_debug.out', filemode='w')
-    logger = logging.getLogger('psana.psexp.node')
-    logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
 
 
 def smd_callback(run):
@@ -45,8 +34,10 @@ def run_main(max_events,
         ts = int(time.time()) + 25 
         n_eb_nodes = int(os.environ.get('PS_N_EB_NODES', '1'))
         n_queries = 20
-        print(f'To view performance, run:')
-        print(f'./qm.sh {batch_size} {MPI.Get_processor_name()} {os.getpid()} {n_eb_nodes} {size} $(({ts})) {n_queries}', flush=True)
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+        print(f'[{date_time}] To view performance, run:')
+        print(f'[{date_time}] ./qm.sh {batch_size} {MPI.Get_processor_name()} {os.getpid()} {n_eb_nodes} {size} $(({ts})) {n_queries}', flush=True)
 
     # Record start time
     comm.Barrier()
@@ -54,9 +45,10 @@ def run_main(max_events,
 
     # Setup DataSource
     # Test dta
-    xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M32n"  # test data
+    #xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M32n"  # test data
+    xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/"
     ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, 
-            smd_callback=smd_callback,
+            #smd_callback=smd_callback,
             )
     # Test tmo-like data
     #xtc_dir = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc8n'
@@ -115,7 +107,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         max_events = int(sys.argv[1])
     batch_size = 1000
-    flag_monitor = False
+    flag_monitor = True
 
     # If not 0, call ds.terminate() when this number is reached
     N_images_max = 0

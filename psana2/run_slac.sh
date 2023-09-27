@@ -49,7 +49,7 @@ MAX_EVENTS=${1}
 EXP=${2}
 RUNNO=${3}
 XTCDIR=${4}
-#python -u ${HOME}/psana-nersc/psana2/test_psana2_perf.py $MAX_EVENTS
+python -u ${HOME}/psana-nersc/psana2/test_psana2_perf.py $MAX_EVENTS
 #valgrind --track-origins=yes --keep-stacktraces=alloc-and-free python -u ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO ${XTCDIR}
 python -u -X faulthandler ${HOME}/psana-nersc/psana2/test_live.py $EXP $RUNNO ${XTCDIR}
 #python -u ${HOME}/problems/tdd14/preproc.py 406
