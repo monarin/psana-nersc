@@ -3,20 +3,30 @@ import numpy as np
 filename = sys.argv[1]
 import matplotlib.pyplot as plt
 
-data = []
+data = {'WAITTIME SMD0-EB':[], 
+        'WAITTIME EB-SMD0':[],
+        'WAITTIME EB-BD': [],
+        'WAITTIME BD-EB': [],
+        'RATE SMD0-EB': [],
+        'RATE EB-BD': [],
+        'RATE BD': [],
+        'READRATE SMD0':[]}
+
 with open(filename, 'r') as f:
     for line in f:
-        #if line.find('bd reads chunk') >= 0:
-        if line.find('rate:') >= 0:
-            rate = line.split()[4]
-            try:
-                val = float(rate[5:9])
-                data.append(val)
-            except Exception:
-                print('error')
-            #data.append(float(line.split()[16]))
+        for tag_name, values in data.items():
+            if line.find(tag_name) >= 0:
+                try:
+                    values.append(float(line.split()[4]))
+                except Exception as e:
+                    print(e)
 
-plt.hist(data)
-plt.title(f'bigdata nodes rate (kHz) mean={np.mean(data):.2f} min={np.min(data):.2f} max={np.max(data):.2f}')
-plt.xlabel('kHz')
+for i, (tag_name, values) in enumerate(data.items()):
+    try:
+        plt.subplot(2,4,i+1)
+        plt.plot(values, label=tag_name)
+        plt.title(f'({len(values)}) avg={np.mean(values):.2f} min={np.min(values):.2f} max={np.max(values):.2f}')
+        plt.xlabel(tag_name)
+    except Exception as e:
+        print(e)
 plt.show()

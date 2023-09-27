@@ -14,7 +14,12 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
+<<<<<<< Updated upstream
 
+=======
+myhost = MPI.Get_processor_name()
+print(f'RANK:{rank} HOSTNAME:{myhost}')
+>>>>>>> Stashed changes
 
 def test_standard():
     batch_size = 1000
@@ -28,25 +33,28 @@ def test_standard():
     if len(sys.argv) > 3:
         exp=sys.argv[1]
         runno=int(sys.argv[2])
-        root_dir = sys.argv[3]
+        max_events=int(sys.argv[3])
+        root_dir = sys.argv[4]
+
+    if rank == 0:
+        print(f'{exp=} {runno=} {batch_size=} {max_events=}')
 
     hutch=exp[:3]
     xtc_dir=f'{root_dir}/{hutch}/{exp}/xtc/'
-
-    #detectors = ['timing','hsd','tmo_fzpopal','tmo_peppexopal','tmo_fim1','tmo_fim0','laser_wav8']
-    #detectors = ['tmo_fim1','tmo_fim0','laser_wav8']
 
     ds = DataSource(exp=exp, 
                     run=runno, 
                     batch_size=batch_size, 
                     max_events=max_events, 
                     dir=xtc_dir, 
+<<<<<<< Updated upstream
                     live=False,
 		            monitor=True,
                     #detectors=detectors
+=======
+                    live=True,
+>>>>>>> Stashed changes
                     )
-
-    #smd = ds.smalldata(filename='mysmallh5.h5', batch_size=5)
 
     sendbuf = np.zeros(1, dtype='i')
     recvbuf = None
@@ -55,26 +63,12 @@ def test_standard():
 
     st = time.time()
     for run in ds.runs():
-        #opal = run.Detector('tmo_fzpopal')
-        #runsum  = np.zeros((3),dtype=float)
         for nevt, evt in enumerate(run.events()):
-            #img = opal.raw.image(evt)
-            #if img is None:
-            #    continue
             if nevt % 1000 == 0 and nevt > 0:
                 en = time.time()
                 print(f'RANK: {rank:4d} EVENTS: {nevt:10d} RATE: {(1000/(en-st))*1e-3:.2f}kHz', flush=True)
                 st = time.time()
             sendbuf += 1
-            #evtsum = np.sum(img)
-            #smd.event(evt, evtsum=evtsum) 
-            #runsum += img[0, :3]
-    
-        #if smd.summary:
-        #    tot_runsum = smd.sum(runsum)
-        #    smd.save_summary({'sum_over_run' : tot_runsum}, summary_int=1)
-
-        #smd.done()
 
     # Count total no. of events
     comm.Gather(sendbuf, recvbuf, root=0)
@@ -89,6 +83,8 @@ def test_standard():
 if __name__ == "__main__":
     comm.Barrier()
     t0 = MPI.Wtime()
+    if rank == 0:
+        print(f'PROMETHEUS JOBID: {os.getpid()}', flush=True)
     
     n_events = test_standard()
     

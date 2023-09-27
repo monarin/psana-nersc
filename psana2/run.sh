@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Test Smd0
 # Note that running with jsrun --erf_input erf0.txt ./run.sh
 # or jsrun -n 1 ./run.sh (w or w/o OMP_NUM_THREADS)
@@ -27,5 +26,6 @@
 
 
 # Test mpi
-python test_send_recv_wait.py
+source $HOME/lcls2/setup_env.sh
+python test_mpi.py
 

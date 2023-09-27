@@ -27,7 +27,7 @@ def run_smd0():
     filenames = [None] * n_files
     for i in range(n_files):
         #filenames[i] = os.path.join(smd_dir,f'data-r0001-s{str(i).zfill(2)}.smd.xtc2')
-        filenames[i] = os.path.join(smd_dir,f'tmoc00221-r0020-s{str(i).zfill(3)}-c000.smd.xtc2')
+        filenames[i] = os.path.join(smd_dir,f'tmoc00221-r0029-s{str(i).zfill(3)}-c000.smd.xtc2')
 
     smd_fds = np.array([os.open(filename, os.O_DIRECT) for filename in filenames], dtype=np.int32)
 
