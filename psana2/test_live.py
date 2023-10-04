@@ -14,12 +14,8 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
-<<<<<<< Updated upstream
-
-=======
 myhost = MPI.Get_processor_name()
 print(f'RANK:{rank} HOSTNAME:{myhost}')
->>>>>>> Stashed changes
 
 def test_standard():
     batch_size = 1000
@@ -47,13 +43,9 @@ def test_standard():
                     batch_size=batch_size, 
                     max_events=max_events, 
                     dir=xtc_dir, 
-<<<<<<< Updated upstream
                     live=False,
 		            monitor=True,
                     #detectors=detectors
-=======
-                    live=True,
->>>>>>> Stashed changes
                     )
 
     sendbuf = np.zeros(1, dtype='i')
