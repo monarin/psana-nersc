@@ -28,6 +28,10 @@ pvput PV:VAR value
 pvmonitor PV:VAR
 ```
 ## xpmpva
+You need to be on the right node to access PV values:
+- For room208 xpms, hop on drp-srcf-mon001
+- For FEE Alcove, hop on drp-neh-ctl002  
+
 For each XPM, you can use xpmpva tool to view the channel
 ```
 xpmpva DAQ:NEH:XPM:5 DAQ:NEH:XPM:6
