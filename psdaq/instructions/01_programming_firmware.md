@@ -1,3 +1,14 @@
+## Programming FEB (front-end-board/ the "black box") and KCU1500 for Opal
+### FEB
+- Get the firmware from https://github.com/slaclab/cameralink-gateway/releases/tag/v8.2.3
+- On the node where Opal is installed, from cameralink-gateway repo, run
+  ```
+  python software/scripts/updateFebFpga.py --mcs ~/ClinkFebPgp2b_1ch-0x02000000-20191210103130-ruckman-d6618cc.mcs --lane 0 --pgp4 0
+  ```
+  Note* replace the above .mcs file with the downloaded one
+  Note** lane can be determined from .cnf file
+### KCU1500
+
 ## Programming KCU1500 Firmware
 1. On psbuild-rhel7 or any other nodes with internet access, wget both the primary and secondary mcs files of the requested version from this [cameralink-gateway releases page](https://github.com/slaclab/cameralink-gateway/releases).
 2. Logon to the node with the KCU1500 (that you wish to program)
