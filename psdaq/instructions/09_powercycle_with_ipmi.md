@@ -13,7 +13,7 @@ Note that node name should be changed to the node that you want to power cycle. 
 Again, the ini filename should match with the node name.
 3. If you get 'permission denied', there's a chance your group isn't verified correctly. Change your group to ps-ipmi with:
 ```
-newgrpu ps-ipmi
+newgrp ps-ipmi
 ```
   
 4. Choose remote control tab, and click power cycle
