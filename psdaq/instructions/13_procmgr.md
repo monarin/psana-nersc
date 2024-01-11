@@ -7,3 +7,7 @@ or use stopall
 ```
 procmgr stopall hsd.conf
 ```
+Note: increase timeout (sometimes start/stop don't succeed), you can increase the timeout by
+```
+procmgr stop rix.cnf -t 20
+```
