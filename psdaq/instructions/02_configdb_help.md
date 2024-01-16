@@ -32,3 +32,7 @@ You can copy a detector item:
 ```
 configdb cp tst/BEAM/timing_0 tst/BEAM/timing_1 --write
 ```
+If copying between hutches, you need to specify the destination hutch in --user:
+```
+configdb cp --user tmoopr --write tst/BEAM/txi_fim1_0 tmo/BEAM/txi_fim1_0
+```
