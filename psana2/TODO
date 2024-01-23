@@ -1,19 +1,28 @@
 Updates 09/25/2023
-- Friday talk
-- psplot_latest (integrate kafka, and give demo to the scientists, and a new name)
-- rix piranha (onsite)
+- psplot_latest (give demo to the scientists, and change name to psplot_live)
+- rix piranha (offsite/on) use fzp opal node instead + more rix timing to the boss
 - live mode sleep problem (don't know how to fix this, but we should try)
-- high rate integrating detector (rixx1003721 run 169)
 - high rate encoder (onsite: waiting for hardware)
+  - git clone slaclab/high-rate-encoder-dev
+  - ./scripts/devGui --help
+    ./scripts/devGui --standAloneMode 1
+  - copy Epix100.cc to EncoderHR.cc
+  - copy piranha_config.py to encoderhr_config.py 
+    write a standalone rogue python script that set groupca (groupca DAQ:NEH 11 6)
 - epixM (onsite: get the detector from dionisio)
-- batchtest without pmi2
 - more timing fibers for ric epixhr emulation
 - destination callback (conflicts with integrating detector?). work with silke,andy@txi
 
 Spinifel
 - fsc stand-alone script
 - chimera wiki
-- report
 - mpi multiple conformation
 
+Prometheus 
+MPIDataSource
+- Monitor an exp/run for multiple segments
+DrpDataSource
+- Monitor each segment of an exp/run
+
+hdf5 VDS path correction and sorting event timestamp
 
