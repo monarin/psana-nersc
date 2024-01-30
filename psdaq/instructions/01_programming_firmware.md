@@ -28,6 +28,11 @@ cd ~weaver/pgp-pcie-apps-new/software/
 source setup_l2si.sh
 python scripts/updatePcieFpga.py --dev /dev/datadev_1 --path ~weaver/mcs/drp --type SPIx8
 ```
+or run
+```
+cd ~/firmware
+./update_timing_system.sh
+```
 where datadev_1 is usually the timing system driver and path is Matt's usual path where he stores the new firmware images.  
 
 2. Copy the new kcuSim from locally built lcls2 to the local folder on the node
