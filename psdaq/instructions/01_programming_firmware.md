@@ -50,7 +50,40 @@ monarin@drp-srcf-cmp028 ~ kcuSim -s
   build string      :  DrpTDet: Vivado v2022.1, rdsrv301 (Ubuntu 20.04.6 LTS), Built Thu 25 Jan 2024 09:19:24 AM PST by weaver
 ```
 linkUp should be 1 and remoteId should be correct.
+### XPM
+Step 0: Check the version of XPM firmware:
+```
+ssh psdev
+source /cds/sw/package/IPMC/env.sh
+amcc_dump_bsi --all <AMCc address>
+```
+where AMCc address is the rack that hosts the XPMs. The list of AMCc addresses and available slots (in parentheses):
+1. shm-neh-daq01 (slot1: Network, slot2: XPM0, slot3: None, slot4: XPM5, slot5: XPM6, slot6: None,   slot7: hxr XPM) 
+2. shm-tmo-daq01 (slot1: Network, slot2: None, slot3: XPM2, slot4: None, slot5: XPM4, slot6: fanout, slot7: fanout)
+3. shm-rix-daq01 (slot1: Network, slot2: None, slot3: XPM3, slot4: None, slot5: None, slot6: fanout, slot7: None)
+4. shm-fee-daq01 (slot1: Network, slot2: XPM10,slot3: None, slot4: XPM11,slot5: None, slot6: None,   slot7: None)
 
-
-
+The dump shows what type of xpm mcs file is needed. For example, XPM0 uses xpm:
+```
+FW bld string: 'xpm: Vivado v2021.1, rdsrv301 (Ubuntu 20.04.6 LTS), Built Mon 13 Nov 2023 06:31:59 PM PST by weaver'
+```
+while XPM5 uses xpm_noRTM:
+```
+FW bld string: 'xpm_noRTM: Vivado v2021.1, rdsrv301 (Ubuntu 20.04.6 LTS), Built Mon 13 Nov 2023 06:50:09 PM PST by weaver'
+```
+Step 1: Stop the long-live pyxpm process  
+Check the status of pyxpm
+```
+ssh tmo-daq -l tmoopr
+procmgr status neh-base.cnf
+Host           UniqueID     Status     PID     PORT   Command+Args
+drp-srcf-mon001 pyxpm-0      RUNNING    25914   29451  pyxpm --ip 10.0.1.102 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:0
+drp-srcf-mon001 pyxpm-1      RUNNING    25933   29459  pyxpm --ip 10.0.2.102 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:1
+drp-srcf-mon001 pyxpm-2      RUNNING    25935   29453  pyxpm --ip 10.0.3.103 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:2
+drp-srcf-mon001 pyxpm-3      RUNNING    25929   29452  pyxpm --ip 10.0.2.103 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:3
+drp-srcf-mon001 pyxpm-4      RUNNING    25936   29454  pyxpm --ip 10.0.3.105 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:4
+drp-srcf-mon001 pyxpm-5      RUNNING    25934   29456  pyxpm --ip 10.0.1.104 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:5
+drp-srcf-mon001 pyxpm-6      RUNNING    36351   29455  pyxpm --ip 10.0.1.105 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:6
+drp-srcf-mon001 pyxpm-7      RUNNING    15030   29458  pyxpm --ip 10.0.1.107 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:7
+```
 
