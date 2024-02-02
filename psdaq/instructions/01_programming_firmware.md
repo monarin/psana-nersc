@@ -62,16 +62,19 @@ where AMCc address is the rack that hosts the XPMs. The list of AMCc addresses a
 2. shm-tmo-daq01 (slot1: Network, slot2: None, slot3: XPM2, slot4: None, slot5: XPM4, slot6: fanout, slot7: fanout)
 3. shm-rix-daq01 (slot1: Network, slot2: None, slot3: XPM3, slot4: None, slot5: None, slot6: fanout, slot7: None)
 4. shm-fee-daq01 (slot1: Network, slot2: XPM10,slot3: None, slot4: XPM11,slot5: None, slot6: None,   slot7: None)
-
-The dump shows what type of xpm mcs file is needed. For example, XPM0 uses xpm:
+** slot2 of shm-rix-daq01 shows an XPM (not sure which) with xpm_noRTM.  
+The dump shows what type of xpm mcs file is needed. As of 20240202, the following shows xpm and its firmware version:
 ```
-FW bld string: 'xpm: Vivado v2021.1, rdsrv301 (Ubuntu 20.04.6 LTS), Built Mon 13 Nov 2023 06:31:59 PM PST by weaver'
+XPM0: xpm
+XPM1: 
+XPM2: xpm
+XPM3: xpm
+XPM4: xpm_noRTM
+XPM5: xpm_noRTM
+XPM6: xpm_noRTM
+hxrXPM: xtpg
 ```
-while XPM5 uses xpm_noRTM:
-```
-FW bld string: 'xpm_noRTM: Vivado v2021.1, rdsrv301 (Ubuntu 20.04.6 LTS), Built Mon 13 Nov 2023 06:50:09 PM PST by weaver'
-```
-Step 1: Stop the long-live pyxpm process  
+Step 1: (Use XPM6 as an example) Stop the long-live pyxpm process  
 Check the status of pyxpm
 ```
 ssh tmo-daq -l tmoopr
@@ -86,4 +89,28 @@ drp-srcf-mon001 pyxpm-5      RUNNING    25934   29456  pyxpm --ip 10.0.1.104 --d
 drp-srcf-mon001 pyxpm-6      RUNNING    36351   29455  pyxpm --ip 10.0.1.105 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:6
 drp-srcf-mon001 pyxpm-7      RUNNING    15030   29458  pyxpm --ip 10.0.1.107 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:7
 ```
-
+Stop the selected pyxmp
+```
+procmgr stop neh-base.cnf pyxpm-6
+```
+Step 2: Install the firmware for the xpm.  
+- Pick the current version by viewing the output of amcc_dump_bsi in Step 0. The new mcs files are usually given by Matt, for example:
+```
+/cds/home/w/weaver/mcs/xpm/xpm-0x03090100-20240124215526-weaver-1af94a4.mcs
+/cds/home/w/weaver/mcs/xpm/xpm_noRTM-0x03090100-20240125105637-weaver-93a4570.mcs
+/cds/home/w/weaver/mcs/xpm/xtpg-0x03090100-20240124215328-weaver-1af94a4.mcs
+```
+- Find the ipaddress of the selected xpm from the neh-base.cnf status.    
+- Hop on the correct node (drp-srcf-mon001 for production and drp-srcf-ctl002 for the fee teststand) then run:
+```
+~weaver/FirmwareLoader/rhel6/FirmwareLoader -a 10.0.1.105 /cds/home/w/weaver/mcs/xpm/xpm_noRTM-0x03090100-20240125105637-weaver-93a4570.mcs
+```  
+- Restart the rack
+```
+fru_deactivate shm-neh-daq01/5
+fru_activate shm-neh-daq01/5
+```
+- Restart the pyxmp process (on tmo-daq as tmoopr)
+```
+procmgr start neh-base.cnf pyxpm-6
+```
