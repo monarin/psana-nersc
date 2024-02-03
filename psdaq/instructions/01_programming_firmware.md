@@ -60,13 +60,13 @@ amcc_dump_bsi --all <AMCc address>
 where AMCc address is the rack that hosts the XPMs. The list of AMCc addresses and available slots (in parentheses):
 1. shm-neh-daq01 (slot1: Network, slot2: XPM0, slot3: None, slot4: XPM5, slot5: XPM6, slot6: None,   slot7: hxr XPM) 
 2. shm-tmo-daq01 (slot1: Network, slot2: None, slot3: XPM2, slot4: None, slot5: XPM4, slot6: fanout, slot7: fanout)
-3. shm-rix-daq01 (slot1: Network, slot2: None, slot3: XPM3, slot4: None, slot5: None, slot6: fanout, slot7: None)
+3. shm-rix-daq01 (slot1: Network, slot2: XPM1, slot3: XPM3, slot4: None, slot5: None, slot6: fanout, slot7: None)
 4. shm-fee-daq01 (slot1: Network, slot2: XPM10,slot3: None, slot4: XPM11,slot5: None, slot6: None,   slot7: None)
-** slot2 of shm-rix-daq01 shows an XPM (not sure which) with xpm_noRTM.  
+
 The dump shows what type of xpm mcs file is needed. As of 20240202, the following shows xpm and its firmware version:
 ```
 XPM0: xpm
-XPM1: 
+XPM1: xpm_noRTM
 XPM2: xpm
 XPM3: xpm
 XPM4: xpm_noRTM
