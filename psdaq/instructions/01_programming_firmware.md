@@ -105,12 +105,12 @@ Step 2: Install the firmware for the xpm.
 ```
 ~weaver/FirmwareLoader/rhel6/FirmwareLoader -a 10.0.1.105 /cds/home/w/weaver/mcs/xpm/xpm_noRTM-0x03090100-20240125105637-weaver-93a4570.mcs
 ```  
-- Restart the rack
+- Restart the rack (from psdev terminal)
 ```
 fru_deactivate shm-neh-daq01/5
 fru_activate shm-neh-daq01/5
 ```
-- Restart the pyxmp process (on tmo-daq as tmoopr)
+- Restart the pyxmp process (from tmo-daq as tmoopr terminal)
 ```
 procmgr start neh-base.cnf pyxpm-6
 ```
