@@ -90,6 +90,8 @@ drp-srcf-mon001 pyxpm-4      RUNNING    25936   29454  pyxpm --ip 10.0.3.105 --d
 drp-srcf-mon001 pyxpm-5      RUNNING    25934   29456  pyxpm --ip 10.0.1.104 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:5
 drp-srcf-mon001 pyxpm-6      RUNNING    36351   29455  pyxpm --ip 10.0.1.105 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:6
 drp-srcf-mon001 pyxpm-7      RUNNING    15030   29458  pyxpm --ip 10.0.1.107 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:7
+drp-neh-ctl002 pyxpm-10     NOCONNECT  -       29457  pyxpm --ip 10.0.5.102 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:10
+drp-neh-ctl002 pyxpm-11     NOCONNECT  -       29450  pyxpm --ip 10.0.5.104 --db https://pswww.slac.stanford.edu/ws-auth/configdb/ws/,configDB,tmo,XPM -P DAQ:NEH:XPM:11
 ```
 Stop the selected pyxmp
 ```
