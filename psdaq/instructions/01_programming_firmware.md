@@ -73,6 +73,8 @@ XPM4: xpm_noRTM
 XPM5: xpm_noRTM
 XPM6: xpm_noRTM
 hxrXPM: xtpg
+XPM10: xtpg
+XPM11: xpm_noRTM
 ```
 Step 1: (Use XPM6 as an example) Stop the long-live pyxpm process  
 Check the status of pyxpm
