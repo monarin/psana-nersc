@@ -47,7 +47,11 @@ This is observed on cmp002 and cmp025. Running kcuSim cmd shows that remoteid is
 On cmp002, we tried different things including hitting TxLinkReset on xmppva, swapping connections on the BOS with other known xpm, etc. What worked was we use a loopback fiber on the dead lane, see the linkUp (should be 1) and swap back to the correct fiber (possibly powe cycle the nodes in between). At the end, we saw that linkUp stayed at 1.
 Note that on cmp025, the node seems to fix itself.
 ### Restart hsd base processes
-Some detectors rely on PV values received through base processes. Hsd for example, is one of them. With timing glitches, these base processes might need to be restarted. Follow the following instrutions:
+Some detectors rely on PV values received through base processes. Hsd for example, is one of them. With timing glitches, these base processes might need to be restarted. Below shows an example of the error message when trying to run HSDs when the base processes are down:
+```
+ValueError: RxLink not locked! DAQ:NEH:XPM:3:LinkRxReady1
+```
+Follow the following instrutions:
 1. Login to rixdaq
 ```
 ssh rix-daq -l rixopr
