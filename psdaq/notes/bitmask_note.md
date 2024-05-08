@@ -1,7 +1,16 @@
 ## CNF -l (lane) flag (DAQ Control)
 devGui and DAQ Control both count from 0. 
 There are 8 lanes (4 per PGP/ 2 PGPs per node) connected to a node. We connect an instrument to one of this lanes.  
-0 1 2 3 4 5 6 7
+| bitmask  | hex | dec | lane |
+| --- | --- | --- | --- |
+| 00000001  | 0x1  | 1  | 0 |
+| 00000010  | 0x2  | 2  | 1 |
+| 00000100  | 0x4  | 4  | 2 |
+| 00001000  | 0x8  | 8  | 3 |
+| 00010000  | 0x10 | 16 | 4 |
+| 00100000  | 0x20 | 32 | 5 |
+| 01000000  | 0x40 | 64 | 6 |
+| 10000000  | 0x80 | 128| 7 |
 
 The lane number is represented by a bitmask. For example,  
 LANE#0 is 00000001 = 1<<0 = 2^0 = 1  
