@@ -1,5 +1,5 @@
 ## Mannage build with psrel
-User psrel is responsible for creating new build releases. To become rel on a machine, make sure that your k-ticket is valid (do `kinit` if needed then
+User psrel is responsible for creating new build releases. To become psrel on a machine, **make sure** that your k-ticket is valid (do `kinit` if needed then
 ```
 ssh `hostname` -l psrel
 ```
