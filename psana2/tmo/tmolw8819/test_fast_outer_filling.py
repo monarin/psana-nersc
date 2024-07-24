@@ -25,6 +25,7 @@ else:
     ehsd = np.random.rand(1000).reshape((n_blobs, n_samples)).astype(dtype)
     ihsd = np.random.rand(1000).reshape((n_blobs, n_samples)).astype(dtype)
     fzp = np.random.rand(n_fzp_samples).astype(dtype)
+
 n_events = 5000
 tt = ctor.zeros((n_events,3))
 
@@ -32,6 +33,15 @@ tt = ctor.zeros((n_events,3))
 # The outer product matrices are in full form (8000, 2048)
 n_hsd_full = 8000
 n_fzp_full = 2048
+if rank == 0:
+    print(f'Test outer product {n_events} events')
+    print(f'  sample hsd: {n_samples} fzp: {n_fzp_samples} #blobs: {n_blobs}')
+    print(f'  filling to full hsd: {n_hsd_full} fzp: {n_fzp_full}')
+    print(f'  ehsd type: {ehsd.dtype} first three samples: {ehsd[0,:3]}')
+    print(f'  ihsd type: {ihsd.dtype} first three samples: {ihsd[0,:3]}')
+    print(f'  fzp type : {fzp.dtype} first three samples: {fzp[:3]}')
+
+
 # Assign random indices to the blobs
 ehsd_st = ctor.zeros(n_blobs, dtype=dtype_i)
 ihsd_st = ctor.zeros(n_blobs, dtype=dtype_i)
