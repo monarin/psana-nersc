@@ -26,6 +26,12 @@ else:
     ihsd = np.random.rand(1000).reshape((n_blobs, n_samples)).astype(dtype)
     fzp = np.random.rand(n_fzp_samples).astype(dtype)
 
+
+# Make array values bigger
+ehsd += 3.4*1e10
+ihsd += 3.4*1e10
+fzp += 3.4*1e10
+
 n_events = 5000
 tt = ctor.zeros((n_events,3))
 

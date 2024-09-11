@@ -46,13 +46,19 @@ def run_main(max_events,
     # Setup DataSource
     # Test dta
     #xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M32n"  # test data
-    xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/"
-    ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, 
+    #xtc_dir = "/cds/data/drpsrcf/users/monarin/xtcdata/10M60n/xtcdata/"
+    #xtc_dir = "/sdf/data/lcls/drpsrcf/ffb/users/monarin/xtcdata/10M16n"
+    #xtc_dir = "/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmoc00118/xtc"
+    #ds = DataSource(exp='tmoc00118', run=463, batch_size=batch_size, dir=xtc_dir, max_events=max_events, monitor=flag_monitor, )
+    #ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, 
             #smd_callback=smd_callback,
-            )
+    #        )
+    #smd = ds.smalldata(filename='/sdf/data/lcls/drpsrcf/ffb/users/monarin/h5/mysmallh5.h5', batch_size=5)
     # Test tmo-like data
-    #xtc_dir = '/cds/data/drpsrcf/users/monarin/tmolv9418/xtc8n'
-    #ds = DataSource(exp='xpptut15', run=175, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
+    #xtc_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/xtc'
+    #ds = DataSource(exp='rixc00122', run=211, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
+    #ds = DataSource(exp='tmoc00122', run=569, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
+    ds = DataSource(exp='tmox1009422', run=26, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
     # SPI data (duplicate 120 events to 300k)
     #xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"        
     #ds = DataSource(exp='amo06516', run=90, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
@@ -62,6 +68,8 @@ def run_main(max_events,
     # Spinifel simulated data
     #xtc_dir = "/cds/data/drpsrcf/users/monarin/spinifel_3iyf"
     #ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
+    # rixc00122 r0211
+    #ds = DataSource(exp='rixc00122', run=211, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
     
     # Setup run 
     run = next(ds.runs())
@@ -69,25 +77,33 @@ def run_main(max_events,
     recvbuf = None
     if rank == 0:
         recvbuf = np.empty([size, 1], dtype='i')
-    det = run.Detector('xpphsd')
-    #det = run.Detector('hsd')
-    #det = run.Detector("amopnccd")
-    #pixel_position = run.beginruns[0].scan[0].raw.pixel_position
-    #pixel_index_map = run.beginruns[0].scan[0].raw.pixel_index_map
+    det1 = run.Detector('tmo_atmopal')
+    det2 = run.Detector('tmo_fzppiranha')
+    det3 = run.Detector('mbes_hsd')
+
 
     # Record time per batch (N_images_per_rank)
     st_batch = time.time()
     for i_evt, evt in enumerate(run.events()):
+        data1 = det1.raw.calib(evt)
+        data2 = det1.raw.raw(evt)
+        data3 = det3.raw.waveforms(evt)
+
         if sendbuf[0] == 0:
             print(f'RANK:{rank} GOT FIRST EVT AT {time.time()} ON HOST {MPI.Get_processor_name()} n_dgrams:{len(evt._dgrams)}', flush=True)
         sendbuf += 1
+        
         if sendbuf[0] % N_images_per_rank == 0:
             en_batch = time.time()
             print(f'RANK:{rank} got {sendbuf[0]} events in {en_batch-st_batch:.3f}s. rate:{(batch_size/(en_batch-st_batch))*1e-3:.2f}kHz', flush=True)
             st_batch = time.time()
+        
+        #smd.event(evt, calib=calib)
         if N_images_max > 0 and sendbuf[0] == N_images_max:
             ds.terminate()
 
+    #smd.done()
+    
     # Record no. of events and tototal time
     comm.Gather(sendbuf, recvbuf, root=0)
     en = MPI.Wtime()
@@ -97,13 +113,15 @@ def run_main(max_events,
         else:
             processed_events = np.sum(recvbuf)
         n_eb_nodes = int(os.environ.get('PS_EB_NODES', '1'))
+        n_bd_nodes = comm.Get_size() - n_eb_nodes - 1
         ps_smd_chunksize = int(os.environ.get('PS_SMD_CHUNKSIZE', '16777216'))
         ps_bd_chunksize = int(os.environ.get('PS_BD_CHUNKSIZE', '16777216'))
-        print(f'#events={processed_events} #eb:{n_eb_nodes} PS_SMD_CHUNKSIZE={ps_smd_chunksize*1e-6:.2f}MB PS_BD_CHUNKSIZE:{ps_bd_chunksize*1e-6:.2f}MB time:{en-st:.2f}s rate: {processed_events/((en-st)*1e6):.5f}MHz')
+        print(f'#events={processed_events} #eb:{n_eb_nodes} #bd:{n_bd_nodes} PS_SMD_CHUNKSIZE={ps_smd_chunksize*1e-6:.2f}MB PS_BD_CHUNKSIZE:{ps_bd_chunksize*1e-6:.2f}MB time:{en-st:.2f}s rate: {processed_events/((en-st)*1e6):.5f}MHz')
 
 if __name__ == "__main__":
     # Parameters for DataSource
-    max_events = 100000
+    max_events = 0
+
     if len(sys.argv) > 1:
         max_events = int(sys.argv[1])
     batch_size = 1000

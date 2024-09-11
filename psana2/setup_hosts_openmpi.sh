@@ -1,8 +1,7 @@
+############################################################
 # First node must be exclusive to smd0
 # * For openmpi, slots=1 must be assigned to the first node.
-# Slurm variables:
-# SLURM_JOB_NODELIST e.g. drp-srcf-cmp[004-010],drp-srcf-eb[010-011]
-###
+############################################################
 
 
 # Get list of hosts by expand shorthand node list into a 
@@ -17,8 +16,19 @@ for i in "${!hosts[@]}"; do
     if [[ "$i" == "0" ]]; then
         echo ${hosts[$i]} slots=1 > $host_file
     else
-        echo ${hosts[$i]} >> $host_file
+        if [[ -z "${PS_N_TASKS_PER_NODE}" ]]; then
+            echo ${hosts[$i]} >> $host_file
+        else
+            echo ${hosts[$i]} slots=${PS_N_TASKS_PER_NODE} >> $host_file
+        fi
     fi
 done
 
-echo $host_file
+
+# Export hostfile for mpirun  
+export PS_HOST_FILE=$host_file
+
+
+# Calculate no. of ranks available in the job
+export PS_N_RANKS=$(( SLURM_CPUS_ON_NODE * ( SLURM_JOB_NUM_NODES - 1 ) + 1 ))
+

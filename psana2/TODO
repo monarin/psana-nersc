@@ -1,22 +1,27 @@
-Updates 09/25/2023
-- psplot_latest (give demo to the scientists, and change name to psplot_live)
-- rix piranha (offsite/on) use fzp opal node instead + more rix timing to the boss
+Updates 08/07/2024
+1. psbatch
+psbatch --> daqbatch
+
+2. grafana
+switch job unique id to slurm jobid (default), if no slurm jobid, take user-overwrite name. 
+confluence page
+
+
+
+
+Updates 07/09/2024
+
+Hi Mona, I’ve been looking through the to-do list and would suggest these projects as topics for you to work on, with my guess for priority order (in addition to dealing with issues with slurm replacement of procmgr):
+    - psana2 scaling issue within a node (Wilko may also look at this)
+    - archon calibration
+    - setup spare nodes in s3df and timing fibers in bos (perhaps work with Riccardo)
+    - psana sz/lz decompress performance
+For psana2 scaling issue I suggest you copy what Mikhail did here for psana1: https://confluence.slac.stanford.edu/display/PSDMInternal/Scaling+behavior+of+psana1+-+Part+2+-+test+with+command+perf+stat#Scalingbeh[…]commandperf.  The code that is not scaling well within a node is in s3df in ~cpo/problems/isele_bad_scaling/preproc_v4.py.  We can eliminate the SRV stuff (i.e. smd.event() calls) and still see the problem I think.  The results of the scaling measurements we did with Erik are here: ~cpo/problems/tmo_isele_perf (NOT on s3df: the old system).  We should probably discuss all this on zoom … too much typing otherwise!
+
 - live mode sleep problem (don't know how to fix this, but we should try)
-- high rate encoder (onsite: waiting for hardware)
-  - git clone slaclab/high-rate-encoder-dev
-  - ./scripts/devGui --help
-    ./scripts/devGui --standAloneMode 1
-  - copy Epix100.cc to EncoderHR.cc
-  - copy piranha_config.py to encoderhr_config.py 
-    write a standalone rogue python script that set groupca (groupca DAQ:NEH 11 6)
 - epixM (onsite: get the detector from dionisio)
 - more timing fibers for ric epixhr emulation
 - destination callback (conflicts with integrating detector?). work with silke,andy@txi
-
-Spinifel
-- fsc stand-alone script
-- chimera wiki
-- mpi multiple conformation
 
 Prometheus 
 MPIDataSource

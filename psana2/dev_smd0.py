@@ -3,16 +3,6 @@ import numpy as np
 from psana.psexp import SmdReaderManager, PrometheusManager
 from psana.psexp.ds_base import DsParms
 
-#import logging
-#logging.basicConfig(filename='dev_smd0.log')
-#logger = logging.getLogger('psana.psexp.smdreader_manager')
-#logger.setLevel(logging.DEBUG)
-#ch = logging.StreamHandler()
-#ch.setLevel(logging.DEBUG)
-#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#ch.setFormatter(formatter)
-#logger.addHandler(ch)
-
 max_events = 0
 os.environ['PS_SMD_MAX_RETRIES'] = '0'
 #os.environ['PS_SMD_N_EVENTS'] = '10000'
@@ -21,13 +11,15 @@ os.environ['PS_SMD_MAX_RETRIES'] = '0'
 #os.environ['PS_SMD0_NUM_THREADS'] = '32'
 
 def run_smd0():
-    smd_dir = '/sdf/data/lcls/drpsrcf/ffb/tmo/tmoc00221/xtc/smalldata/'
+    smd_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmoc00118/xtc/smalldata'
+    #smd_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/xtc/smalldata'
     #smd_dir = '/cds/data/drpsrcf/users/monarin/amo06516/smalldata/'
     n_files = int(sys.argv[1])
     filenames = [None] * n_files
     for i in range(n_files):
         #filenames[i] = os.path.join(smd_dir,f'data-r0001-s{str(i).zfill(2)}.smd.xtc2')
-        filenames[i] = os.path.join(smd_dir,f'tmoc00221-r0029-s{str(i).zfill(3)}-c000.smd.xtc2')
+        filenames[i] = os.path.join(smd_dir,f'tmoc00118-r0463-s{str(i).zfill(3)}-c000.smd.xtc2')
+        #filenames[i] = os.path.join(smd_dir,f'tmolv9418-r0175-s{str(i).zfill(3)}-c000.smd.xtc2')
 
     smd_fds = np.array([os.open(filename, os.O_DIRECT) for filename in filenames], dtype=np.int32)
 
@@ -43,6 +35,7 @@ def run_smd0():
             smd_inprogress_converted=0,
             timestamps  = np.empty(0, dtype=np.uint64),
             intg_det = "",
+            intg_delta_t=0,
             )
     smdr_man = SmdReaderManager(smd_fds[:n_files], dsparms)
     configs = smdr_man.get_next_dgrams()
