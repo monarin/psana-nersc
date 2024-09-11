@@ -1,13 +1,3 @@
-Updates 08/07/2024
-1. psbatch
-psbatch --> daqbatch
-
-2. grafana
-switch job unique id to slurm jobid (default), if no slurm jobid, take user-overwrite name. 
-confluence page
-
-
-
 
 Updates 07/09/2024
 
@@ -30,4 +20,65 @@ DrpDataSource
 - Monitor each segment of an exp/run
 
 hdf5 VDS path correction and sorting event timestamp
+
+=======
+srun --cpu-bind=none,mask_cpu
+run with -vvv for more information.
+
+
+PROBLEM: Running-Unallocated Failed with:
+ssize_t Pds::Fabrics::CompletionQueue::handle_comp(ssize_t, fi_cq_data_entry*, const char*):
+  Completion error data:
+int Pds::Eb::EbLfServer::pend(fi_cq_data_entry*, int):
+  Error -125 reading Rx CQ: fi_cq_sread: Operation canceled(-125)
+rix-drp[37669]: <C> Receiver thread lost connection with a TEB
+FIX:
+set tmp=0
+https://github.com/slac-lcls/lcls2/blob/master/psdaq/psdaq/eb/EbCtrbInBase.cc#L299
+see 
+https://github.com/slac-lcls/lcls2/blob/master/psdaq/psdaq/eb/EbLfServer.hh#L89
+
+
+No slurm cpu masking
+teb
+srun -N1 -c5 taskset 4-63 5 threads (+1 main) runs only on core 5 (1 thread active)
+hsd
+srun -N1 -c14 tasket 4-63 32 threads (+1 main) 10 workers (13 threads active)
+
+
+cmp005 hsd_2
+daqbatch
+drp -P rix -C drp-srcf-cmp004 -M /cds/group/psdm/psdatmgr/etc/config/prom/rix -o /cds/data/drpsrcf -d /dev/datadev_0 -k pva_addr=172.21.152.78 -D hsd -k hsd_epics_prefix=DAQ:RIX:HSD:1_1B:B -u hsd_2 -p 2 -W 11
+procmgr
+drp -P rix -C drp-srcf-cmp004 -M /cds/group/psdm/psdatmgr/etc/config/prom/rix -o /cds/data/drpsrcf -d /dev/datadev_0 -k pva_addr=172.21.152.78 -D hsd -k hsd_epics_prefix=DAQ:RIX:HSD:1_1B:B -u hsd_2 -p 2
+
+cmp002 timing_0
+daqbatch
+drp -P rix -C drp-srcf-cmp004 -M /cds/group/psdm/psdatmgr/etc/config/prom/rix -o /cds/data/drpsrcf -d /dev/datadev_1 -k pva_addr=172.21.152.78 -l 0x1 -D ts -u timing_0 -p 2
+procmgr
+drp -P rix -C drp-srcf-cmp004 -M /cds/group/psdm/psdatmgr/etc/config/prom/rix -o /cds/data/drpsrcf -d /dev/datadev_1 -k pva_addr=172.21.152.78 -l 0x1 -D ts -u timing_0 -p 2
+
+hang
+srun -n1 --job-name={job_name} {het_group_opt}{output_opt}{env_opt}bash -c '{cmd}'
+srun -n1 --threads-per-core={n_cores} --job-name={job_name} {het_group_opt}{output_opt}{env_opt}bash -c '{cmd}'
+srun -n1 --threads-per-core={n_cores} --cpus-per-task=1 --job-name={job_name} {het_group_opt}{output_opt}{env_opt}bash -c '{cmd}'
+srun -n1 --threads-per-core={n_cores} --cpus-per-task={n_cores} --job-name={job_name} {het_group_opt}{output_opt}{env_opt}bash -c '{cmd}'
+
+
+Sharing tmo-daq
+Matt W hsd, timing
+Matt B opal, ami, timing
+
+Everyone needs a different lane on cmp028 for timing. 
+               a different platform 
+               a different read-out group "the primary read-out group is tied to the platform"
+Different cnf file cannot use the same detector resources
+
+Mona uses tmo_sc.cnf as-is without all the hsds
+Matt W switch to a different platform and timing system lane mask 0x2
+If Matt B wants to run, we give him a special cnf (with detectors that he needs/platform and available timing system lane)
+
+
+- live mode sleep problem (don't know how to fix this, but we should try)
+- destination callback (conflicts with integrating detector?). work with silke,andy@txi
 

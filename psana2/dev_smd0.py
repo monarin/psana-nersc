@@ -11,8 +11,8 @@ os.environ['PS_SMD_MAX_RETRIES'] = '0'
 #os.environ['PS_SMD0_NUM_THREADS'] = '32'
 
 def run_smd0():
-    smd_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmoc00118/xtc/smalldata'
     #smd_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/xtc/smalldata'
+    smd_dir = '/cds/data/drpsrcf/users/monarin/tmoc00118/xtc/smalldata'
     #smd_dir = '/cds/data/drpsrcf/users/monarin/amo06516/smalldata/'
     n_files = int(sys.argv[1])
     filenames = [None] * n_files
