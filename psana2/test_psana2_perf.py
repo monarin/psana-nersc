@@ -58,7 +58,8 @@ def run_main(max_events,
     #xtc_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/xtc'
     #ds = DataSource(exp='rixc00122', run=211, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
     #ds = DataSource(exp='tmoc00122', run=569, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
-    ds = DataSource(exp='tmox1009422', run=26, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
+    #ds = DataSource(exp='tmox1009422', run=26, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
+    ds = DataSource(exp='tmox1009422', run=61, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
     # SPI data (duplicate 120 events to 300k)
     #xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"        
     #ds = DataSource(exp='amo06516', run=90, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
@@ -77,17 +78,17 @@ def run_main(max_events,
     recvbuf = None
     if rank == 0:
         recvbuf = np.empty([size, 1], dtype='i')
-    det1 = run.Detector('tmo_atmopal')
-    det2 = run.Detector('tmo_fzppiranha')
-    det3 = run.Detector('mbes_hsd')
+    #det1 = run.Detector('tmo_atmopal')
+    #det2 = run.Detector('tmo_fzppiranha')
+    #det3 = run.Detector('mbes_hsd')
 
 
     # Record time per batch (N_images_per_rank)
     st_batch = time.time()
     for i_evt, evt in enumerate(run.events()):
-        data1 = det1.raw.calib(evt)
-        data2 = det1.raw.raw(evt)
-        data3 = det3.raw.waveforms(evt)
+        #data1 = det1.raw.calib(evt)
+        #data2 = det1.raw.raw(evt)
+        #data3 = det3.raw.waveforms(evt)
 
         if sendbuf[0] == 0:
             print(f'RANK:{rank} GOT FIRST EVT AT {time.time()} ON HOST {MPI.Get_processor_name()} n_dgrams:{len(evt._dgrams)}', flush=True)
