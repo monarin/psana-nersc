@@ -53,13 +53,13 @@ def run_main(max_events,
     #ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, 
             #smd_callback=smd_callback,
     #        )
-    #smd = ds.smalldata(filename='/sdf/data/lcls/drpsrcf/ffb/users/monarin/h5/mysmallh5.h5', batch_size=5)
+    
     # Test tmo-like data
     #xtc_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/xtc'
     #ds = DataSource(exp='rixc00122', run=211, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
     #ds = DataSource(exp='tmoc00122', run=569, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
-    #ds = DataSource(exp='tmox1009422', run=26, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
-    ds = DataSource(exp='tmox1009422', run=61, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
+    ds = DataSource(exp='tmox1009422', run=26, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
+    #ds = DataSource(exp='tmox1009422', run=61, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
     # SPI data (duplicate 120 events to 300k)
     #xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"        
     #ds = DataSource(exp='amo06516', run=90, dir=xtc_dir, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
@@ -72,13 +72,15 @@ def run_main(max_events,
     # rixc00122 r0211
     #ds = DataSource(exp='rixc00122', run=211, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
     
+    # Setup smalldata server (if needed)
+    smd = ds.smalldata(filename='/sdf/data/lcls/drpsrcf/ffb/users/monarin/h5/mysmallh5.h5', batch_size=5)
     # Setup run 
     run = next(ds.runs())
     sendbuf = np.zeros(1, dtype='i')
     recvbuf = None
     if rank == 0:
         recvbuf = np.empty([size, 1], dtype='i')
-    #det1 = run.Detector('tmo_atmopal')
+    det1 = run.Detector('tmo_atmopal')
     #det2 = run.Detector('tmo_fzppiranha')
     #det3 = run.Detector('mbes_hsd')
 
@@ -86,7 +88,7 @@ def run_main(max_events,
     # Record time per batch (N_images_per_rank)
     st_batch = time.time()
     for i_evt, evt in enumerate(run.events()):
-        #data1 = det1.raw.calib(evt)
+        data1 = det1.raw.calib(evt)
         #data2 = det1.raw.raw(evt)
         #data3 = det3.raw.waveforms(evt)
 
@@ -99,11 +101,12 @@ def run_main(max_events,
             print(f'RANK:{rank} got {sendbuf[0]} events in {en_batch-st_batch:.3f}s. rate:{(batch_size/(en_batch-st_batch))*1e-3:.2f}kHz', flush=True)
             st_batch = time.time()
         
-        #smd.event(evt, calib=calib)
+        if data1 is not None:
+            smd.event(evt, calib=data1)
         if N_images_max > 0 and sendbuf[0] == N_images_max:
             ds.terminate()
 
-    #smd.done()
+    smd.done()
     
     # Record no. of events and tototal time
     comm.Gather(sendbuf, recvbuf, root=0)
@@ -121,7 +124,7 @@ def run_main(max_events,
 
 if __name__ == "__main__":
     # Parameters for DataSource
-    max_events = 0
+    max_events = 100000
 
     if len(sys.argv) > 1:
         max_events = int(sys.argv[1])

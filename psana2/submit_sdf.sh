@@ -13,14 +13,14 @@ t_start=`date +%s`
 
 
 # Configure psana2 parallelization
-export PS_N_TASKS_PER_NODE=17
+export PS_N_TASKS_PER_NODE=120
 echo PS_N_TASKS_PER_NODE=$PS_N_TASKS_PER_NODE
 source setup_hosts_openmpi.sh
 
 
 #mpirun -np $PS_N_RANKS --hostfile $PS_HOST_FILE python test_mpi.py
-export PS_EB_NODES=1
-export PS_SRV_NODES=0
+export PS_EB_NODES=2
+export PS_SRV_NODES=1
 export PS_VERBOSITY=1
 export PS_ZEROEDBUG_WAIT_SEC=0
 #MAX_EVENTS=0
@@ -28,7 +28,7 @@ export PS_ZEROEDBUG_WAIT_SEC=0
 #RUNNO=34
 #XTCDIR="/sdf/data/lcls/drpsrcf/ffb"
 #mpirun -np $PS_N_RANKS --hostfile $PS_HOST_FILE python test_live.py $EXP $RUNNO $MAX_EVENTS ${XTCDIR}
-mpirun -n 18 --hostfile $PS_HOST_FILE python test_psana2_perf.py
+mpirun -n 121 --hostfile $PS_HOST_FILE python test_psana2_perf.py
 
 
 t_end=`date +%s`
