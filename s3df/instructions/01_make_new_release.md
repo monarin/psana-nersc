@@ -1,0 +1,1 @@
+To make a new release: get a kerberos ticket, login to the same machine as user “psrel”,  checkout lcls2 and ami into /sdf/group/lcls/ds/ana/sw/conda2/rel/ using the existing “date” naming convention for the directories.  Build psana as usual, then build ami with build_all.sh in the ami directory (do NOT execute the setup_env.sh in the ami dir)
