@@ -1,15 +1,10 @@
 
 Updates 10/09/2024
-    c h5 crashes
-    c document delta_t and endofbatch on confluence
-    c psplot_live only serve from srv rank0 even if many ranks
+    - update firmware for camera link nodes (FIM and Opal to version 3.8.1?) from Julian. 
     - psana damage handling (OIP)
+    - spare nodes using riccardo's ansible
     - test all detectors
     - fiber BER
-    - spare nodes using riccardo's ansible
-    c PS_SMD_N_EVENT>1 with EndOfBatch interface for 35kHz area detectors
-      (not clear how much work this is, depends on where the dgram
-      "transition flip")
     - psana2 scaling issue within a node (Wilko may also look at this)
     - archon calibration
     - psana sz/lz decompress performance
