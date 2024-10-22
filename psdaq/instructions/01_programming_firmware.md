@@ -1,5 +1,9 @@
-## Programming FEB (front-end-board/ the "black box") and KCU1500 for Opal
-### FEB
+## Wave8/FIM 
+### KCU1500
+- MCS files: https://github.com/slaclab/pgp-pcie-apps/releases/tag/v2.5.0 (kcu1500 firmware that "only receive" data).
+  see the update instruction in the KCU1500 Data section below.
+## Opal/piranha (Camera-link gateway)
+### FEB (front-end-board or the black box)
 - Get the firmware from https://github.com/slaclab/cameralink-gateway/releases/tag/v8.2.3
 - On the node where Opal is installed, from cameralink-gateway repo, run
   ```
@@ -8,7 +12,8 @@
   Note* replace the above .mcs file with the downloaded one
   Note** lane can be determined from .cnf file
 ### KCU1500 Data (datadev_0)
-1. On psbuild-rhel7 or any other nodes with internet access, wget both the primary and secondary mcs files of the requested version from https://github.com/slaclab/lcls2-pgp-pcie-apps/releases/tag/v3.7.0
+- MCS files: https://github.com/slaclab/lcls2-pgp-pcie-apps (kcu1500 that take timing and data). 
+1. On psbuild-rhel7 or any other nodes with internet access, wget both the primary and secondary mcs files of the requested version from the above repo.
 2. Logon to the node with the KCU1500 (that you wish to program)
 3. Check the current version:
 ```
