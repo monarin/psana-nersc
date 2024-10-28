@@ -18,7 +18,9 @@
 5. Wire (go to SRCF) the patch panel with MPO breakout cable to the node(s). 
 6. Use the BOS webgui to add a new Cross Connect that links the chosen timing BOS port to the desired srcf node (the right side of the BOS). 
 7. Check light level
-    * Check if light is received using the devGui (Note that for timing-only node, there's no devGui so we can only use the BOS to check the light level).
+    * Use the BOS (all nodes)
+      * If In or Out shows -90, check if cable is swapped (this could be anywhere in the connections). You have to go through XPM, the BOS, or the srcf node and swap the fiber cable. If the swap is done correctly, you should see the correct light level ~10 < -1.
+    * Use devGui (only data/timing node) 
    ```
    python scripts/devGui --pgp4 0 --laneConfig 1=Piranha4 --pcieBoardType Kcu1500 --enLclsII 1 --enableConfig 1 --startupMode 1
    ```
@@ -34,6 +36,7 @@
    ```
    For viewing XPM 5 and 6.
    ![example of xpmvpa tool](/psdaq/images/ex-xpmvpa_xpm5_amc0.png)
+8. Install firmware (see seperate instruction) and copy tdetsim.service from a similar timing node if necessary. 
 
 ## TimingTxReset on Wave8 Gui
 Another place that might help fixing link lock problem is from resetting TimingTxReset on Wave8 gui.
