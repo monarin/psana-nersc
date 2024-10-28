@@ -27,19 +27,11 @@ python software/scripts/updatePcieFpga.py --path $HOME/Downloads     # where pat
 **Note** If there are two datadev_ (0 and 1), add `--dev /dev/datadev_1`. See full instruction [here](https://confluence.slac.stanford.edu/display/PSDMInternal/Debugging+DAQ#DebuggingDAQ-Opal).
 5. Power reset node
 ### KCU1500 Timing System (datadev_1)
-1. On the node that needs update, go to Matt's copy of pgp-pcie-apps and run the following:
+1. On the node that needs update, source setup_env.sh and go to:
 ```
-cd ~weaver/pgp-pcie-apps-new/software/
-source setup_l2si.sh
-python scripts/updatePcieFpga.py --dev /dev/datadev_1 --path ~weaver/mcs/drp --type SPIx8
+cd /cds/home/p/psrel/git/pgp-pcie-apps/software
+python scripts/updatePcieFpga.py --path ~weaver/mcs/drp --dev /dev/datadev_1
 ```
-or run
-```
-cd ~/firmware
-./update_timing_system.sh
-```
-where datadev_1 is usually the timing system driver and path is Matt's usual path where he stores the new firmware images.  
-
 2. Copy the new kcuSim from locally built lcls2 to the local folder on the node
 ```
 sudo cp ~/lcls2/install/bin/kcuSim /usr/local/sbin/
