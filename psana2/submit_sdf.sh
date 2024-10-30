@@ -19,9 +19,9 @@ source setup_hosts_openmpi.sh
 
 
 #mpirun -np $PS_N_RANKS --hostfile $PS_HOST_FILE python test_mpi.py
-export PS_EB_NODES=2
-export PS_SRV_NODES=1
-export PS_VERBOSITY=1
+export PS_EB_NODES=4
+export PS_SRV_NODES=0
+export PS_VERBOSITY=0
 export PS_ZEROEDBUG_WAIT_SEC=0
 #MAX_EVENTS=0
 #EXP="tmoc00221"

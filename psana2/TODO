@@ -1,8 +1,8 @@
 
-Updates 10/09/2024
-    - update firmware for camera link nodes (FIM and Opal to version 3.8.1?) from Julian. 
+Updates 10/29/2024
+    - update firmware for camera link nodes (Piranha and Opal to version 3.8.1?) from Julian. 
     - psana damage handling (OIP)
-    - spare nodes using riccardo's ansible
+    c spare nodes using riccardo's ansible
     - test all detectors
     - fiber BER
     - psana2 scaling issue within a node (Wilko may also look at this)

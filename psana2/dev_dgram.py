@@ -1,6 +1,10 @@
-from psana import dgram
-import os, glob, time, sys
+import glob
+import os
+import sys
+import time
+
 import numpy as np
+from psana import dgram
 
 CHUNKSIZE = 0x4000000
 BIGDGRAM_SIZE = 366
@@ -10,21 +14,29 @@ if len(sys.argv) > 1:
 
 n_files = 16
 max_events = 1000
-fds = [os.open(xtc_file, os.O_RDONLY) for xtc_file in glob.glob('/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/*.xtc2')[:n_files]]
-#fds = [os.open(xtc_file, os.O_RDONLY) for xtc_file in glob.glob('/reg/neh/home/monarin/lcls2/.tmp/smalldata/*.xtc2')[:n_files]]
+fds = [
+    os.open(xtc_file, os.O_RDONLY)
+    for xtc_file in glob.glob("/reg/d/psdm/xpp/xpptut15/scratch/mona/xtc2/*.xtc2")[
+        :n_files
+    ]
+]
+# fds = [os.open(xtc_file, os.O_RDONLY) for xtc_file in glob.glob('/reg/neh/home/monarin/lcls2/.tmp/smalldata/*.xtc2')[:n_files]]
 configs = [dgram.Dgram(file_descriptor=fd) for fd in fds]
 
 if read_chunk:
-    print('read_chunk')
-    views = [None]*n_files
+    print("read_chunk")
+    views = [None] * n_files
     for i in range(n_files):
         views[i] = os.read(fds[i], CHUNKSIZE)
 
     st = time.time()
     cn_events = 0
-    offsets = np.zeros(n_files, dtype='i')
+    offsets = np.zeros(n_files, dtype="i")
     for i in range(max_events):
-        dgrams = [dgram.Dgram(view=view, config=config, offset=offset) for view, config, offset in zip(views, configs, offsets)]
+        dgrams = [
+            dgram.Dgram(view=view, config=config, offset=offset)
+            for view, config, offset in zip(views, configs, offsets)
+        ]
         cn_events += 1
         offsets += BIGDGRAM_SIZE
 
@@ -37,10 +49,11 @@ else:
         dgrams = [dgram.Dgram(config=config) for config in configs]
         cn_events += 1
 
-
     en = time.time()
 
 for fd in fds:
     os.close(fd)
-print('#Evt: %d Total Elapsed(s): %6.3f Rate(kHz): %6.3f'%(cn_events, (en-st), cn_events/((en-st)*1000)))
-
+print(
+    "#Evt: %d Total Elapsed(s): %6.3f Rate(kHz): %6.3f"
+    % (cn_events, (en - st), cn_events / ((en - st) * 1000))
+)
