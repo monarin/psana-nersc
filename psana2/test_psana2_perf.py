@@ -2,6 +2,18 @@
 # PS_EB_NODES=1 PS_SMD_N_EVENTS=10000 SLURM_HOSTFILE=slurm_hosts srun -o xx --partition=anaq --exclusive python test_psana2_perf.py
 # or
 # `which mpirun` -n 33 --hostfile openmpi_hosts --mca btl_openib_allow_ib 1 ./run_slac.sh
+#
+# Test read while write:
+# 1. From a drp node, go to /sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/inprogress
+# 2. Remove the data file then run:
+#    > dd if=/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/xtc/tmolv9418-r0175-s000-c000.xtc2 of=xpptut15-r0001-s000-c000.xtc2 oflag=nocache bs=1MB status=progress
+# 3. Use ctrl-z to suspend the process (pause writing) and fg when start seeing bd cores are waiting for the data
+# 4. From s3df, allocate three nodes (use xpptut15 run 1), run
+#    > PS_VERBOSITY=1 PS_EB_NODES=8 mpirun -n 137 --hostfile slurm_host_test python -u test_psana2_perf.py
+#    In slurm_host_test,
+#    sdfmilan220 slots=1
+#    sdfmilan221 slots=68
+#    sdfmilan223 slots=68
 
 import logging
 import os
@@ -62,16 +74,17 @@ def run_main(
     #        )
 
     # Test tmo-like data
-    # xtc_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/xtc'
+    xtc_dir = '/sdf/data/lcls/drpsrcf/ffb/users/monarin/tmolv9418/inprogress'
+    ds = DataSource(exp='xpptut15', run=1, dir=xtc_dir, live=True)
     # ds = DataSource(exp='rixc00122', run=211, batch_size=batch_size, max_events=max_events, monitor=flag_monitor)
     # ds = DataSource(exp='tmoc00122', run=569, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
-    ds = DataSource(
-        exp="tmox1009422",
-        run=26,
-        batch_size=batch_size,
-        max_events=max_events,
-        monitor=flag_monitor,
-    )
+    #ds = DataSource(
+    #    exp="tmox1009422",
+    #    run=26,
+    #    batch_size=batch_size,
+    #    max_events=max_events,
+    #    monitor=flag_monitor,
+    #)
     # ds = DataSource(exp='tmox1009422', run=61, batch_size=batch_size, max_events=max_events, monitor=flag_monitor, )
     # SPI data (duplicate 120 events to 300k)
     # xtc_dir = "/cds/data/drpsrcf/users/monarin/amo06516"
@@ -94,16 +107,18 @@ def run_main(
     recvbuf = None
     if rank == 0:
         recvbuf = np.empty([size, 1], dtype="i")
-    det1 = run.Detector("tmo_atmopal")
-    det2 = run.Detector("tmo_fzppiranha")
-    det3 = run.Detector("mbes_hsd")
+    det1 = run.Detector('hsd')
+    #det1 = run.Detector("tmo_atmopal")
+    #det2 = run.Detector("tmo_fzppiranha")
+    #det3 = run.Detector("mbes_hsd")
 
     # Record time per batch (N_images_per_rank)
     st_batch = time.time()
     for i_evt, evt in enumerate(run.events()):
-        data1 = det1.raw.calib(evt)
-        data2 = det1.raw.raw(evt)
-        data3 = det3.raw.waveforms(evt)
+        data1 = det1.raw.waveforms(evt)
+        #data1 = det1.raw.calib(evt)
+        #data2 = det1.raw.raw(evt)
+        #data3 = det3.raw.waveforms(evt)
 
         if sendbuf[0] == 0:
             print(

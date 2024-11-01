@@ -32,4 +32,4 @@ mpirun -n 121 --hostfile $PS_HOST_FILE python test_psana2_perf.py
 
 
 t_end=`date +%s`
-echo PSJobCompleted TotalElapsed $((t_end-t_start)) 
+echo PSJobCompleted TotalElapsed $((t_end-t_start))
