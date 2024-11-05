@@ -4,13 +4,22 @@
   see the update instruction in the KCU1500 Data section below.
 ## Opal/piranha (Camera-link gateway)
 ### FEB (front-end-board or the black box)
-- Get the firmware from https://github.com/slaclab/cameralink-gateway/releases/tag/v8.2.3
+- Get the cameralink-gateway repo from https://github.com/slaclab/cameralink-gateway/releases/tag/v8.2.3
 - On the node where Opal is installed, from cameralink-gateway repo, run
   ```
   python software/scripts/updateFebFpga.py --mcs ~/ClinkFebPgp2b_1ch-0x02000000-20191210103130-ruckman-d6618cc.mcs --lane 0 --pgp4 0
   ```
   Note* replace the above .mcs file with the downloaded one
   Note** lane can be determined from .cnf file
+  Current nodes with Opal or Piranha (20241105)
+  ```
+  drp-srcf-cmp011 tmo_fzpopal_0
+  drp-srcf-cmp026 tmo_atmopal_0 and tmo_peppexopal_0
+  drp-srcf-cmp007 tmo_atmpiranha_0
+  drp-srcf-cmp013 tmo_fzppiranha_0
+  drp-srcf-cmp027 c_atmopal_0 and q_atmopal_0
+  drp-srcf-cmp012 c_piranha_0 and q_piranha_0
+  ```
 ### KCU1500 Data (datadev_0)
 - MCS files: https://github.com/slaclab/lcls2-pgp-pcie-apps (kcu1500 that take timing and data). 
 1. On psbuild-rhel7 or any other nodes with internet access, wget both the primary and secondary mcs files of the requested version from the above repo.
