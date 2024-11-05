@@ -9,9 +9,9 @@
   ```
   python software/scripts/updateFebFpga.py --mcs ~/ClinkFebPgp2b_1ch-0x02000000-20191210103130-ruckman-d6618cc.mcs --lane 0 --pgp4 0
   ```
-  Note* replace the above .mcs file with the downloaded one
-  Note** lane can be determined from .cnf file
-  Current nodes with Opal or Piranha (20241105)
+  Note* replace the above .mcs file with the downloaded one  
+  Note** lane can be determined from .cnf file  
+  Current nodes with Opal or Piranha (20241105)  
   ```
   drp-srcf-cmp011 tmo_fzpopal_0
   drp-srcf-cmp026 tmo_atmopal_0 and tmo_peppexopal_0
