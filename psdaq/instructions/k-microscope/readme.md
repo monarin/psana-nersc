@@ -1,4 +1,5 @@
 # K-microscope setup at FEE Alcove
+```
   LCLSII - Timing
     | 
    (FSP1)
@@ -6,3 +7,4 @@
 (Ctrl Port)       (Data Port)
      | dhcp          | static IP
 drp-neh-cmp011   drp-neh-cmp012
+```
