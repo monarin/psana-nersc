@@ -45,3 +45,24 @@ r.get_fifo_limit()
 r.get_fifo_max()
 
 ```
+## Use groupca to talk to XPM
+To test sending data to the tdc box, run groupca
+```
+groupca DAQ:NEH 10 0
+```
+On Events tab, check Run then run the python script, you should see no. of L1 matching the rate set by groupca.
+```
+(daq_20241215) monarin@drp-neh-cmp011 python python talk-to-tdc.py
+L0 Counter      : 103
+Accepted L1     : 103
+Rejected L1     : 0
+Transition      : 0
+Valid           : 931230
+Trigger         : 103
+Partition Addr  : 3791650827
+Partition Word0 : 4144071682
+Pause to trig   : 0
+notPauseToTrig  : 4095
+delay           : 42
+Ratio Valid / Accepted: 9041.067961165048
+```
