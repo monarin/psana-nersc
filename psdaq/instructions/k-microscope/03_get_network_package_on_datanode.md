@@ -36,9 +36,8 @@ cp ~monarin/sw/kmicro/SurfaceConcept/20241206/tdc_drivers/scTDC1_devclass45_cent
 ```
 sudo ldconfig -v /opt/kmicro/lib/
 ```
-3. Run the gui. Note that the first LD* path is for libqwt (sent by Sur
+3. Run the gui. Note that the first LD* path is for libqwt (sent by SurfaceConcept) and the second is libtiff available in our conda environment.
 ```
 LD_LIBRARY_PATH=/cds/home/m/monarin/sw/kmicro/SurfaceConcept/20241206/tdc_gui/dldgui2_centos7_lcls2_v0.2.11:$CONDA_PREFIX/lib ./dldgui2
 ```
-4. 
-5. 
+
