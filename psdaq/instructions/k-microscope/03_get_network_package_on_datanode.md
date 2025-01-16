@@ -36,7 +36,14 @@ cp ~monarin/sw/kmicro/SurfaceConcept/20241206/tdc_drivers/scTDC1_devclass45_cent
 ```
 sudo ldconfig -v /opt/kmicro/lib/
 ```
-3. Run the gui. Note that the first LD* path is for libqwt (sent by SurfaceConcept) and the second is libtiff available in our conda environment.
+3. Prior to running to gui (according to README.txt in guit director), you need to copy the libscDeviceClass45.so.version to this directory and creates soft links correctly as shown below:
+```
+(daq_20241215) monarin@drp-neh-cmp012 dldgui2_centos7_lcls2_v0.2.11 cp ~/sw/kmicro/SurfaceConcept/20241206/tdc_drivers/scTDC1_devclass45_centos7_lcls2_v1.3023.13/libscDeviceClass45.so.0.4.6 .
+(daq_20241215) monarin@drp-neh-cmp012 dldgui2_centos7_lcls2_v0.2.11 ln -s libscDeviceClass45.so.0.4.6 libscDeviceClass45.so
+(daq_20241215) monarin@drp-neh-cmp012 dldgui2_centos7_lcls2_v0.2.11 ln -s libscDeviceClass45.so.0.4.6 libscDeviceClass45.so.0
+(daq_20241215) monarin@drp-neh-cmp012 dldgui2_centos7_lcls2_v0.2.11 ln -s libscDeviceClass45.so.0.4.6 libscDeviceClass45.so.0.4
+```
+4. Run the gui. Note that the first LD* path is for libqwt (sent by SurfaceConcept) and the second is libtiff available in our conda environment.
 ```
 LD_LIBRARY_PATH=/cds/home/m/monarin/sw/kmicro/SurfaceConcept/20241206/tdc_gui/dldgui2_centos7_lcls2_v0.2.11:$CONDA_PREFIX/lib ./dldgui2
 ```
