@@ -100,3 +100,4 @@ RxRecClk: 185.733904 MHz
                group        0        0        0        0        0        0        0        0
 
 ```
+* NOTE that datadev_0 is the right 4 columns and datadev_1 is the left 4 columns.
