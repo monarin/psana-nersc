@@ -268,3 +268,12 @@ DLDEVENT event_count: 1, total_time: 0.000000
   j: 48 start_counter: 0 timetag: 0 dif1: 819 dif2: 128
 END event_count: 1, total_time: 0.000000
 ```
+## Understanding the cb_dld_event callback
+Setting: measurement range: 1000ms
+```
+groupca       no. of        no. of e-
+rate (Hz)  cb_dld_events
+  1              1           1 or 2
+  10             4           1 or 2
+  100            44          1-3  
+```
