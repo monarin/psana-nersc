@@ -45,7 +45,7 @@ ls ~cpo/git/cameralink-gateway-*
 ### Check datadev driver
 It's also likely that the node will have the old version of datadev.ko, kcuSim, kcuStatus, and tdetsim. Copy them from /usr/local/sbin/ on the current working node. 
 ### Troubleshoot
-* If kcuSim -s shows lDown = 1, you may need to run kcuSim -t, kcuSim -T
+* If kcuSim -s shows ldown = 1, you may need to run kcuSim -t, kcuSim -T
 * Check FSP lights on xpmpva, QSFP might be broken is the light levels are abnormal.
 * Enable lanes with kcuSim -C 0,0,0xff, if running below command doesn't show any transitions when sending it from groupca.
 ```
