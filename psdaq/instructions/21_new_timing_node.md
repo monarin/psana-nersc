@@ -42,3 +42,30 @@ and try to look for the older env with the older Rogue.
 ```
 ls ~cpo/git/cameralink-gateway-*
 ```
+### Check datadev driver
+It's also likely that the node will have the old version of datadev.ko, kcuSim, kcuStatus, and tdetsim. Copy them from /usr/local/sbin/ on the current working node. 
+### Troubleshoot
+* If kcuSim -s shows lDown = 1, you may need to run kcuSim -t, kcuSim -T
+* Check FSP lights on xpmpva, QSFP might be broken is the light levels are abnormal.
+* Enable lanes with kcuSim -C 0,0,0xff, if running below command doesn't show any transitions when sending it from groupca.
+```
+(daq_20241215) monarin@drp-neh-cmp012 ~ ~/lcls2/psdaq/build/drp/pgpread -d /dev/datadev_1
+setting lane 0, dest 0x0 
+setting lane 1, dest 0x100 
+setting lane 2, dest 0x200 
+setting lane 3, dest 0x300 
+setting lane 4, dest 0x400 
+setting lane 5, dest 0x500 
+setting lane 6, dest 0x600 
+setting lane 7, dest 0x700 
+device  /dev/datadev_1
+dmaCount 4100  dmaSize 2162688
+Size 288 B | Dest 1.0 | Transition id 2 | pulse id 9066576779782 (2110.4195785222) | TimeStamp 41919516993541617  (9760148.529421809) | event counter 32 | index 132
+env 02000001 | payload 00000000 00000000 00000000 00000000 00000000 00000000
+Size 288 B | Dest 2.0 | Transition id 2 | pulse id 9066576779782 (2110.4195785222) | TimeStamp 41919516993541617  (9760148.529421809) | event counter 32 | index 133
+env 02000001 | payload 00000000 00000000 00000000 00000000 00000000 00000000
+Size 288 B | Dest 3.0 | Transition id 2 | pulse id 9066576779782 (2110.4195785222) | TimeStamp 41919516993541617  (9760148.529421809) | event counter 32 | index 134
+env 02000001 | payload 00000000 00000000 00000000 00000000 00000000 00000000
+Size 288 B | Dest 0.0 | Transition id 2 | pulse id 9066576779782 (2110.4195785222) | TimeStamp 41919516993541617  (9760148.529421809) | event counter 32 | index 135
+env 02000001 | payload 00000000 00000000 00000000 00000000 00000000 00000000
+```
