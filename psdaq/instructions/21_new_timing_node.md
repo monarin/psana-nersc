@@ -1,5 +1,5 @@
 ## Setting up a new Timing node
-Below show how to setup a new timing node and the FEE test stand. The new timing node is drp-neh-cmp012 and it's connected 
+Below show how to setup a new timing node at the FEE test stand. The new timing node is drp-neh-cmp012 and it's connected 
 to xpm 10 amc 0 port 2 (counting from 0)
 ### Check KCU firmware
 The kcu firmware must be up-to-date. In this case, the working node is drp-neh-cmp002 and its values are
