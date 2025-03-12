@@ -16,9 +16,10 @@ monarin@drp-neh-cmp002 ~ cat /proc/datadev_0
 ```
 If the new timing node doesn't show these values, we'll need to update the firmware image. The command is:
 ```
-python scripts/updatePcieFpga.py --path ~weaver/mcs/drp --dev /dev/datadev_0
+python scripts/updatePcieFpga.py --path ~weaver/mcs/drp --type SPIx8
 ```
-Note that this update needs Rogue and it has to match with the current version running on the node. 
+Note:
+1. This update needs Rogue and it has to match with the current version running on the node.
 If you see the error below, 
 ```
 (daq_20241215) monarin@drp-neh-cmp012 software python scripts/updatePcieFpga.py --path ~weaver/mcs/drp --dev /dev/datadev_0
@@ -32,16 +33,18 @@ rogue.GeneralError: AxiMemMap::AxiMemMap: General Error: Bad kernel driver versi
        		aes-stream-driver = v5.16.0 (or later)
 		rogue = v5.13.0 (or later)
 ```
-1. You'll need to find the right version of Rogue that was used to install the current firmware image. 
+1.1 You'll need to find the right version of Rogue that was used to install the current firmware image. 
 You can do this buy looking at 
 ```
 conda env list
 ```
 and try to look for the older env with the older Rogue.  
-2. Use the right version of cameralink_gateway for running the updatePcieFpga.py (above), the available versions are:
+1.2 Use the right version of cameralink_gateway for running the updatePcieFpga.py (above), the available versions are:
 ```
 ls ~cpo/git/cameralink-gateway-*
 ```
+2. datadev_0 is the default drive, use --dev /dev/datadev_1 otherwise
+3. Add --type SPIx8 to prevent updatePcieFpga from not looking for _primary and _secondary files.
 ### Check datadev driver
 It's also likely that the node will have the old version of datadev.ko, kcuSim, kcuStatus, and tdetsim. Copy them from /usr/local/sbin/ on the current working node. 
 ### Troubleshoot
