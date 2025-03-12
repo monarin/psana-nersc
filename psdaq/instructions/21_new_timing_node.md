@@ -16,7 +16,7 @@ monarin@drp-neh-cmp002 ~ cat /proc/datadev_0
 ```
 If the new timing node doesn't show these values, we'll need to update the firmware image. The command is:
 ```
-(daq_20241215) monarin@drp-neh-cmp012 software python scripts/updatePcieFpga.py --path ~weaver/mcs/drp --dev /dev/datadev_0
+python scripts/updatePcieFpga.py --path ~weaver/mcs/drp --dev /dev/datadev_0
 ```
 Note that this update needs Rogue and it has to match with the current version running on the node. 
 If you see the error below, 
