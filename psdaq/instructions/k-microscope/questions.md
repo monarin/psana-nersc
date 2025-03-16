@@ -43,3 +43,19 @@ PGPReader: Jump in complete l1Count 16777215 -> 0
 PGPReader: Jump in complete l1Count 16777215 -> 0 
 PGPReader: Jump in complete l1Count 16777215 -> 0
 ```
+### Why is m_pool.dmaInUse() gets reset at 5 bits (count up to 31)?
+Try adding below to DrpBase.cc PgpReader::handle LINE 372
+```
+    // **LOG BUFFER POINTER AND SIZE**
+    logging::info("PGPReader::handle - Buffer index: %u, Lane: %u, Size: %u, DMA InUse/Free: %" PRId64 "/%u, Event Counter: %u, DMA Index: %u",
+        index, lane, size, m_pool.dmaInUse(), m_pool.nDmaBuffers(), evtCounter, index);
+```
+See log file: /cds/home/m/monarin/2025/03/16_10:19:45_drp-neh-cmp012:kmicro_0.log. There are 2048 DMA buffers available but we only use up to 32.
+```
+202 tst-drp_bld[93408]: <I> PGPReader::handle - Buffer index: 2025, Lane: 0, Size: 432, DMA InUse/Free: 29/2048, Event Counter: 61, DMA Index: 2025^M
+203 tst-drp_bld[93408]: <I> PGPReader::handle - Buffer index: 2026, Lane: 0, Size: 432, DMA InUse/Free: 30/2048, Event Counter: 62, DMA Index: 2026^M
+204 tst-drp_bld[93408]: <I> PGPReader::handle - Buffer index: 2027, Lane: 0, Size: 432, DMA InUse/Free: 31/2048, Event Counter: 63, DMA Index: 2027^M
+205 tst-drp_bld[93408]: <I> PGPReader::handle - Buffer index: 2028, Lane: 0, Size: 432, DMA InUse/Free: 0/2048, Event Counter: 64, DMA Index: 2028^M
+206 tst-drp_bld[93408]: <I> PGPReader::handle - Buffer index: 2029, Lane: 0, Size: 432, DMA InUse/Free: 1/2048, Event Counter: 65, DMA Index: 2029^M
+207 tst-drp_bld[93408]: <I> PGPReader::handle - Buffer index: 2030, Lane: 0, Size: 432, DMA InUse/Free: 2/2048, Event Counter: 66, DMA Index: 2030^M
+```
