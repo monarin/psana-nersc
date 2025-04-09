@@ -26,11 +26,11 @@ $ git submodule update --recursive
 ```
 We can use either Kcu1500 or Wave8 devGui to check for optic signal and linklock.
 ### Kcu1500 devGui
-To start the devGui
+To start the devGui, make sure that rogue matches with the firmware. As of 20250409, we need Rogue/pyrogue version v5.18.4 from ps-4.6.0.
 ```
 ssh drp-srcf-cmp004
 cd wave8/software
-python scripts/PcieDebugGui.py --boardType Kcu1500
+python scripts/PcieDebugGui.py --boardType XilinxKcu1500
 ```
 For Optic, check the value of RxPower[1] of Qsfp[1] on Kcu1500
 ![ins05_devgui_kcu1500_QSFP1_1](/psdaq/images/ins05_devgui_kcu1500_QSFP1_1.png)
@@ -38,7 +38,7 @@ For linklock, check Lane 5 (QSFP1_1 corresponds to lane 5 of the 8 lanes on KCU)
 The LinkReady register should show True for both RxStatus and TxStauts. 
 ![ins05_devGui_kcu1500_Lane5_LinkReady](/psdaq/images/ins05_devGui_kcu1500_Lane5_LinkReady.png)
 ### Wave8 devGui
-To start the devGui
+To start the devGui, we need rogue version 6.1.1. Also, firmware/python/wave8/Top.py should have raise firmware verion check commented out!
 ```
 python scripts/wave8DAQ.py --l 5 --enDataPath 0 --startupMode 1
 ```
