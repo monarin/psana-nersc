@@ -48,6 +48,8 @@ Check PgpMon[1] (QSFP1) LinkReady register
 ![ins05_wave8gui_LinkReady](/psdaq/images/ins05_wave8gui_LinkReady.png)
 Check TimingFrameRx RxLinkUp register
 ![ins05_wave8gui_TimingFrameRx_RxLinkUp](/psdaq/images/ins05_wave8gui_TimingFrameRx_RxLinkUp.png)
+To locate remote id (RxId)
+![ins05_wave8_devgui_remoteid](/psdaq/images/ins05_wave8_devgui_remoteid.png)
 ### IOC Manager
 After PGP 1 connection with IOC machine is established by control staffs, we can view wave8 registers by runninng iocmanager gui from txi hutch.
 ```
@@ -61,6 +63,9 @@ From the iocmanager main and Wave8 diag screens, we can obtain:
 ![txi_ioc_wave8_main](/psdaq/images/txi_ioc_wave8_main.png)
 ![txi_ioc_wave8_diag](/psdaq/images/txi_ioc_wave8_diag.png)
 ### Running Wave8 on daq control
+Before running the daq, check that Trigger Delay (ns) or start_ns is correct on the IOC. It should be 99.884k
+![ins05_ioc_wave8_start_ns](/psdaq/images/ins05_ioc_wave8_start_ns_99k.png)
+
 The full working cnf file is available here [mona.cnf](https://github.com/slac-lcls/lcls2/blob/dd2850ab95602c3ce772197e74cc0d85cbf30c5a/psdaq/psdaq/cnf/mona.cnf). The line which adds wave8 is
 ```
 {host: 'drp-srcf-cmp004', id:'txi_fim1_0',  flags:'spu', env:epics_env, cmd:drp_cmd0+' -l 0x20 -D wave8 -k epics_prefix=TXI:RP:W8:01'}
