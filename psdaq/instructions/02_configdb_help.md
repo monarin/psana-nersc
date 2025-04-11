@@ -28,11 +28,7 @@ To view the values (json) for each detector:
 ```
 configdb cat tst/BEAM/timing_0
 ```
-You can copy a detector item:
+You can copy a detector item (make sure that your kerboros ticket is valid):
 ```
-configdb cp tst/BEAM/timing_0 tst/BEAM/timing_1 --write
-```
-If copying between hutches, you need to specify the destination hutch in --user:
-```
-configdb cp --user tmoopr --write tst/BEAM/txi_fim1_0 tmo/BEAM/txi_fim1_0
+configdb cp --user rixopr rix/BEAM/qrix_w8_0 rix/BEAM/crixs_las_w8_0 --write
 ```
