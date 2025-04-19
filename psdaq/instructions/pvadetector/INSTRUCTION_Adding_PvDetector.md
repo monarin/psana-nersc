@@ -6,7 +6,7 @@ This guide walks you through the process of integrating a new EPICS PVA detector
 
 ## 1. 📐 Determine Image Size and Data Rate
 
-- Use EDM or `pvinfo` to inspect image dimensions and data type.
+- Use IOC or `pvinfo` to inspect image dimensions and data type.
 - Multiply width × height × (bytes per pixel) to get **image size in bytes**.
   - For a 5Mpix `uint16` image: `6144 × 6144 × 2 = ~74 MiB`
 - Estimate frame rate requirements to understand throughput demands.
@@ -31,6 +31,7 @@ Restart the driver:
 sudo systemctl daemon-reload
 sudo systemctl restart tdetsim.service
 ```
+🚨 **Caution:** Before restarting the service, make sure that DAQ or the drp processes are not running on that node. 
 
 ---
 
@@ -55,7 +56,6 @@ Update the DAQ configuration file (e.g., `rix.py`) to include the detector:
 ## ✅ Final Checks
 
 - Ensure the image size and data rate are sustainable on the selected host.
-- Verify buffer allocation logs in `drp_pva` show reasonable `m_payloadSize`, `Queue depth`, and `Total buffer size`.
-- Test with `drp_pva` and check for segmentation faults or warnings.
+- Test with the DAQ and verify that there are no deadtime.
 
 Good luck! 🎉
