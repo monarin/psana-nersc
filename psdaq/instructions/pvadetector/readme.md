@@ -4,7 +4,7 @@ This section documents the buffer allocations involved in setting up a large PvD
 
 ## 🖼️ Buffer Allocation Flow
 
-![PvDetector Buffer Allocation Flow](./PvDetector%20Buffer%20Allocation%20Flow.png)
+![PvDetector Buffer Allocation Flow](/psdaq/images/PvDetector_Buffer_Allocation_Flow.png)
 
 > *The example shows values used for RIX's Axis detector with image size ~74 MiB.*
 
