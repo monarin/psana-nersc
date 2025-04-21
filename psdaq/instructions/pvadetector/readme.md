@@ -26,3 +26,28 @@ This section documents the buffer allocations involved in setting up a large PvD
 - The **Pebble Buffers** are user-space buffers used for event building. They are allocated in `DrpBase::MemPool`.
 - The **Transition Buffers** are used internally by `PvaDetector::PvMonitor` for holding and staging PV data during acquisition. They are sized based on image payload and cannot be resized via kwargs.
 - The buffer counts (`pebbleBufCount`) are typically set to a power-of-two value greater than `cfgRxCount` to avoid indexing and overflow issues.
+
+## ⚖️ Asymmetry Between DMA and Pebble Buffers
+
+One important design detail in the DAQ system is the **asymmetry** between how **DMA buffers** and **pebble buffers** are used:
+
+| Aspect              | **DMA Buffers**                              | **Pebble Buffers**                              |
+|---------------------|-----------------------------------------------|--------------------------------------------------|
+| **Created by**      | Device driver (`cfgRxCount`, `cfgSize`)       | User-space via `pebble.create()`                |
+| **Purpose**         | Streaming image fragments via PGP             | Holding a full event (image + metadata)         |
+| **Size per buffer** | Small (e.g., 1 MiB)                            | Large (e.g., full image size, e.g., 84 MiB)      |
+| **Usage**           | One image spans multiple DMA buffers          | One image fits entirely in one pebble buffer    |
+| **Mapping**         | Many DMA buffers per image                    | One pebble buffer per image                     |
+| **Memory location** | Kernel-mapped (hardware DMA)                  | User-space (DAQ process)                        |
+
+### 🔍 Why This Matters
+
+- The number of **pebble buffers** is directly tied to the number of DMA buffers (`cfgRxCount`) to ensure every in-flight DMA event has a matching location in user-space memory.
+- **Pebble and transition buffers are large**, so increasing `cfgRxCount` (e.g., from 64 → 2048) without caution can lead to **massive memory allocation** (e.g., hundreds of GB).
+- To avoid buffer overrun and excessive memory use, you must **balance**:
+  - `cfgRxCount × cfgSize` ≥ one image (so DMA doesn’t overflow)
+  - `pebbleBufCount × pebbleBufSize` fits in system memory
+
+### 💡 Pro Tip
+
+If you’re handling large images (e.g., 84 MiB), try to **keep `cfgRxCount` low** (just enough to hold one image) and **use `pebbleBufCount`** to control the number of concurrent events. This avoids allocating unnecessary large buffer regions while still ensuring safe operation.
