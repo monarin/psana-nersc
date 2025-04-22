@@ -14,7 +14,7 @@ This section documents the buffer allocations involved in setting up a large PvD
 
 | **Buffer Type**        | **Component**              | **Set By**                                  | **Size**                                  | **Notes**                                                                 |
 |------------------------|----------------------------|---------------------------------------------|-------------------------------------------|---------------------------------------------------------------------------|
-| **DMA Buffers**        | PGP Kernel Driver          | `cfgRxCount` and `cfgSize`                  | `cfgRxCount × cfgSize`<br>e.g., `80 × 1MiB = 80MiB` | Must hold the entire image (no overrun). Acts as a ring buffer.           |
+| **DMA Buffers**        | PGP Kernel Driver          | `cfgRxCount` and `cfgSize`                  | `cfgRxCount × cfgSize`<br>e.g., `80 × 4KB = 320KB` | Must hold the data rate. **For PVA Detector this is just TimingHeaders (32 B + 32 B of ‘overhead’)**. Acts as a ring buffer.           |
 | **Pebble Buffers**     | `DrpBase::MemPool`         | `pebbleBufCount` and `pebbleBufSize` kwargs (`-k`) | e.g., `128 × 84MiB = 10.8GiB`             | Used by DRP process to store full datagrams. Count defaults to next power of 2 above `cfgRxCount`. |
 | **Transition Buffers** | `PvaDetector::PvMonitor`   | Tied to `pebbleBufCount`                    | e.g., `128 × 74MiB = 9.2GiB`               | Cannot be resized directly; size taken from DRP dgram payload. Tied 1:1 with pebble count. |
 
@@ -22,10 +22,26 @@ This section documents the buffer allocations involved in setting up a large PvD
 
 ## 🧠 Key Points
 
-- The **PGP DMA Buffers** must be large enough to receive a single full image, otherwise the DMA engine will overrun and data loss will occur.
+- The **PGP DMA Buffers** must be large enough to receive a single full image header, otherwise the DMA engine will overrun and data loss will occur.
 - The **Pebble Buffers** are user-space buffers used for event building. They are allocated in `DrpBase::MemPool`.
 - The **Transition Buffers** are used internally by `PvaDetector::PvMonitor` for holding and staging PV data during acquisition. They are sized based on image payload and cannot be resized via kwargs.
 - The buffer counts (`pebbleBufCount`) are typically set to a power-of-two value greater than `cfgRxCount` to avoid indexing and overflow issues.
+
+# PvDetector Buffer Allocation and Asymmetry
+
+## 🧠 Understanding Buffer Allocation Differences
+
+In the DAQ system, buffer allocation strategies differ between PGP and PVA detectors:
+
+| Aspect                    | **PGP Detectors**                          | **PVA Detectors**                               |
+|---------------------------|--------------------------------------------|-------------------------------------------------|
+| **Data Ingress**          | Via KCU1500 (PGP link)                     | Via network protocols (e.g., EPICS PV, UDP)     |
+| **DMA Buffer Usage**      | Stores full image data                     | Stores only TimingHeader (~64 bytes)            |
+| **Required `cfgSize`**    | Must accommodate full image size           | Can be minimal (e.g., 4 KB)                     |
+| **Pebble Buffer Role**    | Receives data from DMA buffers             | Directly receives full image data               |
+| **Pebble Buffer Sizing**  | Optional; depends on DMA buffer size       | Crucial; must fit entire image                  |
+
+For PVA detectors, since the image data bypasses the DMA buffers, it's essential to configure `pebbleBufSize` to accommodate the full image size. Conversely, `cfgSize` can remain small, as it's only used for the TimingHeader.
 
 ## ⚖️ Asymmetry Between DMA and Pebble Buffers
 
