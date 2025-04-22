@@ -1,61 +1,43 @@
-# 🛠️ Adding a New PvDetector to the DAQ
+# INSTRUCTION: Adding a PvDetector
 
-This guide walks you through the process of integrating a new EPICS PVA detector into the DAQ system. The steps below are based on recent integration of a RIX 5Mpix Axis camera.
+## 🛠️ Steps to Add a New PVA Detector
 
----
+1. **Determine the Size of the Image and Data Rate**
 
-## 1. 📐 Determine Image Size and Data Rate
+   - Estimate the payload size per event (e.g., 84 MiB for a 5Mpix image).
+   - Decide the acquisition rate (e.g., 100 Hz) and verify system throughput.
 
-- Use IOC or `pvinfo` to inspect image dimensions and data type.
-- Multiply width × height × (bytes per pixel) to get **image size in bytes**.
-  - For a 5Mpix `uint16` image: `6144 × 6144 × 2 = ~74 MiB`
-- Estimate frame rate requirements to understand throughput demands.
+2. **Update the DMA Driver (`tdetsim.service`)**
 
----
+   Since PVA detectors only use DMA for TimingHeaders:
 
-## 2. ⚙️ Update Kernel Driver Buffer Settings
+   - Set `cfgSize` to a small value (e.g., 4096 bytes).
+   - Set `cfgRxCount` based on expected rate (e.g., 60).
 
-Edit the driver service file (typically `tdetsim.service`) and update the line that loads the PGP kernel module:
+   Example line in `tdetsim.service`:
 
-```
-ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=4 cfgRxCount=80 cfgSize=1048576 cfgMode=0x2
-```
+   ```
+   ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=4 cfgRxCount=60 cfgSize=4096 cfgMode=0x2
+   ```
 
-- **cfgRxCount**: Number of DMA buffers (ring buffer slots).
-- **cfgSize**: Size of each DMA buffer in bytes (e.g., 1 MiB = 1048576).
+3. **Configure the DAQ Conf File (e.g., `rix.py`)**
 
-> 💡 Total buffer size (cfgRxCount × cfgSize) must be greater than or equal to the image size. Otherwise, a buffer overrun may occur.
+   - Add an entry using an available timing node and lane mask.
+   - Set `pebbleBufSize` to image size (e.g., 84000000 for 84 MiB).
+   - Set `pebbleBufCount` > `cfgRxCount` (e.g., 128).
 
-Restart the driver:
-```bash
-sudo systemctl daemon-reload
-sudo systemctl restart tdetsim.service
-```
-🚨 **Caution:** Before restarting the service, make sure that DAQ or the drp processes are not running on that node. 
+   Example:
 
----
+   ```python
+   { host: 'drp-srcf-cmp025',
+     id: 'axis_svls_0',
+     flags: 'spu',
+     env: epics_env,
+     cmd: pva_cmd1 + ' -l 0x2 RIX:SVLS:CAM:01:IMAGE1:Pva:Image -k pebbleBufSize=88000000,pebbleBufCount=128' },
+   ```
 
-## 3. 🧾 Add Detector Entry in DAQ Config (e.g., `rix.py`)
+## ⚠️ Notes and Best Practices
 
-Update the DAQ configuration file (e.g., `rix.py`) to include the detector:
-
-```python
-{ host: 'drp-srcf-cmp025',
-  id: 'axis_svls_0',
-  flags: 'spu',
-  env: epics_env,
-  cmd: pva_cmd1 + ' -l 0x2 RIX:SVLS:CAM:01:IMAGE1:Pva:Image -k pebbleBufSize=84000000' },
-```
-
-- `-l 0x2`: Lane mask. Set a free lane bit corresponding to the timing connection.
-- `-k pebbleBufSize=84000000`: Optional kwargs. Set `pebbleBufSize` to image size (in bytes).
-- You can also add `pebbleBufCount=N` if you want to override the buffer count (must be > `cfgRxCount`).
-
----
-
-## ✅ Final Checks
-
-- Ensure the image size and data rate are sustainable on the selected host.
-- Test with the DAQ and verify that there are no deadtime.
-
-Good luck! 🎉
+- `cfgRxCount` and `cfgSize` affect all DRPs on a node.
+- `pebbleBufSize` and `pebbleBufCount` are per-detector (per DRP process).
+- Transition buffers are sized via `maxTrSize` and are independent of image payload size.
