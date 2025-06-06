@@ -38,6 +38,10 @@ python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_03
 **Location:**  
 `/cds/home/j/jumdz/epix-quad/software`
 
+Check FrameCnt and FrameRate registers  
+
+![epix10ka frame count](/psdaq/instructions/epix10ka/ePix10ka_FrameCnt.png)
+
 ---
 
 ## 🛠 Status
