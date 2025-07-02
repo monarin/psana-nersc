@@ -47,6 +47,7 @@ python -m pyrogue gui --server='localhost:9004'
 
 To run the epixQuadDAQ GUI:
 ```bash
+cd /cds/home/j/jumdz/epix-quad/software
 python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_0
 ```
 
