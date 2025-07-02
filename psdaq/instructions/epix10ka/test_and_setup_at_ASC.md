@@ -52,7 +52,7 @@ python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_0
 
 Or if the DAQ is running:
 ```bash
-python -m pyrogue gui --server='localhost:9115'
+python -m pyrogue gui --server='localhost:9103'
 ```
 
 ## Buffer Fix for Jumping Events
