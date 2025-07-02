@@ -16,12 +16,20 @@ In the LCLS timing system, delays are defined in **ticks**, where each tick repr
 
 ## 🧠 Key Variables
 
-- `start_ns`: The nanoseconds to wait after receiving a timing message before sending a trigger.
-- `partitionDelay`: The number of ticks it takes for a trigger message to propagate through the system.
-- `triggerDelay`: How many ticks after the message the trigger should be sent (must be ≥ 0).
+- `start_ns`: The absolute trigger start time, in nanoseconds. This value is typically defined in the experiment setup.
+- `clk_period`: Duration of a single timing tick in nanoseconds.
+  - For 186 MHz: `clk_period = 1 / 186e6 = 5.37 ns`
+  - For 119 MHz: `clk_period = 1 / 119e6 = 8.4 ns`
+- `partitionDelay`: Number of ticks to account for message propagation and processing delay (fixed at 91 ticks).
+- `msg_period`: Interval between messages (200 for 186M and 238 for 119M)
+- `triggerDelay`: How many ticks the XPM should delay before sending the trigger.
+
+## Calculation
+
+The formula for calculating `triggerDelay` is:
 
 ```python
-triggerDelay = int(start_ns / tick_duration) - partitionDelay
+triggerDelay = int(rawStart / clk_period - partitionDelay * msg_period)
 ```
 
 If `triggerDelay < 0`, you'll get an error because the trigger would have to be sent **before** the message arrives — which is obviously too ambitious.
@@ -30,21 +38,21 @@ If `triggerDelay < 0`, you'll get an error because the trigger would have to be 
 
 ## 💡 Example Calculations
 
-Let’s say `partitionDelay = 18200` ticks.
+#### 1. LCLS-II (186 MHz, clk_period = 5.37 ns)
+To make triggerDelay > 0, use start_ns = 99000
+```text
+triggerDelay = int(99000 / 5.37 - 91 * 200)
+             = int(18435.19 - 18200)
+             = 235 ticks
+```
 
-### For LCLS-II (186 MHz):
-- Tick = 5.37 ns
-- `start_ns = 99000`
-- Ticks after message = 99000 / 5.37 ≈ **18435**
-- `triggerDelay = 18435 - 18200 = 235 ticks ✅`
-
-### For LCLS-I (119 MHz):
-- Tick = 8.4 ns
-- `start_ns = 99000`
-- Ticks after message = 99000 / 8.4 ≈ **11785**
-- `triggerDelay = 11785 - 18200 = -6415 ❌` (not enough delay)
-
-So, for **LCLS-I**, you’d need a **larger `start_ns`** to avoid a negative `triggerDelay`.
+#### 2. LCLS-I (119 MHz, clk_period = 8.4 ns)
+To make triggerDelay > 0, use start_ns = 184000 
+```text
+triggerDelay = int(184000 / 8.4 - 91 * 238)
+             = int(21904.76 - 21658)
+             = 247 ticks 
+```
 
 ---
 
