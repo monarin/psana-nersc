@@ -68,7 +68,8 @@ Click the **Run** button to start trigger stream.
 
 - In **Camera devGui**: `FrameCnt` (under `RdoutStreamMonitoring.Ch[0]`) should be increasing.
 - In **kcu1500 devGui**: `DevPcie.Application.AppLane[0].EventBuilder.DataCnt[0-2]` should all be increasing at comparable rates.
-
+More information about DataCnt lanes:
+DMA Channel mapping section on this page: https://github.com/slaclab/lcls2-pgp-pcie-apps. 
 ---
 
 ## Note
