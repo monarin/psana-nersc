@@ -12,11 +12,8 @@ We **do not** run the full DAQ stack. Instead, we launch:
 ---
 
 ## 1. Start Camera devGui
-
+On daq-det-evr01
 ```bash
-ssh daq-det-evr01
-source /cds/sw/ds/ana/conda2/inst/setup_conda.sh
-conda activate daq_20250402
 cd /cds/home/j/jumdz/epix-quad/software
 python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_0
 ```
