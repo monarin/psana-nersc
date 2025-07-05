@@ -47,6 +47,13 @@ python scripts/devGui.py --dev /dev/datadev_0 --pgp4 1 --serverPort 9004 --pcieB
   ```
 - Set `Blowoff`:
     - Toggle **True** then **False** to flush stale buffered events.
+- Set `Timeout`:
+    - The calculation is
+      ```
+      hex(int(156.25e6 / rate))
+      ```
+      For 102Hz, Timeout = 0x1763F6.
+      For 1020Hz, Timeout = 0x25632.
 
 ---
 
@@ -65,7 +72,7 @@ Click the **Run** button to start trigger stream.
 ---
 
 ## 4. Verify Operation
-
+- In **kcu1500 devGui**: DevRoot, Hit Exec StartRun.
 - In **Camera devGui**: `FrameCnt` (under `RdoutStreamMonitoring.Ch[0]`) should be increasing.
 - In **kcu1500 devGui**: `DevPcie.Application.AppLane[0].EventBuilder.DataCnt[0-2]` should all be increasing at comparable rates.
 More information about DataCnt lanes:
