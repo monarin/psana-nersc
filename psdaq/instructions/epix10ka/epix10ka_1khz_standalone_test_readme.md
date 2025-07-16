@@ -19,7 +19,7 @@ python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_0
 ```
 
 ### Camera Configuration
-1. **Load Config YAML**:
+1. SKIP (UPDATED 2025-07-16: Loading this yml causes the Framesize to reduce to 1600 Bytes) **Load Config YAML**:
     - In System tab:
       ```
       /cds/home/j/jumdz/epix-quad/software/yml/ued/epixQuad_ASICs_allAsics_UED_1080Hz_settings.yml
@@ -27,9 +27,13 @@ python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_0
     - Click **Load Config**.
 
 2. After loading:
-   - `TrigSrcSel` should reset to `0x3` (internal trigger) for 1080Hz.
-   - Manually change `TrigSrcSel` to `0x0` (external trigger from LCLS XPM).
-   - Reset counters in `RdoutStreamMonitoring.Ch[0]` using the **Exec** button next to `CntRst`.
+   - Set:
+     ```
+     SystemRegs.TrigSrcSel = 0x0      # External trigger  
+     SystemRegs.AutoTrigEn  = False   # Disable internal trigger  
+     AcqCore.AsicRoClkHalfT = 0xAAAA0001 # For running at 1kHz
+     ```
+   - (Optional) Reset counters in `RdoutStreamMonitoring.Ch[0]` using the **Exec** button next to `CntRst`.
 
 ---
 
