@@ -74,55 +74,6 @@ procmgr start mona.cnf
 ````
 to start the process.
 
-## Driver Control
-Each node has different hardware installed. To check how the driver is being setup, i.e. on cmp015 with a fake detector
-```
-monarin@drp-neh-cmp015 ~ 👁)$ locate tdetsim.service
-/etc/systemd/system/multi-user.target.wants/tdetsim.service
-/usr/lib/systemd/system/tdetsim.service
-/usr/lib/systemd/system/tdetsim.service~
-monarin@drp-neh-cmp015 ~ 👁)$ less /usr/lib/systemd/system/tdetsim.service
-monarin@drp-neh-cmp015 ~ 👁)$ cat /usr/lib/systemd/system/tdetsim.service
-[Unit]
-Description=SimCam Device Manager
-Requires=multi-user.target
-After=multi-user.target
-
-[Service]
-Type=forking
-ExecStartPre=-/sbin/rmmod datadev.ko
-#2023/01/05 commented out by RMelchiorri dma map memory error, switch to second line
-#ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=4 cfgRxCount=1048572 cfgSize=4096 cfgMode=0x2
-ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=4 cfgRxCount=2044 cfgSize=262144 cfgMode=0x2
-ExecStartPost=/usr/local/sbin/kcuSim -s -d /dev/datadev_1
-#ExecStartPost=/usr/bin/sh -c "/usr/bin/echo 4 > /proc/irq/368/smp_affinity_list"
-#modified 2023/01/05 by RMelchiorri in neh-cmp015 is causing an error, cannot write in directory
-#ExecStartPost=/usr/bin/sh -c "/usr/bin/echo 4 > /proc/irq/369/smp_affinity_list"
-#ExecStartPost=/usr/bin/sh -c "/usr/bin/echo 5 > /proc/irq/370/smp_affinity_list"
-KillMode=none
-IgnoreSIGPIPE=no
-StandardOutput=syslog
-StandardError=inherit
-
-[Install]
-WantedBy=multi-user.target
-```
-**Note:** The module insmod inserts the given driver with parameters to the system. In this case, the driver is datadev.ko with 2044 buffers (each buffer is 262144 bytes). 
-### Updating Driver Parameters
-1. Update values in the driver file, i.e. for fake cam
-```
-vi /usr/lib/systemd/system/tdetsim.service
-```
-2. Reload daemon then restart the driver service (sudo is required).
-```
-systemctl daemon-reload
-systemctl restart tdetsim.service
-```
-3. Check if the values are correct:
-```
-cat /proc/datadev_1
-```
-
 ## Running Daq
 After all the GUIs are present, use Daq Control `Partition > Select` to select detectors that you want to obtain data from. Choose `Recording` to write data to disk. Choose `Target State: Configure` and select DAQ:NEH (separate GUI) Fixed Rate LOSelect mkHz to change the rate from the previous run. You can also choose `Target State: Running` to start running with the saved rate. When done, choose `Unallocated` to finish the run.
 
