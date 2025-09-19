@@ -65,4 +65,14 @@ git describe --tags --exact-match
 
 ---
 
+## NOTE: Comment out Rogue version check
+In this file:
+```
+vi /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09192025_1kfps/lcls2-pgp-pcie-apps/firmware/python/lcls2_pgp_pcie_apps/_DevRoot.py
+```
+comment out this line:
+```
+#rogue.Version.minVersion('6.4.0')
+```
+
 ✅ You are now running `epix-quad-1kfps v2.1.1` inside the `lcls2_submodules_1kfps` environment.
