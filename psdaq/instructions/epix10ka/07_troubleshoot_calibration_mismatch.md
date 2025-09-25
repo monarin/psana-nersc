@@ -16,11 +16,14 @@ This is expected the first time after flashing a new FPGA image.
 
 ## Fix Procedure
 
-1. Run the DAQ script with calibration mode enabled:
+1. **Run the DAQ script with calibration mode enabled** from a writable folder (e.g. `~/tmp/epix10ka_1khz`).  
+   This is required because the training will generate a file `ePixQuadAdcTrainingData.txt` in the current working directory.
 
    ```bash
-   cd epix-quad/software
-   python scripts/epixQuadDAQ.py --l 0 --adcCalib 1
+   mkdir -p ~/tmp/epix10ka_1khz
+   cd ~/tmp/epix10ka_1khz
+
+   python /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09252025_1kfps/epix-quad/software/scripts/epixQuadDAQ.py --l 0 --adcCalib 1
    ```
 
    > The `--adcCalib 1` flag sets `promWrEn` to true, enabling ADC training constants to be written into PROM.
@@ -36,10 +39,14 @@ This is expected the first time after flashing a new FPGA image.
    - Use the helper script:
 
      ```bash
-     python scripts/epixQuadRebootFPGA.py --l 0
+     python /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09252025_1kfps/epix-quad/software/scripts/epixQuadRebootFPGA.py --l 0
      ```
 
-4. Restart `epixQuadDAQ.py` (without `--adcCalib`) to confirm normal operation.
+4. Restart `epixQuadDAQ.py` (without `--adcCalib`) to confirm normal operation:
+
+   ```bash
+   python /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09252025_1kfps/epix-quad/software/scripts/epixQuadDAQ.py --l 0
+   ```
 
 ---
 
@@ -55,15 +62,18 @@ This is expected the first time after flashing a new FPGA image.
 
 ```bash
 # First run after firmware flash (expect mismatch error):
-python scripts/epixQuadDAQ.py --l 0
+python /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09252025_1kfps/epix-quad/software/scripts/epixQuadDAQ.py --l 0
 
-# Fix:
-python scripts/epixQuadDAQ.py --l 0 --adcCalib 1
+# Fix (from writable folder):
+mkdir -p ~/tmp/epix10ka_1khz
+cd ~/tmp/epix10ka_1khz
+python /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09252025_1kfps/epix-quad/software/scripts/epixQuadDAQ.py --l 0 --adcCalib 1
 # → Click AdcTrain in GUI
 # → Wait for training to complete
-python scripts/epixQuadRebootFPGA.py --l 0
+
+python /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09252025_1kfps/epix-quad/software/scripts/epixQuadRebootFPGA.py --l 0
 
 # Verify:
-python scripts/epixQuadDAQ.py --l 0
+python /cds/sw/ds/ana/conda2/rel/lcls2_submodules_09252025_1kfps/epix-quad/software/scripts/epixQuadDAQ.py --l 0
 # → Should start without mismatch error
 ```
