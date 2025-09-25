@@ -29,9 +29,10 @@ git commit -m "submodules(1kfps): bump epix-quad-1kfps to v2.1.1 release"
 
 ---
 
-## 3. Sync recursive submodules
+## 3. Sync recursive submodules and apply patch
 ```bash
 git submodule update --init --recursive
+source patch.sh  # update local changes
 ```
 
 ---
