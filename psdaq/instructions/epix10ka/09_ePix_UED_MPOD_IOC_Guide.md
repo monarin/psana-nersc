@@ -31,6 +31,7 @@ cd ~/ePix/ePix_control/ePix_MPOD
 
 This command opens the **EPICS EDM control panel** for the MPOD (see
 attached screenshot).
+![ePix MPOD](ued_ePix_MPOD.png)
 
 ### Power-on sequence
 
