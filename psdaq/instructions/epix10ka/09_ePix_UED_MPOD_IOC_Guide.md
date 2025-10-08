@@ -90,9 +90,84 @@ values (voltages, currents, temperatures).\
 - Automatically interlock only if a true fault condition occurs.
 
 ------------------------------------------------------------------------
+## 4. Locating and Killing the ePix IOC Process (via procServ)
 
-## 4. Troubleshooting
+If the ePix IOC is running under `procServ`, you can identify and stop it as shown below.
 
+### Step 1. Locate the running IOC
+
+Log into the IOC host node (e.g., `drp-ued-cmp003`):
+
+```bash
+ssh drp-ued-cmp003
+```
+
+List all IOC-related processes:
+
+```bash
+ps -ef | grep proc
+```
+
+Look for a line similar to:
+
+```
+/reg/g/pcds/pyps/apps/IocManager/R2.5.6/startProc ioc-ued-epix-01 30001 ued ./st.cmd
+```
+
+From this line, note:
+- **IOC name:** `ioc-ued-epix-01`  
+- **Port number:** `30001` (used for telnet access)
+
+---
+
+### Step 2. Connect to the IOC process
+
+Use telnet to connect to the IOC’s procServ port:
+
+```bash
+telnet localhost 30001
+```
+
+You should see output similar to:
+
+```
+Welcome to procServ
+Child process is shutting down
+Auto restart mode is disabled
+```
+
+---
+
+### Step 3. Stop the IOC cleanly
+
+Inside the telnet session, press:
+
+```
+Ctrl + X
+```
+
+This stops the IOC process gracefully and returns:
+
+```
+Connection closed by foreign host.
+```
+
+---
+
+### Step 4. Verify
+
+After disconnecting, confirm the IOC has stopped:
+
+```bash
+ps -ef | grep epix
+```
+
+You should no longer see the `ioc-ued-epix-01` entry.
+
+---
+
+## 5. Troubleshooting
+```
   ------------------------------------------------------------------------
   Symptom                Likely Cause                      Notes
   ---------------------- --------------------------------- ---------------
@@ -110,11 +185,11 @@ values (voltages, currents, temperatures).\
                                                            under
                                                            investigation
   ------------------------------------------------------------------------
-
+```
 ------------------------------------------------------------------------
 
-## 5. Contacts
-
+## 6. Contacts
+```
   ------------------------------------------------------------------------
   Role                   Name                   Notes
   ---------------------- ---------------------- --------------------------
@@ -127,3 +202,4 @@ values (voltages, currents, temperatures).\
   Detector Support       Dan / Mona             Power cycling and DAQ
                                                 integration
   ------------------------------------------------------------------------
+```
