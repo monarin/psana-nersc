@@ -141,6 +141,19 @@ ADC09: frame= 250, lanes=[268 276 227 249 220 226 212 228]
 
 ---
 
+## 7 . Data collection
+
+- **Pedestal scan** run takepeds then makepeds
+- **Update geometry** if new exp (ask Mikhail)
+- **Manual Timetool** find the right start_ns by +/- 10ms and see if the intensities drop in AMI. Good value is 44000 ns  
+- Collect data at 360/540/1080 Hz at different gain modes (FH,FM,FL)
+**Note** UED uses evr code 256 for running. For example, we update this evr code with the command below to change to 540Hz rate:
+  ```
+  [uedopr@ued-daq ~]$ seqprogram --pv DAQ:UED:XPM:0 --seq 0:ued_540Hz.py --start --reset
+  ```
+
+---
+
 ### Deployment Complete
 ✅ **Date:** 2025-11-04  
 ✅ **System:** UED — ePixQuad-1kfps  
