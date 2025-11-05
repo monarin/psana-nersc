@@ -84,7 +84,45 @@ Dual-buffer trigger implementation:
 
 ---
 
-## 4 . Known and Resolved Issues
+## 4 . ADC Training Values Decoding
+
+After firmware flashing, **ADC retraining** must be performed before data taking.
+
+### Enabling Debug Output
+In `epixquad1kfps_config.py`, set:
+```python
+DEBUG_ADC_TRAIN_WRITE = True
+```
+
+### Procedure
+Run the unpacking script:
+```bash
+/cds/home/m/monarin/firmware/update_notes/epixquad1kfps_deploy_20251031/unpack_adc_training.py
+```
+
+### Example Output
+```
+Decoded 90 ADC delay values:
+ADC00: frame= 221, lanes=[213 191 219 206 244 246 227 217]
+ADC01: frame= 389, lanes=[376 405 382 408 423 424 433 430]
+ADC02: frame= 281, lanes=[279 269 277 270 286 265 296 301]
+ADC03: frame= 101, lanes=[ 97  78  93  55 104  93 110  60]
+ADC04: frame= 217, lanes=[207 203 210 196 237 201 248 238]
+ADC05: frame= 405, lanes=[429 428 433 444 453 453 456 446]
+ADC06: frame= 382, lanes=[364 331 373 378 402 402 399 378]
+ADC07: frame= 325, lanes=[368 355 367 374 375 388 382 387]
+ADC08: frame= 226, lanes=[237 217 250 243 220 225 235 234]
+ADC09: frame= 250, lanes=[268 276 227 249 220 226 212 228]
+```
+
+### Important Notes
+- Perform ADC training **when the detector temperature is stable (≈ 65–70 °C)**.  
+  Cold training values may result in unstable operation or image artifacts.
+- Keep a record of trained values **before and after firmware update** for comparison.
+
+---
+
+## 5 . Known and Resolved Issues
 
 | Issue | Resolution |
 |--------|-------------|
@@ -94,7 +132,7 @@ Dual-buffer trigger implementation:
 
 ---
 
-## 5 . Verification Summary
+## 6 . Verification Summary
 
 - **RunTrigger** confirmed active at 1080 Hz (EVR event code 6).  
 - **DAQTrigger** verified at 100 Hz after +9 offset correction.  
