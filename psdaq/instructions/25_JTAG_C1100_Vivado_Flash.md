@@ -26,7 +26,7 @@ Step-by-step notes for flashing C1100 cards with Vivado on `drp-srcf-gpu005`.
    ```bash
    source /sdf/group/faders/tools/xilinx/2024.2/Vivado/2024.2/settings64.sh
    ```
-4. (Optional) Start a hardware server in a separate shell if you prefer:
+4. (Optional) Start a hardware server in a separate shell if you need to run vivado on another node:
    ```bash
    hw_server -s tcp::3121 &
    ```
