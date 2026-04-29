@@ -15,6 +15,10 @@ mamba create -y -p "$env_prefix" -c conda-forge \
   pip=24.3.1 \
   setuptools=75.6.0 \
   wheel \
+  meson \
+  ninja \
+  hatchling \
+  uv \
   cmake=3.31.1 \
   numpy=1.26.4 \
   cython=3.0.11 \
