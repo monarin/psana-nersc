@@ -22,7 +22,8 @@ node first, then use that shared environment from compute nodes.
   Activates that environment and exports the compiler and MPI settings needed
   on Perlmutter.
 - `~/lcls2/build_psana.sh`
-  Builds `xtcdata`, `psalg` when needed, and `psana`.
+  Builds a minimal local `psana` install using the current Meson-based build
+  flow.
 
 ## 1. Create the build environment on a login node
 
@@ -82,29 +83,52 @@ Clone `lcls2` if needed, then from the repo root:
 ```bash
 cd ~/lcls2
 source ~/psana-nersc/activate_psana_build_env.sh
-./build_psana.sh --clean --cmake-prefix "$CONDA_PREFIX"
+activate_psana
+./build_psana.sh --clean -j 8
 ```
 
-The default build list is set to:
-
-```bash
-PSANA:DGRAM:HSD:PYCALGOS
-```
-
-This is intentional. On Perlmutter, importing `DataSource` ended up requiring:
-
-- `HSD`
-- `PYCALGOS`
-
-and `HSD` also requires `psalg`.
-
-## 4. Add psana to your shell environment
-
-The build installs into:
+This installs into:
 
 ```bash
 ~/lcls2/install_psana
 ```
+
+This flow now uses:
+
+- Meson
+- Ninja
+- Hatchling
+- `uv pip install .` from the `lcls2` repo root
+
+The `psana-build` environment created by `create_psana_build_env.sh` includes
+these tools already.
+
+### Python-only refresh
+
+If you only modify Python files or Python entry-point scripts under `lcls2`,
+you do not need a full rebuild. Use:
+
+```bash
+./build_psana.sh --python-only
+```
+
+This skips Meson configure/compile/install and only refreshes the installed
+Python package.
+
+Use the normal build instead:
+
+```bash
+./build_psana.sh
+```
+
+when you change any of the following:
+
+- C or C++ source
+- Cython source
+- Meson build files
+- anything that affects installed native libraries or binaries
+
+## 4. Add psana to your shell environment
 
 You already have a helper function in:
 
@@ -146,7 +170,8 @@ srun -n 3 python ~/psana-nersc/psana2/test_mpi.py
 - If you need extra Python or conda packages, install them on the login node,
   then reuse the updated environment from compute nodes.
 - `create_psana_build_env.sh` installs:
-  - build tools: `python`, `pip`, `setuptools`, `cmake`, `numpy`, `cython`
+  - build tools: `python`, `pip`, `setuptools`, `cmake`, `meson`, `ninja`,
+    `hatchling`, `uv`, `numpy`, `cython`
   - runtime packages found to be needed on Perlmutter:
     `amityping`, `krtc`, `pymongo`
   - MPI support:
