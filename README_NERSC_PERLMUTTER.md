@@ -164,6 +164,49 @@ MPI example:
 srun -n 3 python ~/psana-nersc/psana2/test_mpi.py
 ```
 
+## 6. Data location on NERSC
+
+Experiment data staged on NERSC is typically under:
+
+```bash
+/pscratch/sd/p/psdatmgr/psdm/<instr>/<expt>/...
+```
+
+For example, a known experiment with Jungfrau data is:
+
+```bash
+/pscratch/sd/p/psdatmgr/psdm/mfx/mfx101629726/
+```
+
+and the XTC2 files are typically under:
+
+```bash
+/pscratch/sd/p/psdatmgr/psdm/mfx/mfx101629726/xtc/
+```
+
+## 7. Calibration service workaround
+
+Do not use:
+
+```bash
+export SIT_PSDM_OFFSITE=1
+```
+
+On Perlmutter, that setting points `LCLS_CALIB_HTTP` at:
+
+```bash
+https://psextapi.slac.stanford.edu/calib_ws/
+```
+
+and this does not work for the current setup.
+
+Workaround:
+
+```bash
+unset SIT_PSDM_OFFSITE
+export LCLS_CALIB_HTTP=https://pswww.slac.stanford.edu/calib_ws/
+```
+
 ## Notes
 
 - If you rebuild the conda environment, do it on the login node.

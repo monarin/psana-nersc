@@ -11,6 +11,7 @@ export CMAKE_PREFIX_PATH="${CONDA_PREFIX}${CMAKE_PREFIX_PATH:+:${CMAKE_PREFIX_PA
 export CC="$(command -v gcc)"
 export CXX="$(command -v g++)"
 export MPICH_GPU_SUPPORT_ENABLED=0
+export LCLS_CALIB_HTTP="https://pswww.slac.stanford.edu/calib_ws/"
 
 cat <<EOF
 Activated psana build environment:
@@ -18,4 +19,9 @@ Activated psana build environment:
   CC=${CC}
   CXX=${CXX}
   MPICH_GPU_SUPPORT_ENABLED=${MPICH_GPU_SUPPORT_ENABLED}
+  LCLS_CALIB_HTTP=${LCLS_CALIB_HTTP}
+
+Hint:
+  XTC data on NERSC are typically under:
+  /pscratch/sd/p/psdatmgr/psdm/<instr>/<expt>/...
 EOF
