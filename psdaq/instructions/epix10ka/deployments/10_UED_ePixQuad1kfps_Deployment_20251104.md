@@ -19,12 +19,14 @@
 
 ## 2 . Firmware Update Procedure
 
-Performed on **drp-ued-cmp003** using `/dev/datadev_0` (lane 3).
+Performed on **drp-ued-cmp003** using `/dev/datadev_0`. The commands below use PGP lane 0; verify the current lane before running them.
 
 ### Step 1 — Program the FPGA
 ```bash
-python scripts/epixQuadLoadFpga.py --l 0
+python scripts/epixQuadLoadFpga.py --l 0 --mcs /path/to/approved-Quad-firmware.mcs
 ```
+
+The readable 2025 script requires `--mcs` and **programs the Quad PROM** before reloading the FPGA. Check the deployed script and approved Quad image with the detector owner before using this historical update procedure. This is not a routine recovery for a 1600-byte frame; see [the frame-size troubleshooting guide](../troubleshooting/12_troubleshoot_1600_byte_frame.md).
 
 ### Step 2 — Run ADC Training
 ```bash
@@ -32,7 +34,7 @@ python scripts/epixQuadADCTrain.py --l 0
 ```
 
 > **Note:**  
-> Lane 3 is shared with `iocMon`.  
+> VC3 is shared with `iocMon` on the camera link; this is separate from the `--l 0` PGP lane selection.
 > To free it before training:
 > ```bash
 > telnet localhost 30001

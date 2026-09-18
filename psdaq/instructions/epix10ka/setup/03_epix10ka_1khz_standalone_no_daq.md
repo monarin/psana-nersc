@@ -19,14 +19,9 @@ python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_0
 ```
 
 ### Camera Configuration
-1. SKIP (UPDATED 2025-07-16: Loading this yml causes the Framesize to reduce to 1600 Bytes) **Load Config YAML**:
-    - In System tab:
-      ```
-      /cds/home/j/jumdz/epix-quad/software/yml/ued/epixQuad_ASICs_allAsics_UED_1080Hz_settings.yml
-      ```
-    - Click **Load Config**.
+1. **Do not load the old UED 1080 Hz ASIC YAML.** The 2025-07-16 standalone test found that `epixQuad_ASICs_allAsics_UED_1080Hz_settings.yml` reduced `FrameSize` to 1600 bytes. See [the recovery guide](../troubleshooting/12_troubleshoot_1600_byte_frame.md).
 
-2. After loading:
+2. With the approved base configuration:
    - Set:
      ```
      SystemRegs.TrigSrcSel = 0x0      # External trigger  

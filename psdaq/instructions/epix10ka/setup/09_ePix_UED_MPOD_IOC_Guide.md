@@ -31,7 +31,7 @@ cd ~/ePix/ePix_control/ePix_MPOD
 
 This command opens the **EPICS EDM control panel** for the MPOD (see
 attached screenshot).
-![ePix MPOD](ued_ePix_MPOD.png)
+![ePix MPOD](../ued_ePix_MPOD.png)
 
 ### Power-on sequence [NOT RECOMMENDED - BYPASS INTERLOCK]
 
@@ -74,12 +74,12 @@ This opens the **IOC EDM control screen**, which normally displays
 temperature, bias, and other monitoring values.
 ### To turn on,
 Hit the DETECTOR IDLE button and wait a few seconds, if nothing trips, you'll see the DETECTOR ON, click on it
-![ePix EDM_off](ued_ePix_EDM_off_status.png)
+![ePix EDM_off](../ued_ePix_EDM_off_status.png)
 If the temperature cut-off is set too low, it can interlock and DETECTOR ON button will be disabled.
 Check the MPOD Voltages - 6V looks good.
 ### To turn off
 Hit the DETECTOR IDLE then DETECTOR OFF
-![ePix EDM_on](ued_ePix_EDM_on_status.png)
+![ePix EDM_on](../ued_ePix_EDM_on_status.png)
 
 ### Current status (as of Oct 8, 2025)
 

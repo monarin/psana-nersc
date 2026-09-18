@@ -1,110 +1,35 @@
-# epix10ka Integration for UED DAQ
+# ePix10ka / ePixQuad 1kfps notes
 
-This project documents the integration process of a 1kHz epix10ka detector into the UED DAQ system. The detector is currently hosted on `daq-det-evr01` with development GUIs and configuration tools available under the `lcls2-epix-hr-pcie` software tree.
+Start here for ASC standalone tests and UED DAQ operation. The ASC setup notes and UED deployment notes describe different hosts and software generations; confirm the current DRP log header before using a command. The dated deployment files are historical records.
 
----
+## Find the symptom
 
-## 📍 Detector Setup (Updated)
+| What you see | Guide | Status |
+| --- | --- | --- |
+| `subframe[2] size 0` / camera `FrameSize = 0` | [Empty image subframe](troubleshooting/13_troubleshoot_zero_byte_image.md) | Open; compare UED timing, ADC/readout, and restart evidence |
+| `subframe[2] size 1600` / camera `FrameSize = 1600` | [1600-byte image](troubleshooting/12_troubleshoot_1600_byte_frame.md) | Historical old-YAML cause documented |
+| `subframe count 3 [expected 4]` | [KCU EventBuilder bypass](troubleshooting/11_troubleshoot_missing_data_framcnt.md) | `Bypass=0x4` case documented |
+| `AsicMask` verify error during Configure | [AsicMask Configure failure](troubleshooting/14_troubleshoot_asicmask_configure.md) | RTL write-key hypothesis; live fix unverified |
+| Quad fails to start / AxiVersion timeout | [Startup failure](troubleshooting/01_troubleshoot_fail_to_start.md) | Historical ASC note |
+| Calibration GitHash mismatch | [ADC calibration mismatch](troubleshooting/07_troubleshoot_calibration_mismatch.md) | Historical procedure |
 
-- **Host node:** `daq-det-evr01`
-- **PCIe Device Path:** `/dev/datadev_0`
-- **KCU Type:** `XilinxKcu1500`
+## Setup and operations
 
-### ✅ Latest Working Status
+- [ASC 1 kHz overview (2025)](setup/asc_1khz_overview_2025.md)
+- [ASC DAQ test and setup](setup/02_test_and_setup_at_ASC.md)
+- [Standalone camera and KCU devGuis](setup/03_epix10ka_1khz_standalone_no_daq.md)
+- [Switch KCU configuration](setup/04_switch_kcu_for_epix10ka.md)
+- [Update 1kfps submodules](setup/05_update_submodules_1kfps.md)
+- [UED MPOD and IOC guide](setup/09_ePix_UED_MPOD_IOC_Guide.md)
 
-Successfully integrated and ran **epix10ka at 1 kHz** with the DAQ on `det-daq`.
+## Deployment history
 
-**Important Notes:**
-- You may need to **reboot** the epix10ka in the Detector Clean Room at the ASC Lab.
-- **DO NOT** load Julian’s configuration YAML — doing so will reduce FrameSize to 1600 bytes.
-- After reboot, start with the base config and only apply changes below.
+- [UED 360/1080 Hz deployment, 2025-10-06](deployments/08_UED_ePixQuad_360_1080_Deploy_2025-10-06.md)
+- [UED ePixQuad1kfps deployment, 2025-11-04](deployments/10_UED_ePixQuad1kfps_Deployment_20251104.md)
 
-### DAQ Startup Instructions:
+## Reference and support files
 
-```bash
-ssh det-daq -l detopr
-cd scripts
-source setup_env.sh   # (should be version lcls2_071425)
-procmgr start epix10ka.cnf
-```
+- [Trigger delay explanation](reference/00_understand_trigger_delay.md)
+- [ASC procmgr config](epix10ka.cnf) and [DRP launch script](launch_drp_test.sh)
 
-```bash
-ssh det-daq-evr01
-./lcls2/launch_drp_test.sh   # launches drp with correct ulimit (requires sudo)
-```
-
-### Configuration Changes:
-
-In `psdaq/configdb/epixquad_config.py`, update:
-```python
-event_rate_hz = 1020
-devPtr.EventBuilder.Timeout.set(int(156.25e6 / event_rate_hz))
-```
-
-In your config for `epix10ka_0`:
-```yaml
-user.start_ns: 150000           # Smaller values (e.g., 110000) may cause TEB Fixup errors
-expert.EpixQuad.AcqCore.AsicRoClkHalfT: 1
-```
-> ℹ️ Value `1` will be OR’ed in `epixquad_config.py`. Setting `3` here results in only ~340 Hz rate.
-
----
-
-## 🚀 Dev GUIs
-
-### KCU Board GUI
-
-To launch the board-level dev GUI:
-
-```bash
-python scripts/devGui.py --dev /dev/datadev_0 --pgp4 1 --serverPort 9004 --pcieBoardType XilinxKcu1500
-```
-
-**Location:**  
-`/cds/home/j/jumdz/lcls2-epix-hr-pcie/software`
-
----
-
-### Camera GUI
-
-To launch the epix10ka QuadDAQ GUI:
-
-```bash
-python scripts/epixQuadDAQ.py --l 0 --dev /dev/datadev_0
-```
-optional `--viewer 1` will bring ImageViwer for this epix (bur currently not showing anything - possibly broken).
-
-**Location:**  
-`/cds/home/j/jumdz/epix-quad/software`
-
-or in **Spy mode**
-```bash
-python -m pyrogue gui --server='localhost:9103'
-```
-
-Check `FrameCnt` and `FrameRate` registers to confirm 1MB FrameSize.
-
-![epix10ka frame count](/psdaq/instructions/epix10ka/ePix10ka_FrameCnt.png)
-
----
-
-## 🛠 Status
-
-| Component     | Host           | Status     |
-|---------------|----------------|------------|
-| epix10ka      | daq-det-evr01  | ✅ Working at 1 kHz |
-| devGui        | Installed      | ✅          |
-| QuadDAQ GUI   | Installed      | ✅          |
-| DAQ Pipeline  | Integrated     | ✅          |
-
----
-
-## 📝 Notes
-
-*Removed – content deprecated*
-
----
-
-## 📎 To Do
-
-*Removed – all tasks completed and verified*
+For the UED 360 Hz Quad test, the UED operator reports using `ued_seq --a360` on `ued-daq`. The Andor 1 Hz timing sequence is not suitable for the Quad. See the [empty-image guide](troubleshooting/13_troubleshoot_zero_byte_image.md) for checks and the limits of what has been verified.
